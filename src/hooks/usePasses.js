@@ -9,6 +9,7 @@ import {
   useVerifyPaymentMutation,
   useSpinWheelMutation,
 } from '../store/api/passesApi'
+import { useGetSpinHistoryQuery } from '../store/api/userDataApi'
 import { openRazorpayCheckout, executeCheckoutFlow } from '../utils/razorpay'
 
 export default function usePasses({ showAlert } = {}) {
@@ -24,6 +25,10 @@ export default function usePasses({ showAlert } = {}) {
   const [createCreditOrder, { isLoading: creditOrderLoading }] = useCreateCreditOrderMutation()
   const [verifyPayment] = useVerifyPaymentMutation()
   const [spinWheel, { isLoading: spinLoading }] = useSpinWheelMutation()
+
+  const { data: spinHistoryData, refetch: refetchSpinHistory } = useGetSpinHistoryQuery(undefined, {
+    skip: !isAuthenticated,
+  })
 
   const activePasses = activeData?.passes || []
   const activeCredits = activeData?.credits || []
@@ -89,11 +94,12 @@ export default function usePasses({ showAlert } = {}) {
   const handleSpin = useCallback(async () => {
     try {
       const result = await spinWheel().unwrap()
+      refetchSpinHistory()
       return result
     } catch (err) {
       return { error: err.data?.detail || 'Spin failed' }
     }
-  }, [spinWheel])
+  }, [spinWheel, refetchSpinHistory])
 
   return {
     activePasses,
@@ -106,6 +112,8 @@ export default function usePasses({ showAlert } = {}) {
     passOrderLoading,
     creditOrderLoading,
     spinLoading,
+    spinHistory: spinHistoryData?.spins || [],
+    refetchSpinHistory,
     refetchPasses: refetch,
   }
 }

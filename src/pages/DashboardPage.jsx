@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { TOOLS, ACHIEVEMENTS, LEVELS, PERSONAS, QUEST_TEMPLATES, USE_CASE_TABS } from '../constants/tools'
 import { useGetPassCatalogQuery } from '../store/api/passesApi'
+import SpinWheel from '../components/gamification/SpinWheel'
+import { useGetToolStatsQuery } from '../store/api/userDataApi'
 import formatPriceUtil from '../utils/formatPrice'
 
 export default function DashboardPage({ gamification, user, isAuthenticated, showAlert, mode, setMode, subscription }) {
@@ -53,8 +55,21 @@ export default function DashboardPage({ gamification, user, isAuthenticated, sho
         }
     }, [editingName])
 
+    const { data: toolStatsData } = useGetToolStatsQuery(undefined, { skip: !isAuthenticated })
+
     // Top used tools
     const topTools = useMemo(() => {
+        // Prefer API tool stats (lifetime data from dedicated table)
+        if (toolStatsData?.stats?.length) {
+            return toolStatsData.stats
+                .slice(0, 10)
+                .map(s => {
+                    const tool = TOOLS.find(t => t.id === s.tool_id)
+                    return tool ? { ...tool, count: s.total_uses } : null
+                })
+                .filter(Boolean)
+        }
+        // Fallback to gamification JSONB (for unauthenticated/loading)
         if (!g?.toolsUsed) return []
         return Object.entries(g.toolsUsed)
             .sort(([, a], [, b]) => b - a)
@@ -64,7 +79,7 @@ export default function DashboardPage({ gamification, user, isAuthenticated, sho
                 return tool ? { ...tool, count } : null
             })
             .filter(Boolean)
-    }, [g?.toolsUsed])
+    }, [toolStatsData, g?.toolsUsed])
 
     // Category usage
     const categoryUsage = useMemo(() => {
@@ -92,6 +107,7 @@ export default function DashboardPage({ gamification, user, isAuthenticated, sho
     const sections = [
         { id: 'overview', label: 'Overview', icon: '📊' },
         { id: 'subscription', label: 'Subscription', icon: '⚡' },
+        { id: 'rewards', label: 'Rewards', icon: '🎰' },
         { id: 'profile', label: 'Profile', icon: '👤' },
         { id: 'achievements', label: 'Achievements', icon: '🏆' },
         { id: 'favorites', label: 'Favorites', icon: '❤️' },
@@ -313,6 +329,15 @@ export default function DashboardPage({ gamification, user, isAuthenticated, sho
 
                 {/* ─── Subscription ─── */}
                 {activeSection === 'subscription' && <SubscriptionTab subscription={subscription} showAlert={showAlert} navigate={navigate} isAuthenticated={isAuthenticated} />}
+
+                {/* ─── Rewards ─── */}
+                {activeSection === 'rewards' && (
+                    <div className="tu-dash-content">
+                        <h2 className="tu-dash-title">Weekly Rewards</h2>
+                        <p className="tu-dash-subtitle">Spin the wheel once per week for free rewards</p>
+                        <SpinWheel subscription={subscription} isAuthenticated={isAuthenticated} />
+                    </div>
+                )}
 
                 {/* ─── Profile ─── */}
                 {activeSection === 'profile' && (

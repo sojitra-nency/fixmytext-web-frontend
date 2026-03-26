@@ -4,6 +4,7 @@ import {
   useGetGamificationQuery, useUpdateGamificationMutation,
   useUpdatePreferencesMutation, useGetPreferencesQuery,
   useGetFavoritesQuery, useAddFavoriteMutation, useRemoveFavoriteMutation,
+  useGetDiscoveredToolsQuery,
 } from '../store/api/userDataApi'
 import { TOOLS, ACHIEVEMENTS, QUEST_TEMPLATES, LEVELS } from '../constants/tools'
 
@@ -75,7 +76,6 @@ function stateToApi(s) {
     total_ops: s.totalOps,
     total_chars: s.totalChars,
     tools_used: s.toolsUsed,
-    discovered_tools: s.discoveredTools,
     achievements: s.achievements,
     saved_pipelines: s.savedPipelines,
     completed_quests: s.completedQuests,
@@ -120,6 +120,7 @@ export default function useGamification() {
   const { data: dbGamification } = useGetGamificationQuery(undefined, { skip: !isAuthenticated })
   const { data: dbPrefs } = useGetPreferencesQuery(undefined, { skip: !isAuthenticated })
   const { data: dbFavorites } = useGetFavoritesQuery(undefined, { skip: !isAuthenticated })
+  const { data: dbDiscovered } = useGetDiscoveredToolsQuery(undefined, { skip: !isAuthenticated })
   const [syncToDb] = useUpdateGamificationMutation()
   const [syncPrefs] = useUpdatePreferencesMutation()
   const [apiAddFavorite] = useAddFavoriteMutation()
@@ -147,6 +148,21 @@ export default function useGamification() {
       setState(prev => ({ ...prev, favorites: ids }))
     }
   }, [dbFavorites])
+
+  // Hydrate discovered tools from dedicated endpoint
+  useEffect(() => {
+    if (dbDiscovered?.tools) {
+      const ids = dbDiscovered.tools.map(t => t.tool_id)
+      setState(prev => {
+        // Merge: keep any locally-tracked discoveries not yet in DB
+        const merged = [...new Set([...ids, ...prev.discoveredTools])]
+        if (merged.length === prev.discoveredTools.length && merged.every(id => prev.discoveredTools.includes(id))) {
+          return prev // no change
+        }
+        return { ...prev, discoveredTools: merged }
+      })
+    }
+  }, [dbDiscovered])
 
   // Reset hydration flag on logout
   useEffect(() => {
