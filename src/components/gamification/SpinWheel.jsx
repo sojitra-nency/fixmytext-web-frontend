@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const WHEEL_SEGMENTS = [
@@ -16,10 +16,15 @@ const CONFETTI_EMOJIS = ['🎉', '🎊', '✨', '⭐', '🌟', '💫', '🏆', '
 
 function ConfettiParticle({ index }) {
   const emoji = CONFETTI_EMOJIS[index % CONFETTI_EMOJIS.length]
-  const left = 10 + Math.random() * 80
-  const delay = Math.random() * 0.5
-  const duration = 1.5 + Math.random() * 1.5
-  const size = 0.8 + Math.random() * 0.7
+  const { left, delay, duration, size } = useMemo(
+    () => ({
+      left: 10 + Math.random() * 80,
+      delay: Math.random() * 0.5,
+      duration: 1.5 + Math.random() * 1.5,
+      size: 0.8 + Math.random() * 0.7,
+    }),
+    []
+  )
 
   return (
     <motion.span
@@ -94,6 +99,19 @@ function labelPos(index, radius) {
   }
 }
 
+// Map API reward result to a WHEEL_SEGMENTS index
+function rewardToSegmentIndex(res) {
+  if (!res) return 0
+  if (res.reward_type === 'credits') {
+    return res.amount >= 3 ? 1 : 0 // 3 Credits or 1 Credit
+  }
+  if (res.reward_type === 'pass') {
+    const passMap = { quick_fix: 2, tinkerer: 3, day_single: 4, day_triple: 5 }
+    return passMap[res.pass_id] ?? 2
+  }
+  return 0
+}
+
 export default function SpinWheel({ subscription, isAuthenticated }) {
   const { handleSpin, spinLoading, spinHistory } = subscription || {}
 
@@ -101,6 +119,12 @@ export default function SpinWheel({ subscription, isAuthenticated }) {
   const [result, setResult] = useState(null)
   const [rotation, setRotation] = useState(0)
   const [error, setError] = useState(null)
+  const isMounted = useRef(true)
+
+  useEffect(() => {
+    isMounted.current = true
+    return () => { isMounted.current = false }
+  }, [])
 
   const alreadySpun = useMemo(() => hasSpunThisWeek(spinHistory), [spinHistory])
 
@@ -112,17 +136,26 @@ export default function SpinWheel({ subscription, isAuthenticated }) {
     setResult(null)
     setError(null)
 
-    // Start the wheel spinning: add 3-8 full rotations + random offset
+    // Call the API and wait for animation in parallel
+    const [res] = await Promise.all([
+      handleSpin(),
+      new Promise((resolve) => setTimeout(resolve, 4000)), // matches CSS transition duration
+    ])
+
+    // Compute rotation to land on the correct segment
+    const segIndex = rewardToSegmentIndex(res)
+    const segCenter = segIndex * SEGMENT_ARC + SEGMENT_ARC / 2
     const extraRotations = 3 + Math.floor(Math.random() * 6)
-    const randomOffset = Math.random() * 360
-    const newRotation = rotation + extraRotations * 360 + randomOffset
+    // Wheel rotates clockwise; pointer is at top (0deg). To land pointer on segment,
+    // we want (360 - segCenter) as the final offset within one full rotation.
+    const targetOffset = (360 - segCenter + 360) % 360
+    const newRotation = rotation + extraRotations * 360 + targetOffset
     setRotation(newRotation)
 
-    // Call the API while the wheel spins
-    const res = await handleSpin()
+    // Wait for the CSS transition to finish after setting rotation
+    await new Promise((resolve) => setTimeout(resolve, 4200))
 
-    // Wait for the animation to finish (matches CSS transition duration)
-    await new Promise((resolve) => setTimeout(resolve, 4000))
+    if (!isMounted.current) return
 
     setSpinning(false)
 
