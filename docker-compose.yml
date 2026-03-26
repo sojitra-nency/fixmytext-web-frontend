@@ -1,0 +1,51 @@
+# fixmytext-frontend — unified compose file with profiles.
+#
+# Profiles:
+#   dev   development stack  (hot reload, source volumes)
+#   prod  production stack   (multi-stage builds, nginx)
+#
+# Usage:
+#   docker compose --profile dev up --build     # dev
+#   docker compose --profile prod up --build    # prod
+#
+services:
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # DEV  —  profile: dev
+  # ══════════════════════════════════════════════════════════════════════════
+  frontend-dev:
+    profiles: ["dev"]
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: fixmytext-frontend-dev
+    network_mode: "host"  # use host networking for dev to simplify API access and hot reload
+    volumes:
+      - .:/app/src          # mount src — Vite hot-reloads on change
+    environment:
+      - VITE_API_URL=http://localhost:8000
+
+  # ══════════════════════════════════════════════════════════════════════════
+  # PROD  —  profile: prod
+  # ═════════════════════════════════════════════════════════════════════════════════
+  frontend-prod:
+    profiles: ["prod"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    container_name: fixmytext-frontend-prod
+    restart: unless-stopped
+    network_mode: "host"  # use host networking for dev to simplify API access and hot reload
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+# ── Volumes ───────────────────────────────────────────────────────────────────
+volumes:
+  fixmytext-pgdata:
