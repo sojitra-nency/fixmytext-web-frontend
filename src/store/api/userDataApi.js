@@ -4,7 +4,7 @@ import { baseQueryWithReauth } from './baseQuery'
 export const userDataApi = createApi({
   reducerPath: 'userDataApi',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['Preferences', 'Gamification', 'Templates', 'UiSettings', 'Favorites', 'ToolStats', 'Pipelines'],
+  tagTypes: ['Preferences', 'Gamification', 'Templates', 'UiSettings', 'Favorites', 'ToolStats', 'Pipelines', 'DiscoveredTools', 'SpinHistory'],
   endpoints: (builder) => ({
     // Preferences
     getPreferences: builder.query({
@@ -74,6 +74,18 @@ export const userDataApi = createApi({
       providesTags: ['ToolStats'],
     }),
 
+    // Discovered tools (from dedicated table)
+    getDiscoveredTools: builder.query({
+      query: () => '/api/v1/user/discovered-tools',
+      providesTags: ['DiscoveredTools'],
+    }),
+
+    // Spin history
+    getSpinHistory: builder.query({
+      query: () => '/api/v1/user/spin-history',
+      providesTags: ['SpinHistory'],
+    }),
+
     // Pipelines
     getPipelines: builder.query({
       query: () => '/api/v1/user/pipelines',
@@ -109,6 +121,8 @@ export const {
   useAddFavoriteMutation,
   useRemoveFavoriteMutation,
   useGetToolStatsQuery,
+  useGetDiscoveredToolsQuery,
+  useGetSpinHistoryQuery,
   useGetPipelinesQuery,
   useCreatePipelineMutation,
   useUpdatePipelineMutation,
