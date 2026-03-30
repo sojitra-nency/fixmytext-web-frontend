@@ -3,7 +3,8 @@ import { createPortal } from 'react-dom'
 import { marked } from 'marked'
 import { useCreateShareMutation } from '../../store/api/shareApi'
 
-const TEXT_INTENSIVE_GROUPS = ['ai_writing', 'ai_content', 'language', 'whitespace', 'case', 'lines']
+const TEXT_INTENSIVE_GROUPS = ['ai_writing', 'ai_content', 'language', 'cleanup', 'case', 'lines']
+const HTML_OUTPUT_TOOLS = new Set(['strikethrough'])
 
 const FONTS = [
   'Default', 'Arial', 'Georgia', 'Times New Roman', 'Courier New',
@@ -141,15 +142,20 @@ export default memo(function OutputPanel({
     }
   }, [onOutputEdit])
 
+  const isHtmlOutput = activeTool && HTML_OUTPUT_TOOLS.has(activeTool.id)
+
   // Set initial content when result changes
   useEffect(() => {
     if (editorRef.current && isEditable && aiResult?.result) {
-      // Only set if content diverged (avoid clobbering cursor)
-      if (editorRef.current.innerText.trim() !== aiResult.result.trim()) {
+      if (isHtmlOutput) {
+        if (editorRef.current.innerHTML !== aiResult.result) {
+          editorRef.current.innerHTML = aiResult.result
+        }
+      } else if (editorRef.current.innerText.trim() !== aiResult.result.trim()) {
         editorRef.current.innerText = aiResult.result
       }
     }
-  }, [aiResult?.result, isEditable])
+  }, [aiResult?.result, isEditable, isHtmlOutput])
 
   const saveMenu = saveMenuOpen && createPortal(
     <div className="tu-save-menu" ref={saveMenuRef} style={{ top: menuPos.top, left: menuPos.left }}>
@@ -367,7 +373,9 @@ export default memo(function OutputPanel({
                     onInput={handleEditorInput}
                     spellCheck={false}
                   />
-              ) : <span style={{ whiteSpace: 'pre-wrap' }}>{aiResult.result}</span>
+              ) : isHtmlOutput
+                ? <span style={{ whiteSpace: 'pre-wrap' }} dangerouslySetInnerHTML={{ __html: aiResult.result }} />
+                : <span style={{ whiteSpace: 'pre-wrap' }}>{aiResult.result}</span>
           ) : showDyslexia ? (
             <span className="tu-dyslexia" style={{ whiteSpace: 'pre-wrap' }}>{text}</span>
           ) : showMarkdown ? (

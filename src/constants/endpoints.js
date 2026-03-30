@@ -30,13 +30,25 @@ export const ENDPOINTS = {
   FLAT_CASE: '/api/v1/text/flat-case',
   COBOL_CASE: '/api/v1/text/cobol-case',
 
-  // Whitespace
+  // Text Cleanup
   REMOVE_EXTRA_SPACES: '/api/v1/text/remove-extra-spaces',
   REMOVE_ALL_SPACES: '/api/v1/text/remove-all-spaces',
   REMOVE_LINE_BREAKS: '/api/v1/text/remove-line-breaks',
   STRIP_HTML: '/api/v1/text/strip-html',
   REMOVE_ACCENTS: '/api/v1/text/remove-accents',
   TOGGLE_SMART_QUOTES: '/api/v1/text/toggle-smart-quotes',
+  STRIP_INVISIBLE: '/api/v1/text/strip-invisible',
+  STRIP_EMOJI: '/api/v1/text/strip-emoji',
+  NORMALIZE_WHITESPACE: '/api/v1/text/normalize-whitespace',
+  STRIP_NON_ASCII: '/api/v1/text/strip-non-ascii',
+  FIX_LINE_ENDINGS: '/api/v1/text/fix-line-endings',
+  STRIP_MARKDOWN: '/api/v1/text/strip-markdown',
+  TRIM_LINES: '/api/v1/text/trim-lines',
+  STRIP_EMPTY_LINES: '/api/v1/text/strip-empty-lines',
+  STRIP_URLS: '/api/v1/text/strip-urls',
+  STRIP_EMAILS: '/api/v1/text/strip-emails',
+  NORMALIZE_PUNCTUATION: '/api/v1/text/normalize-punctuation',
+  STRIP_NUMBERS: '/api/v1/text/strip-numbers',
 
   // Encoding
   BASE64_ENCODE: '/api/v1/text/base64-encode',
