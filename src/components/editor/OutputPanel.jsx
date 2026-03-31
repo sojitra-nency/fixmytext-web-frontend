@@ -1,6 +1,8 @@
 import { memo, useMemo, useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { marked } from 'marked'
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
 import { useCreateShareMutation } from '../../store/api/shareApi'
 
 const TEXT_INTENSIVE_GROUPS = ['ai_writing', 'ai_content', 'language', 'cleanup', 'case', 'lines']
@@ -15,7 +17,6 @@ const SIZES = [
   { label: '18', px: '18px' }, { label: '20', px: '20px' }, { label: '24', px: '24px' },
   { label: '28', px: '28px' }, { label: '32', px: '32px' }, { label: '40', px: '40px' },
 ]
-const EMOJIS = ['😀','😂','😍','🤔','👍','👎','🎉','🔥','❤️','✅','❌','⭐','💡','📌','🚀','✨','💪','🙏','👀','📝','🎯','💯','🏆','⚡']
 
 export default memo(function OutputPanel({
   aiResult, hasMarkdown, onAiDismiss,
@@ -29,10 +30,12 @@ export default memo(function OutputPanel({
   const [saveMenuOpen, setSaveMenuOpen] = useState(false)
   const [mdPreview, setMdPreview] = useState(false)
   const [formatOpen, setFormatOpen] = useState(false)
+  const [emojiPickerOpen, setEmojiPickerOpen] = useState(false)
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 })
   const saveBtnRef = useRef(null)
   const saveMenuRef = useRef(null)
   const editorRef = useRef(null)
+  const emojiPickerRef = useRef(null)
   const showResult = previewMode === 'result' && aiResult
   const showDyslexia = previewMode === 'dyslexia' && dyslexiaMode && text
   const showMarkdown = previewMode === 'markdown' && markdownMode && text
@@ -130,10 +133,23 @@ export default memo(function OutputPanel({
     })
   }, [])
 
-  const insertEmoji = useCallback((emoji) => {
+  const insertEmoji = useCallback((emojiData) => {
     editorRef.current?.focus()
-    document.execCommand('insertText', false, emoji)
+    document.execCommand('insertText', false, emojiData.native)
+    setEmojiPickerOpen(false)
   }, [])
+
+  // Close emoji picker on outside click
+  useEffect(() => {
+    if (!emojiPickerOpen) return
+    const handleClick = (e) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(e.target)) {
+        setEmojiPickerOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [emojiPickerOpen])
 
   // Sync contentEditable back to state on input
   const handleEditorInput = useCallback(() => {
@@ -341,10 +357,26 @@ export default memo(function OutputPanel({
               <input type="color" defaultValue="#264F78" onChange={e => execCmd('hiliteColor', e.target.value)} />
             </label>
             <span className="tu-fmt-panel-sep" />
-            <div className="tu-fmt-emoji-wrap">
-              {EMOJIS.map(e => (
-                <button key={e} className="tu-fmt-emoji" onClick={() => insertEmoji(e)} title={e}>{e}</button>
-              ))}
+            <div className="tu-fmt-emoji-wrap" ref={emojiPickerRef}>
+              <button
+                className="tu-fmt-emoji"
+                onClick={() => setEmojiPickerOpen(prev => !prev)}
+                title="Emoji picker"
+              >
+                😀
+              </button>
+              {emojiPickerOpen && (
+                <div className="tu-fmt-emoji-picker">
+                  <Picker
+                    data={data}
+                    onEmojiSelect={insertEmoji}
+                    theme="dark"
+                    previewPosition="none"
+                    skinTonePosition="search"
+                    maxFrequentRows={1}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

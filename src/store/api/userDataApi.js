@@ -124,7 +124,4 @@ export const {
   useGetDiscoveredToolsQuery,
   useGetSpinHistoryQuery,
   useGetPipelinesQuery,
-  useCreatePipelineMutation,
-  useUpdatePipelineMutation,
-  useDeletePipelineMutation,
 } = userDataApi

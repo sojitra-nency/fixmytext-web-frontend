@@ -5,6 +5,7 @@ import {
   useUpdatePreferencesMutation, useGetPreferencesQuery,
   useGetFavoritesQuery, useAddFavoriteMutation, useRemoveFavoriteMutation,
   useGetDiscoveredToolsQuery,
+  useGetPipelinesQuery,
 } from '../store/api/userDataApi'
 import { TOOLS, ACHIEVEMENTS, QUEST_TEMPLATES, LEVELS } from '../constants/tools'
 
@@ -49,8 +50,6 @@ function getLevel(xp) {
 function apiToState(api) {
   return {
     persona: null, // persona is in preferences, not gamification
-    toolsUsed: api.tools_used || {},
-    discoveredTools: api.discovered_tools || [],
     totalOps: api.total_ops || 0,
     totalChars: api.total_chars || 0,
     xp: api.xp || 0,
@@ -61,7 +60,6 @@ function apiToState(api) {
       date: api.daily_quest_date || null,
       completed: api.daily_quest_completed || false,
     },
-    savedPipelines: api.saved_pipelines || [],
     completedQuests: api.completed_quests || [],
   }
 }
@@ -75,9 +73,7 @@ function stateToApi(s) {
     streak_last_date: s.streak.lastDate,
     total_ops: s.totalOps,
     total_chars: s.totalChars,
-    tools_used: s.toolsUsed,
     achievements: s.achievements,
-    saved_pipelines: s.savedPipelines,
     completed_quests: s.completedQuests,
     daily_quest_id: s.dailyQuest.id,
     daily_quest_date: s.dailyQuest.date,
@@ -121,6 +117,7 @@ export default function useGamification() {
   const { data: dbPrefs } = useGetPreferencesQuery(undefined, { skip: !isAuthenticated })
   const { data: dbFavorites } = useGetFavoritesQuery(undefined, { skip: !isAuthenticated })
   const { data: dbDiscovered } = useGetDiscoveredToolsQuery(undefined, { skip: !isAuthenticated })
+  const { data: dbPipelines } = useGetPipelinesQuery(undefined, { skip: !isAuthenticated })
   const [syncToDb] = useUpdateGamificationMutation()
   const [syncPrefs] = useUpdatePreferencesMutation()
   const [apiAddFavorite] = useAddFavoriteMutation()
@@ -163,6 +160,13 @@ export default function useGamification() {
       })
     }
   }, [dbDiscovered])
+
+  // Hydrate saved pipelines from dedicated endpoint
+  useEffect(() => {
+    if (dbPipelines) {
+      setState(prev => ({ ...prev, savedPipelines: dbPipelines }))
+    }
+  }, [dbPipelines])
 
   // Reset hydration flag on logout
   useEffect(() => {

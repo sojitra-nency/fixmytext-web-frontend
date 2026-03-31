@@ -1568,12 +1568,9 @@
   pointer-events: none;
 }
 
-/* Emoji row */
+/* Emoji picker */
 .tu-fmt-emoji-wrap {
-  display: flex;
-  gap: 1px;
-  flex-wrap: wrap;
-  max-width: 340px;
+  position: relative;
 }
 
 .tu-fmt-emoji {
@@ -1594,6 +1591,14 @@
 .tu-fmt-emoji:hover {
   background: var(--list-hover);
   transform: scale(1.2);
+}
+
+.tu-fmt-emoji-picker {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 100;
+  margin-top: 4px;
 }
 
 .tu-output-empty {
@@ -2187,22 +2192,6 @@ body:not(.dark) .tu-bottom-cell-text {
 }
 
 body:not(.dark) .tu-bottom-cell-time {
-  color: #8A8A8A !important;
-}
-
-body:not(.dark) .tu-bottom-cell-word {
-  color: #2B6CB5 !important;
-}
-
-body:not(.dark) .tu-bottom-cell-count {
-  color: #1A1A1A !important;
-}
-
-body:not(.dark) .tu-bottom-cell-pct {
-  color: #7A7A7A !important;
-}
-
-body:not(.dark) .tu-bottom-cell-rank {
   color: #8A8A8A !important;
 }
 

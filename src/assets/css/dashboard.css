@@ -159,13 +159,6 @@
   margin: 0 0 24px;
 }
 
-.tu-dash-section-title {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 32px 0 12px;
-}
-
 /* ── Cards ── */
 .tu-dash-card {
   background: var(--surface);
@@ -173,10 +166,6 @@
   border-radius: var(--r-md);
   padding: 20px;
   margin-bottom: 16px;
-}
-
-.tu-dash-card--wide {
-  margin-top: 20px;
 }
 
 .tu-dash-card-title {
@@ -573,17 +562,6 @@
 
 .tu-dash-settings-label {
   color: var(--text-2);
-}
-
-.tu-dash-settings-value {
-  color: var(--text);
-  font-weight: 500;
-}
-
-.tu-dash-settings-value--mono {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--text-3);
 }
 
 .tu-dash-settings-badge {
