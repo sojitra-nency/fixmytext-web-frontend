@@ -20,7 +20,7 @@ function saveTemplates(templates) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(templates))
 }
 
-export default function useTemplates(text, setText, showAlert) {
+export default function useTemplates(text, setText, showAlert, { getActiveToolId, openToolById, renameActiveTab } = {}) {
     const accessToken = useSelector((s) => s.auth.accessToken)
     const isAuthenticated = !!accessToken
 
@@ -44,22 +44,23 @@ export default function useTemplates(text, setText, showAlert) {
 
     // Use DB templates when authenticated, local otherwise
     const templates = isAuthenticated && dbTemplates
-        ? dbTemplates.map(t => ({ name: t.name, text: t.text, id: t.id, createdAt: t.created_at, updatedAt: t.updated_at }))
+        ? dbTemplates.map(t => ({ name: t.name, text: t.text, tool_id: t.tool_id || null, id: t.id, createdAt: t.created_at, updatedAt: t.updated_at }))
         : localTemplates
 
     const handleSaveTemplate = useCallback(async () => {
         const name = templateName.trim()
         if (!name) { showAlert('Enter a template name', 'danger'); return }
         if (!text) { showAlert('Nothing to save', 'danger'); return }
+        const toolId = getActiveToolId?.() || null
 
         if (isAuthenticated) {
             const existing = templates.find(t => t.name === name)
             try {
                 if (existing?.id) {
-                    await apiUpdate({ id: existing.id, name, text }).unwrap()
+                    await apiUpdate({ id: existing.id, name, text, tool_id: toolId }).unwrap()
                     showAlert(`Template "${name}" updated`, 'success')
                 } else {
-                    await apiCreate({ name, text }).unwrap()
+                    await apiCreate({ name, text, tool_id: toolId }).unwrap()
                     showAlert(`Template "${name}" saved`, 'success')
                 }
             } catch {
@@ -68,22 +69,28 @@ export default function useTemplates(text, setText, showAlert) {
         } else {
             const exists = localTemplates.findIndex(t => t.name === name)
             if (exists >= 0) {
-                setLocalTemplates(prev => prev.map((t, i) => i === exists ? { ...t, text, updatedAt: Date.now() } : t))
+                setLocalTemplates(prev => prev.map((t, i) => i === exists ? { ...t, text, tool_id: toolId, updatedAt: Date.now() } : t))
                 showAlert(`Template "${name}" updated`, 'success')
             } else {
-                setLocalTemplates(prev => [...prev, { name, text, createdAt: Date.now(), updatedAt: Date.now() }])
+                setLocalTemplates(prev => [...prev, { name, text, tool_id: toolId, createdAt: Date.now(), updatedAt: Date.now() }])
                 showAlert(`Template "${name}" saved`, 'success')
             }
         }
+        renameActiveTab?.(name)
         setTemplateName('')
-    }, [templateName, text, isAuthenticated, templates, localTemplates, showAlert, apiCreate, apiUpdate])
+    }, [templateName, text, isAuthenticated, templates, localTemplates, showAlert, apiCreate, apiUpdate, getActiveToolId, renameActiveTab])
 
     const handleLoadTemplate = useCallback((idx) => {
         const t = templates[idx]
         if (!t) return
-        setText(t.text)
+        // Always open via the tool tab — either the saved tool or a fallback
+        if (openToolById) {
+            openToolById(t.tool_id || null, t.text)
+        } else {
+            setText(t.text)
+        }
         showAlert(`Template "${t.name}" loaded`, 'success')
-    }, [templates, setText, showAlert])
+    }, [templates, setText, showAlert, openToolById])
 
     const handleDeleteTemplate = useCallback(async (idx) => {
         const t = templates[idx]
@@ -103,16 +110,16 @@ export default function useTemplates(text, setText, showAlert) {
         }
     }, [templates, isAuthenticated, localTemplates, showAlert, apiDelete])
 
-    const saveDirectly = useCallback(async (name, content) => {
+    const saveDirectly = useCallback(async (name, content, toolId = null) => {
         if (!name || !content) return
 
         if (isAuthenticated) {
             const existing = templates.find(t => t.name === name)
             try {
                 if (existing?.id) {
-                    await apiUpdate({ id: existing.id, name, text: content }).unwrap()
+                    await apiUpdate({ id: existing.id, name, text: content, tool_id: toolId }).unwrap()
                 } else {
-                    await apiCreate({ name, text: content }).unwrap()
+                    await apiCreate({ name, text: content, tool_id: toolId }).unwrap()
                 }
                 showAlert(`Template "${name}" saved`, 'success')
             } catch {
@@ -121,10 +128,10 @@ export default function useTemplates(text, setText, showAlert) {
         } else {
             const exists = localTemplates.findIndex(t => t.name === name)
             if (exists >= 0) {
-                setLocalTemplates(prev => prev.map((t, i) => i === exists ? { ...t, text: content, updatedAt: Date.now() } : t))
+                setLocalTemplates(prev => prev.map((t, i) => i === exists ? { ...t, text: content, tool_id: toolId, updatedAt: Date.now() } : t))
                 showAlert(`Template "${name}" updated`, 'success')
             } else {
-                setLocalTemplates(prev => [...prev, { name, text: content, createdAt: Date.now(), updatedAt: Date.now() }])
+                setLocalTemplates(prev => [...prev, { name, text: content, tool_id: toolId, createdAt: Date.now(), updatedAt: Date.now() }])
                 showAlert(`Template "${name}" saved`, 'success')
             }
         }

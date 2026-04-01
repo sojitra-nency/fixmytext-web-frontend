@@ -26,6 +26,11 @@ export default function TemplatesDrawer({
                             <span style={{ flex: 1, fontWeight: 600, fontSize: '0.8rem', color: 'var(--fg)' }}>
                                 {t.name}
                             </span>
+                            {t.tool_id && (
+                                <span style={{ fontSize: '0.62rem', color: 'var(--fg3)', background: 'var(--bg2)', padding: '0.1rem 0.35rem', borderRadius: '3px', whiteSpace: 'nowrap' }}>
+                                    {t.tool_id.replace(/_/g, ' ')}
+                                </span>
+                            )}
                             <span style={{ fontSize: '0.68rem', color: 'var(--fg2)', whiteSpace: 'nowrap' }}>
                                 {t.text.length} chars
                             </span>

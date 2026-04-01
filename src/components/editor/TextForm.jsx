@@ -229,7 +229,12 @@ export default function TextForm(props) {
     const speech = useSpeech(text, setText, showAlert)
     const exportTools = useExport(setLocalLoading, showAlert)
     const regex = useRegexTester(text, showAlert)
-    const templates = useTemplates(text, setText, showAlert)
+    const templateHelpersRef = useRef({ getActiveToolId: () => null, openToolById: () => {} })
+    const templates = useTemplates(text, setText, showAlert, {
+        getActiveToolId: () => templateHelpersRef.current.getActiveToolId(),
+        openToolById: (toolId, content) => templateHelpersRef.current.openToolById(toolId, content),
+        renameActiveTab: (name) => templateHelpersRef.current.renameActiveTab(name),
+    })
     const wordFreq = useWordFrequency(text, showAlert, ai.setAiResult, setPreviewMode, history.pushHistory)
     const gamification = props.gamification
     const pipeline = usePipeline()
@@ -276,6 +281,8 @@ export default function TextForm(props) {
     // Resizable panels
     const splitRef = useRef(null)
     const gutterRef = useRef(null)
+    const textRef = useRef(text)
+    textRef.current = text
     const textareaRef = useRef(null)
     const sidebarResize = useResize('horizontal', 240, { min: 160, max: 480, storageKey: 'fmx_sidebar_w' })
     const splitResize = useResize('horizontal', 50, { min: 20, max: 80, storageKey: 'fmx_split_pct', unit: 'percent', containerRef: splitRef })
@@ -366,10 +373,11 @@ export default function TextForm(props) {
 
     // ── Generic API handler (RTK Query) ─────────────────────
     const callApi = async (endpoint, successMsg, toolMeta) => {
-        if (!text) return
-        const original = text
+        const t = textRef.current
+        if (!t) return
+        const original = t
         try {
-            const data = await transformText({ endpoint, text }).unwrap()
+            const data = await transformText({ endpoint, text: t }).unwrap()
             if (toolMeta?.toolId) aiResultSourceRef.current = toolMeta.toolId
             ai.setAiResult({ label: successMsg, result: data.result })
             setPreviewMode('result')
@@ -384,10 +392,11 @@ export default function TextForm(props) {
 
     // ── Generic API handler with extra params (for drawer tools) ──
     const callApiWithParams = async (endpoint, successMsg, extraParams, toolMeta) => {
-        if (!text) return
-        const original = text
+        const t = textRef.current
+        if (!t) return
+        const original = t
         try {
-            const data = await transformText({ endpoint, text, ...extraParams }).unwrap()
+            const data = await transformText({ endpoint, text: t, ...extraParams }).unwrap()
             if (toolMeta?.toolId) aiResultSourceRef.current = toolMeta.toolId
             ai.setAiResult({ label: successMsg, result: data.result })
             setPreviewMode('result')
@@ -402,9 +411,23 @@ export default function TextForm(props) {
 
     // ── Clipboard ───────────────────────────────────────────
     const handleClear = () => { setText(''); ai.setAiResult(null); setPreviewMode(null); showAlert('Text cleared', 'success') }
-    const handleCopy = () => { navigator.clipboard.writeText(text); showAlert('Copied to clipboard', 'success') }
-    const handlePaste = () => { navigator.clipboard.readText().then(t => setText(prev => prev + t)); showAlert('Pasted from clipboard', 'success') }
-    const handleClearPaste = () => { navigator.clipboard.readText().then(t => setText(t)); showAlert('Cleared and pasted', 'success') }
+    const handleCopy = () => { navigator.clipboard.writeText(textRef.current); showAlert('Copied to clipboard', 'success') }
+    const handlePaste = () => {
+        navigator.clipboard.readText().then(t => {
+            setText(prev => prev + t)
+            const ws = workspaceTabs.find(tab => tab.id === activeWorkspaceId)
+            if (ws?.type === 'tool') setTimeout(() => executeToolAction(ws.tool), 150)
+        })
+        showAlert('Pasted from clipboard', 'success')
+    }
+    const handleClearPaste = () => {
+        navigator.clipboard.readText().then(t => {
+            setText(t)
+            const ws = workspaceTabs.find(tab => tab.id === activeWorkspaceId)
+            if (ws?.type === 'tool') setTimeout(() => executeToolAction(ws.tool), 150)
+        })
+        showAlert('Cleared and pasted', 'success')
+    }
 
     // ── Encoding ────────────────────────────────────────────
     const handleBase64Encode = () => callApi(ENDPOINTS.BASE64_ENCODE, 'Base64 encoded')
@@ -415,38 +438,123 @@ export default function TextForm(props) {
     const handleHexDecode    = () => callApi(ENDPOINTS.HEX_DECODE,    'Hex decoded')
     const handleMorseEncode  = () => callApi(ENDPOINTS.MORSE_ENCODE,  'Morse encoded')
     const handleMorseDecode  = () => callApi(ENDPOINTS.MORSE_DECODE,  'Morse decoded')
+    const handleBinaryEncode = () => callApi(ENDPOINTS.BINARY_ENCODE, 'Binary encoded')
+    const handleBinaryDecode = () => callApi(ENDPOINTS.BINARY_DECODE, 'Binary decoded')
+    const handleOctalEncode  = () => callApi(ENDPOINTS.OCTAL_ENCODE,  'Octal encoded')
+    const handleOctalDecode  = () => callApi(ENDPOINTS.OCTAL_DECODE,  'Octal decoded')
+    const handleDecimalEncode = () => callApi(ENDPOINTS.DECIMAL_ENCODE, 'Decimal encoded')
+    const handleDecimalDecode = () => callApi(ENDPOINTS.DECIMAL_DECODE, 'Decimal decoded')
+    const handleUnicodeEscape   = () => callApi(ENDPOINTS.UNICODE_ESCAPE,   'Unicode escaped')
+    const handleUnicodeUnescape = () => callApi(ENDPOINTS.UNICODE_UNESCAPE, 'Unicode unescaped')
+    const handleAtbash           = () => callApi(ENDPOINTS.ATBASH, 'Atbash cipher applied')
+    const handleBrainfuckEncode  = () => callApi(ENDPOINTS.BRAINFUCK_ENCODE, 'Brainfuck encoded')
+    const handleBrainfuckDecode  = () => callApi(ENDPOINTS.BRAINFUCK_DECODE, 'Brainfuck decoded')
 
     // ── Hashing (client-side) ───────────────────────────────
-    const handleSha256 = async () => {
-        if (!text) return
-        const original = text
+    // Factory for all hash handlers — keeps things DRY
+    const createHashHandler = (toolId, label, hashFn) => async () => {
+        const t = textRef.current
+        if (!t) return
+        const original = t
         setLocalLoading(true)
         try {
-            const data = new TextEncoder().encode(text)
-            const buf = await crypto.subtle.digest('SHA-256', data)
-            const hash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
-            ai.setAiResult({ label: 'SHA-256 Hash', result: hash })
+            const hash = await hashFn(t)
+            ai.setAiResult({ label, result: hash })
             setPreviewMode('result')
-            history.pushHistory('SHA-256 Hash', original, hash, { toolId: 'sha256', toolType: 'local' })
-            showAlert('SHA-256 hash generated', 'success')
-        } catch { showAlert('SHA-256 hashing failed', 'danger') }
+            history.pushHistory(label, original, hash, { toolId, toolType: 'local' })
+            showAlert(`${label} generated`, 'success')
+        } catch { showAlert(`${label} failed`, 'danger') }
         finally { setLocalLoading(false) }
     }
 
-    const handleMd5 = async () => {
-        if (!text) return
-        const original = text
-        setLocalLoading(true)
-        try {
-            const md5Module = await import('blueimp-md5')
-            const hash = md5Module.default(text)
-            ai.setAiResult({ label: 'MD5 Hash', result: hash })
-            setPreviewMode('result')
-            history.pushHistory('MD5 Hash', original, hash, { toolId: 'md5', toolType: 'local' })
-            showAlert('MD5 hash generated', 'success')
-        } catch { showAlert('MD5 hashing failed', 'danger') }
-        finally { setLocalLoading(false) }
+    // Helper: Web Crypto API digest
+    const webCryptoHash = (algo) => async (text) => {
+        const data = new TextEncoder().encode(text)
+        const buf = await crypto.subtle.digest(algo, data)
+        return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('')
     }
+
+    // Helper: CRC32 (pure JS, no library)
+    const crc32Fn = (text) => {
+        const table = new Uint32Array(256)
+        for (let i = 0; i < 256; i++) {
+            let c = i
+            for (let j = 0; j < 8; j++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1)
+            table[i] = c
+        }
+        const bytes = new TextEncoder().encode(text)
+        let crc = 0xFFFFFFFF
+        for (let i = 0; i < bytes.length; i++) crc = table[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8)
+        return ((crc ^ 0xFFFFFFFF) >>> 0).toString(16).padStart(8, '0')
+    }
+
+    // Helper: Adler-32 (pure JS, no library)
+    const adler32Fn = (text) => {
+        const bytes = new TextEncoder().encode(text)
+        let a = 1, b = 0
+        for (let i = 0; i < bytes.length; i++) { a = (a + bytes[i]) % 65521; b = (b + a) % 65521 }
+        return ((b << 16) | a).toString(16).padStart(8, '0')
+    }
+
+    // Helper: FNV-1a 32-bit (pure JS, no library)
+    const fnv1aFn = (text) => {
+        const bytes = new TextEncoder().encode(text)
+        let hash = 0x811c9dc5
+        for (let i = 0; i < bytes.length; i++) { hash ^= bytes[i]; hash = Math.imul(hash, 0x01000193) }
+        return (hash >>> 0).toString(16).padStart(8, '0')
+    }
+
+    // SHA family (Web Crypto API)
+    const handleMd5     = createHashHandler('md5',    'MD5 Hash',     async (t) => { const m = await import('blueimp-md5'); return m.default(t) })
+    const handleSha1    = createHashHandler('sha1',   'SHA-1 Hash',   webCryptoHash('SHA-1'))
+    const handleSha224  = createHashHandler('sha224', 'SHA-224 Hash', async (t) => { const m = await import('js-sha256'); return m.sha224(t) })
+    const handleSha256  = createHashHandler('sha256', 'SHA-256 Hash', webCryptoHash('SHA-256'))
+    const handleSha384  = createHashHandler('sha384', 'SHA-384 Hash', webCryptoHash('SHA-384'))
+    const handleSha512  = createHashHandler('sha512', 'SHA-512 Hash', webCryptoHash('SHA-512'))
+    const handleSha512_224 = createHashHandler('sha512_224', 'SHA-512/224 Hash', async (t) => { const m = await import('js-sha512'); return m.sha512_224(t) })
+    const handleSha512_256 = createHashHandler('sha512_256', 'SHA-512/256 Hash', async (t) => { const m = await import('js-sha512'); return m.sha512_256(t) })
+
+    // SHA-3 family (js-sha3 library)
+    const handleSha3_224  = createHashHandler('sha3_224',  'SHA3-224 Hash',  async (t) => { const m = await import('js-sha3'); return m.sha3_224(t) })
+    const handleSha3_256  = createHashHandler('sha3_256',  'SHA3-256 Hash',  async (t) => { const m = await import('js-sha3'); return m.sha3_256(t) })
+    const handleSha3_384  = createHashHandler('sha3_384',  'SHA3-384 Hash',  async (t) => { const m = await import('js-sha3'); return m.sha3_384(t) })
+    const handleSha3_512  = createHashHandler('sha3_512',  'SHA3-512 Hash',  async (t) => { const m = await import('js-sha3'); return m.sha3_512(t) })
+    const handleKeccak256 = createHashHandler('keccak256', 'Keccak-256 Hash', async (t) => { const m = await import('js-sha3'); return m.keccak256(t) })
+
+    // Other cryptographic hashes
+    const handleRipemd160 = createHashHandler('ripemd160', 'RIPEMD-160 Hash', async (t) => {
+        const { default: ripemd160 } = await import('../../utils/ripemd160')
+        return ripemd160(t)
+    })
+    const handleBlake2b = createHashHandler('blake2b', 'BLAKE2b Hash', async (t) => {
+        const m = await import('blakejs')
+        const bytes = new TextEncoder().encode(t)
+        return m.blake2bHex(bytes)
+    })
+    const handleBlake2s = createHashHandler('blake2s', 'BLAKE2s Hash', async (t) => {
+        const m = await import('blakejs')
+        const bytes = new TextEncoder().encode(t)
+        return m.blake2sHex(bytes)
+    })
+    const handleWhirlpool = createHashHandler('whirlpool', 'Whirlpool Hash', async (t) => {
+        const m = await import('whirlpool-hash')
+        const w = new m.default.Whirlpool()
+        w.update(t)
+        return m.default.encoders.toHex(w.finalize())
+    })
+
+    // Non-cryptographic hashes (checksums)
+    const handleCrc32      = createHashHandler('crc32',      'CRC32 Checksum',    async (t) => crc32Fn(t))
+    const handleAdler32    = createHashHandler('adler32',    'Adler-32 Checksum', async (t) => adler32Fn(t))
+    const handleFnv1a      = createHashHandler('fnv1a',      'FNV-1a Hash',       async (t) => fnv1aFn(t))
+    const handleXxhash     = createHashHandler('xxhash',     'xxHash Hash',       async (t) => {
+        const m = await import('xxhashjs')
+        return m.h32(t, 0).toString(16).padStart(8, '0')
+    })
+    const handleMurmurHash3 = createHashHandler('murmurhash3', 'MurmurHash3 Hash', async (t) => {
+        const m = await import('murmurhash3js')
+        return m.default.x86.hash32(t).toString(16).padStart(8, '0')
+    })
 
     // ── Escape / Unescape ───────────────────────────────────
     const handleJsonEscape   = () => callApi(ENDPOINTS.JSON_ESCAPE,   'JSON escaped')
@@ -462,11 +570,12 @@ export default function TextForm(props) {
 
     // ── JWT Decoder (client-side) ───────────────────────────
     const handleJwtDecode = () => {
-        if (!text) return
-        const original = text
+        const t = textRef.current
+        if (!t) return
+        const original = t
         setLocalLoading(true)
         try {
-            const cleaned = text.trim().replace(/\s+/g, '')
+            const cleaned = t.trim().replace(/\s+/g, '')
             const parts = cleaned.split('.')
             if (parts.length !== 3) throw new Error('Invalid JWT: expected 3 dot-separated parts')
             const decode = (s, label) => {
@@ -516,7 +625,17 @@ export default function TextForm(props) {
         handleUrlEncode, handleUrlDecode,
         handleHexEncode, handleHexDecode,
         handleMorseEncode, handleMorseDecode,
-        handleMd5, handleSha256,
+        handleBinaryEncode, handleBinaryDecode,
+        handleOctalEncode, handleOctalDecode,
+        handleDecimalEncode, handleDecimalDecode,
+        handleUnicodeEscape, handleUnicodeUnescape,
+        handleAtbash,
+        handleBrainfuckEncode, handleBrainfuckDecode,
+        handleMd5, handleSha1, handleSha224, handleSha256, handleSha384, handleSha512,
+        handleSha512_224, handleSha512_256,
+        handleSha3_224, handleSha3_256, handleSha3_384, handleSha3_512, handleKeccak256,
+        handleRipemd160, handleBlake2b, handleBlake2s, handleWhirlpool,
+        handleCrc32, handleAdler32, handleFnv1a, handleXxhash, handleMurmurHash3,
         handleReverseText: () => callApi(ENDPOINTS.REVERSE, 'Text reversed'),
         handleSortAsc:     () => callApi(ENDPOINTS.SORT_LINES_ASC, 'Lines sorted A → Z'),
         handleSortDesc:    () => callApi(ENDPOINTS.SORT_LINES_DESC, 'Lines sorted Z → A'),
@@ -557,7 +676,7 @@ export default function TextForm(props) {
         handlePadLines:         ai.handlePadLines,
         handleMarkdownMode,
         handleWordFrequency: wordFreq.handleWordFrequency,
-    }), [callApi, ai, formatter, wordFreq, handleBase64Encode, handleBase64Decode, handleUrlEncode, handleUrlDecode, handleHexEncode, handleHexDecode, handleMorseEncode, handleMorseDecode, handleMd5, handleSha256, handleJsonEscape, handleJsonUnescape, handleHtmlEscape, handleHtmlUnescape, handleJsonFormat, handleJsonToYaml, handleCsvToJson, handleJsonToCsv, handleJwtDecode, handleMarkdownMode])
+    }), [callApi, ai, formatter, wordFreq, handleBase64Encode, handleBase64Decode, handleUrlEncode, handleUrlDecode, handleHexEncode, handleHexDecode, handleMorseEncode, handleMorseDecode, handleBinaryEncode, handleBinaryDecode, handleOctalEncode, handleOctalDecode, handleDecimalEncode, handleDecimalDecode, handleUnicodeEscape, handleUnicodeUnescape, handleAtbash, handleBrainfuckEncode, handleBrainfuckDecode, handleMd5, handleSha1, handleSha224, handleSha256, handleSha384, handleSha512, handleSha512_224, handleSha512_256, handleSha3_224, handleSha3_256, handleSha3_384, handleSha3_512, handleKeccak256, handleRipemd160, handleBlake2b, handleBlake2s, handleWhirlpool, handleCrc32, handleAdler32, handleFnv1a, handleXxhash, handleMurmurHash3, handleJsonEscape, handleJsonUnescape, handleHtmlEscape, handleHtmlUnescape, handleJsonFormat, handleJsonToYaml, handleCsvToJson, handleJsonToCsv, handleJwtDecode, handleMarkdownMode])
 
     // ── Open a tool as a workspace tab ──────────────────────
     const openToolTab = useCallback((tool) => {
@@ -584,6 +703,55 @@ export default function TextForm(props) {
         setPreviewMode(null)
     }, [toolTexts])
 
+    // ── Open tool by ID and seed with content (used by templates) ──
+    const openToolById = useCallback((toolId, content) => {
+        const tool = toolId ? TOOLS.find(t => t.id === toolId) : null
+        if (!tool) {
+            // No tool_id or tool not found — load into current tab if open, otherwise open a generic tab
+            const activeId = activeTabIdRef.current
+            if (activeId) {
+                setToolTexts(prev => ({ ...prev, [activeId]: content }))
+            } else {
+                // No tab open — pick the first non-drawer, non-action tool as a generic text holder
+                const fallback = TOOLS.find(t => t.type === 'api' && t.group === 'case') || TOOLS[0]
+                const tabId = `tool-${fallback.id}`
+                setWorkspaceTabs(tabs => {
+                    if (tabs.find(t => t.id === tabId)) return tabs
+                    return [...tabs, { id: tabId, label: fallback.label, icon: fallback.icon, type: 'tool', tool: fallback }]
+                })
+                setToolTexts(prev => ({ ...prev, [tabId]: content }))
+                setActiveWorkspaceId(tabId)
+            }
+            return
+        }
+        const tabId = `tool-${tool.id}`
+        setWorkspaceTabs(tabs => {
+            if (tabs.find(t => t.id === tabId)) return tabs
+            return [...tabs, { id: tabId, label: tool.label, icon: tool.icon, type: 'tool', tool }]
+        })
+        setToolTexts(prev => ({ ...prev, [tabId]: content }))
+        setActiveWorkspaceId(tabId)
+        ai.setAiResult(null)
+        setPreviewMode(null)
+        // Schedule auto-run after text is set
+        pendingAutoRun.current = tool
+    }, [])
+
+    // Keep template helpers ref up to date
+    templateHelpersRef.current = {
+        getActiveToolId: () => {
+            const ws = workspaceTabs.find(t => t.id === activeWorkspaceId)
+            return ws?.type === 'tool' ? ws.tool.id : null
+        },
+        openToolById,
+        renameActiveTab: (name) => {
+            if (!activeWorkspaceId) return
+            setWorkspaceTabs(tabs => tabs.map(t =>
+                t.id === activeWorkspaceId ? { ...t, label: name } : t
+            ))
+        },
+    }
+
     // ── Execute a tool ──
     const executeToolAction = useCallback((tool) => {
         if (!tool) return
@@ -592,7 +760,7 @@ export default function TextForm(props) {
         // Unified tool access check (all tool types: ai, api, local, action, select)
         if (subscription?.checkToolAccess && !subscription.checkToolAccess(tool)) return
 
-        gamification.recordToolUse(tool.id, text.length)
+        gamification.recordToolUse(tool.id, (textRef.current || '').length)
 
         // Stamp the source so the persistence effect knows which tool produced the result
         aiResultSourceRef.current = tool.id
@@ -1069,10 +1237,7 @@ export default function TextForm(props) {
                         ) : (
                             <div className="tu-sidebar-panel-list">
                                 {templates.templates.map((tpl, i) => (
-                                    <div key={i} className="tu-sidebar-panel-item" onClick={() => {
-                                        setText(tpl.text)
-                                        showAlert(`Template "${tpl.name}" loaded`, 'success')
-                                    }}>
+                                    <div key={i} className="tu-sidebar-panel-item" onClick={() => templates.handleLoadTemplate(i)}>
                                         <span className="tu-sidebar-panel-item-icon">📄</span>
                                         <span className="tu-sidebar-panel-item-name">{tpl.name}</span>
                                         <span className="tu-sidebar-panel-item-meta">
@@ -1801,6 +1966,13 @@ export default function TextForm(props) {
                                     setText(e.target.value)
                                     if (previewMode === 'result') { ai.handleAiDismiss(); setPreviewMode(null) }
                                 }}
+                                onPaste={() => {
+                                    // After paste, auto-run the active tool with minimal delay
+                                    const ws = workspaceTabs.find(t => t.id === activeWorkspaceId)
+                                    if (ws?.type === 'tool') {
+                                        setTimeout(() => executeToolAction(ws.tool), 150)
+                                    }
+                                }}
                                 onScroll={e => {
                                     if (gutterRef.current) gutterRef.current.scrollTop = e.target.scrollTop
                                 }}
@@ -2025,8 +2197,14 @@ export default function TextForm(props) {
                 useEffect(() => { inputRef.current?.focus(); inputRef.current?.select() }, [])
                 const handleSave = () => {
                     if (!name.trim()) return
-                    templates.saveDirectly(name.trim(), toolTexts[saveModal.tabId] || '')
+                    const ws = workspaceTabs.find(t => t.id === saveModal.tabId)
+                    const toolId = ws?.type === 'tool' ? ws.tool.id : null
+                    templates.saveDirectly(name.trim(), toolTexts[saveModal.tabId] || '', toolId)
                     setSavedTabs(prev => ({ ...prev, [saveModal.tabId]: true }))
+                    // Rename the tab to the template name
+                    setWorkspaceTabs(tabs => tabs.map(t =>
+                        t.id === saveModal.tabId ? { ...t, label: name.trim() } : t
+                    ))
                     setActiveTab('_templates')
                     setSidebarOpen(true)
                     setSaveModal(null)

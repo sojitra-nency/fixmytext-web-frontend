@@ -81,6 +81,25 @@ SPLIT_TO_LINES: '/api/v1/text/split-to-lines',
   EXTRACT_NTH_LINES: '/api/v1/text/extract-nth-lines',
   ROT13: '/api/v1/text/rot13',
 
+  // Binary / Octal / Decimal
+  BINARY_ENCODE: '/api/v1/text/binary-encode',
+  BINARY_DECODE: '/api/v1/text/binary-decode',
+  OCTAL_ENCODE: '/api/v1/text/octal-encode',
+  OCTAL_DECODE: '/api/v1/text/octal-decode',
+  DECIMAL_ENCODE: '/api/v1/text/decimal-encode',
+  DECIMAL_DECODE: '/api/v1/text/decimal-decode',
+
+  // Unicode Escape
+  UNICODE_ESCAPE: '/api/v1/text/unicode-escape',
+  UNICODE_UNESCAPE: '/api/v1/text/unicode-unescape',
+
+  // Brainfuck
+  BRAINFUCK_ENCODE: '/api/v1/text/brainfuck-encode',
+  BRAINFUCK_DECODE: '/api/v1/text/brainfuck-decode',
+
+  // Ciphers
+  ATBASH: '/api/v1/text/atbash',
+
   // Escape / Unescape
   JSON_ESCAPE: '/api/v1/text/json-escape',
   JSON_UNESCAPE: '/api/v1/text/json-unescape',

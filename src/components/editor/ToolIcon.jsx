@@ -33,21 +33,59 @@ const ICONS = {
   rot13:         <svg {...p}><circle cx="12" cy="12" r="9"/><path d="M12 3v4M12 17v4"/><path d="M8 7l4 5-4 5"/></svg>,
   find_replace:  <svg {...p}><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L20 20"/><path d="M18 13v6h6"/></svg>,
 
-  // ── Encoding ──
+  // ── Encode / Decode ──
   base64_enc:    <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 9v6M11 9v6M15 9l-2 3 2 3"/></svg>,
   base64_dec:    <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 9v6M11 9v6M15 15l-2-3 2-3"/></svg>,
-  url_enc:       <svg {...p}><path d="M10 14a4 4 0 01-4-4V8a4 4 0 018 0v2a4 4 0 01-4 4z"/><path d="M17 10h3M17 14h3M20 12h-3"/></svg>,
-  url_dec:       <svg {...p}><path d="M10 14a4 4 0 01-4-4V8a4 4 0 018 0v2a4 4 0 01-4 4z"/><path d="M18 8v8M15 12h6"/></svg>,
   hex_enc:       <svg {...p}><path d="M5 4v16M2 10h6"/><path d="M11 4v16h5"/><path d="M20 4v16h-2"/></svg>,
   hex_dec:       <svg {...p}><path d="M4 4v16M2 12h4"/><path d="M10 4v16h4"/><path d="M22 4l-4 8 4 8"/></svg>,
+  binary_enc:    <svg {...p}><path d="M6 6v12M10 6v12"/><path d="M16 6v12M20 6v12"/><path d="M6 12h4M16 12h4"/></svg>,
+  binary_dec:    <svg {...p}><path d="M4 6v12M8 6v12"/><path d="M14 12h6"/><path d="M17 9l3 3-3 3"/></svg>,
+  octal_enc:     <svg {...p}><circle cx="8" cy="12" r="5"/><path d="M13 12h8"/><path d="M18 9l3 3-3 3"/></svg>,
+  octal_dec:     <svg {...p}><circle cx="16" cy="12" r="5"/><path d="M3 12h8"/><path d="M6 9l-3 3 3 3"/></svg>,
+  decimal_enc:   <svg {...p}><path d="M4 8h4v8H4z"/><path d="M12 8v8"/><path d="M18 8h2v8h-2"/><path d="M14 16h8"/></svg>,
+  decimal_dec:   <svg {...p}><path d="M4 8h4v8H4z"/><path d="M12 12h8"/><path d="M17 9l3 3-3 3"/></svg>,
+  url_enc:       <svg {...p}><path d="M10 14a4 4 0 01-4-4V8a4 4 0 018 0v2a4 4 0 01-4 4z"/><path d="M17 10h3M17 14h3M20 12h-3"/></svg>,
+  url_dec:       <svg {...p}><path d="M10 14a4 4 0 01-4-4V8a4 4 0 018 0v2a4 4 0 01-4 4z"/><path d="M18 8v8M15 12h6"/></svg>,
   morse_enc:     <svg {...p}><circle cx="4" cy="12" r="2" fill="currentColor" stroke="none"/><path d="M10 12h6"/><circle cx="20" cy="12" r="2" fill="currentColor" stroke="none"/></svg>,
   morse_dec:     <svg {...p}><path d="M2 12h6"/><circle cx="12" cy="12" r="2" fill="currentColor" stroke="none"/><path d="M16 12h6"/></svg>,
-  md5:           <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 16V8l3 4 3-4v8"/><path d="M17 16V8"/></svg>,
-  sha256:        <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 9c0-1 1-2 2-2s2 1 2 1-2 1-2 2 1 2 2 2 2-1 2-2"/></svg>,
-  json_esc:      <svg {...p}><path d="M8 3H6a2 2 0 00-2 2v14a2 2 0 002 2h2"/><path d="M16 3h2a2 2 0 012 2v14a2 2 0 01-2 2h-2"/><path d="M9 12h6M12 9l3 3-3 3"/></svg>,
-  json_unesc:    <svg {...p}><path d="M8 3H6a2 2 0 00-2 2v14a2 2 0 002 2h2"/><path d="M16 3h2a2 2 0 012 2v14a2 2 0 01-2 2h-2"/><path d="M15 12H9M12 9l-3 3 3 3"/></svg>,
+
+  brainfuck_enc: <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 12h4M13 12h4"/><path d="M9 8v8"/><path d="M15 8v8"/></svg>,
+  brainfuck_dec: <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8l3 4-3 4"/><path d="M16 8l-3 4 3 4"/></svg>,
+
+  // ── Escape / Unescape ──
   html_esc:      <svg {...p}><polyline points="8 18 4 12 8 6"/><polyline points="16 6 20 12 16 18"/><path d="M12 9l1 6"/></svg>,
   html_unesc:    <svg {...p}><polyline points="8 18 4 12 8 6"/><polyline points="16 6 20 12 16 18"/><path d="M13 15l-1-6"/></svg>,
+  json_esc:      <svg {...p}><path d="M8 3H6a2 2 0 00-2 2v14a2 2 0 002 2h2"/><path d="M16 3h2a2 2 0 012 2v14a2 2 0 01-2 2h-2"/><path d="M9 12h6M12 9l3 3-3 3"/></svg>,
+  json_unesc:    <svg {...p}><path d="M8 3H6a2 2 0 00-2 2v14a2 2 0 002 2h2"/><path d="M16 3h2a2 2 0 012 2v14a2 2 0 01-2 2h-2"/><path d="M15 12H9M12 9l-3 3 3 3"/></svg>,
+  unicode_esc:   <svg {...p}><path d="M6 4v7c0 3 3 5 6 5s6-2 6-5V4"/><path d="M4 4h4M16 4h4"/><path d="M17 18l3 3-3 3"/></svg>,
+  unicode_unesc: <svg {...p}><path d="M6 4v7c0 3 3 5 6 5s6-2 6-5V4"/><path d="M4 4h4M16 4h4"/><path d="M7 18l-3 3 3 3"/></svg>,
+
+  // ── Hashing & Checksums ──
+  md5:           <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 16V8l3 4 3-4v8"/><path d="M17 16V8"/></svg>,
+  sha1:          <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 9c0-1 1-2 2-2s2 1 2 1-2 1-2 2 1 2 2 2 2-1 2-2"/><path d="M16 8v8"/></svg>,
+  sha224:        <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 9c0-1 1-2 2-2s2 1 2 1-2 1-2 2 1 2 2 2 2-1 2-2"/><path d="M16 8v4h-2"/></svg>,
+  sha256:        <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 9c0-1 1-2 2-2s2 1 2 1-2 1-2 2 1 2 2 2 2-1 2-2"/></svg>,
+  sha384:        <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 9c0-1 1-2 2-2s2 1 2 1-2 1-2 2 1 2 2 2 2-1 2-2"/><path d="M16 9a2 2 0 110 3 2 2 0 110 3"/></svg>,
+  sha512:        <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 9c0-1 1-2 2-2s2 1 2 1-2 1-2 2 1 2 2 2 2-1 2-2"/><path d="M16 8v2h2v2h-2v2h2"/></svg>,
+  sha512_224:    <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 9l3-1v8"/><path d="M14 9h3M17 9v6h-3"/></svg>,
+  sha512_256:    <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 9l3-1v8"/><path d="M14 9h3l-3 3 3 3h-3"/></svg>,
+  sha3_224:      <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 9a2 2 0 110 3 2 2 0 110 3"/><path d="M15 9h2M17 9v6h-2"/></svg>,
+  sha3_256:      <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 9a2 2 0 110 3 2 2 0 110 3"/><path d="M15 9h2l-2 3 2 3h-2"/></svg>,
+  sha3_384:      <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 9a2 2 0 110 3 2 2 0 110 3"/><path d="M15 9a2 2 0 110 3 2 2 0 110 3"/></svg>,
+  sha3_512:      <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 9a2 2 0 110 3 2 2 0 110 3"/><path d="M15 8v2h2v2h-2v2h2"/></svg>,
+  keccak256:     <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8l4 4-4 4"/><path d="M14 8l-2 4 2 4"/></svg>,
+  ripemd160:     <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 8v8M7 8h3a3 3 0 010 4H7"/><path d="M14 8v8h3"/></svg>,
+  blake2b:       <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 8v8M7 8h3a2 2 0 010 4H7M7 12h3a2 2 0 010 4H7"/></svg>,
+  blake2s:       <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 9c0-1 1-2 2-2s2 1 2 1-2 1-2 2 1 2 2 2 2-1 2-2"/><path d="M15 8v4c0 2 3 2 3 0"/></svg>,
+  whirlpool:     <svg {...p}><path d="M12 2a10 10 0 0110 10"/><path d="M12 6a6 6 0 016 6"/><path d="M12 10a2 2 0 012 2"/><path d="M12 22a10 10 0 01-10-10"/><path d="M12 18a6 6 0 01-6-6"/><path d="M12 14a2 2 0 01-2-2"/></svg>,
+  crc32:         <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 8a4 4 0 100 8"/><path d="M16 8v4h-2"/></svg>,
+  adler32:       <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 16l2-8 2 8"/><path d="M9 14h2"/><path d="M16 8v4h-2"/></svg>,
+  fnv1a:         <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8v8M8 8h4M8 12h3"/><path d="M15 16V8l3 8V8"/></svg>,
+  xxhash:        <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 8l4 4-4 4"/><path d="M13 8l4 4-4 4"/></svg>,
+  murmurhash3:   <svg {...p}><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M6 16V8l2 4 2-4v8"/><path d="M13 16V8l2 4 2-4v8"/></svg>,
+
+  // ── Ciphers ──
+  atbash:        <svg {...p}><path d="M4 6l4 14M4 14h8M12 6l4 14"/><path d="M18 6v14"/><path d="M20 8l-2-2-2 2"/><path d="M20 18l-2 2-2-2"/></svg>,
 
   // ── Developer ──
   json_fmt:      <svg {...p}><path d="M8 3H6a2 2 0 00-2 2v14a2 2 0 002 2h2"/><path d="M16 3h2a2 2 0 012 2v14a2 2 0 01-2 2h-2"/><path d="M9 10h6M9 14h4"/></svg>,
