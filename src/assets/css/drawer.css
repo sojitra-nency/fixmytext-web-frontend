@@ -248,6 +248,13 @@
   box-sizing: border-box;
   transition: border-color var(--t);
 }
+/* When toggles are inside the field, make room for them */
+.tu-fr-field--has-toggles .tu-fr-input {
+  padding-right: 80px;
+}
+.tu-fr-field--has-toggles .tu-fr-badge {
+  right: 58px;
+}
 .tu-fr-input:focus {
   outline: none;
   border-color: var(--accent);
@@ -276,15 +283,27 @@
   background: rgba(244, 71, 71, 0.1);
 }
 
-/* Toggle buttons for case-sensitive / regex */
+/* Inline label for drawer inputs */
+.tu-fr-label {
+  font-size: 0.75rem;
+  color: var(--text-2);
+  white-space: nowrap;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+/* Toggle buttons for case-sensitive / regex — inside the input field */
 .tu-fr-toggles {
+  position: absolute;
+  right: 4px;
   display: flex;
-  gap: 2px;
+  gap: 1px;
+  z-index: 1;
 }
 
 .tu-fr-toggle {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;

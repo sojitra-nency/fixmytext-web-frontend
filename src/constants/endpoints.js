@@ -67,6 +67,18 @@ export const ENDPOINTS = {
   REMOVE_DUPLICATE_LINES: '/api/v1/text/remove-duplicate-lines',
   REVERSE_LINES: '/api/v1/text/reverse-lines',
   NUMBER_LINES: '/api/v1/text/number-lines',
+  SHUFFLE_LINES: '/api/v1/text/shuffle-lines',
+  SORT_BY_LENGTH: '/api/v1/text/sort-by-length',
+  SORT_NUMERIC: '/api/v1/text/sort-numeric',
+  LINE_FREQUENCY: '/api/v1/text/line-frequency',
+SPLIT_TO_LINES: '/api/v1/text/split-to-lines',
+  JOIN_LINES: '/api/v1/text/join-lines',
+  PAD_LINES: '/api/v1/text/pad-lines',
+  WRAP_LINES: '/api/v1/text/wrap-lines',
+  FILTER_LINES: '/api/v1/text/filter-lines',
+  REMOVE_LINES: '/api/v1/text/remove-lines',
+  TRUNCATE_LINES: '/api/v1/text/truncate-lines',
+  EXTRACT_NTH_LINES: '/api/v1/text/extract-nth-lines',
   ROT13: '/api/v1/text/rot13',
 
   // Escape / Unescape

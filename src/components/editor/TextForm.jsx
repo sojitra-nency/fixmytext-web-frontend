@@ -38,6 +38,7 @@ import CompareOutput, { CompareInput } from '../drawers/CompareDrawer'
 import { RandomTextDrawer, PasswordDrawer } from '../drawers/GeneratorDrawer'
 import FmtConfigBar from './FmtConfigBar'
 import RegexDrawer from '../drawers/RegexDrawer'
+import { WrapLinesDrawer, FilterLinesDrawer, TruncateLinesDrawer, NthLineDrawer } from '../drawers/LineToolsDrawer'
 import TemplatesDrawer from '../drawers/TemplatesDrawer'
 import HistoryDrawer from '../drawers/HistoryDrawer'
 import SmartSuggestions from './SmartSuggestions'
@@ -61,13 +62,18 @@ const ACTIVITY_ICONS = {
 
 // Drawer panel metadata (static — no need to recreate per render)
 const DRAWERS = {
-    find:     { title: 'Find & Replace',       color: 'teal' },
-    compare:  { title: 'Text Compare',         color: 'purple' },
-    randtext: { title: 'Random Text Generator', color: 'amber' },
-    password: { title: 'Password Generator',    color: 'amber' },
-    regex:    { title: 'Regex Tester',           color: 'teal' },
-    templates:{ title: 'Text Templates',          color: 'amber' },
-    history:  { title: 'History / Undo',          color: 'slate' },
+    find:          { title: 'Find & Replace',       color: 'teal' },
+    compare:       { title: 'Text Compare',         color: 'purple' },
+    randtext:      { title: 'Random Text Generator', color: 'amber' },
+    password:      { title: 'Password Generator',    color: 'amber' },
+    regex:         { title: 'Regex Tester',           color: 'teal' },
+    templates:     { title: 'Text Templates',          color: 'amber' },
+    history:       { title: 'History / Undo',          color: 'slate' },
+    wraplines:     { title: 'Wrap Lines',              color: 'teal' },
+    filterlines:   { title: 'Keep Lines',              color: 'teal' },
+    droplines:     { title: 'Drop Lines',              color: 'teal' },
+    truncatelines: { title: 'Truncate Lines',          color: 'teal' },
+    nthlines:      { title: 'Every Nth Line',          color: 'teal' },
 }
 
 /* ── Tab bar with scroll arrows that disable at boundaries ── */
@@ -186,6 +192,7 @@ export default function TextForm(props) {
     }, [])
     const sharedTextRef = useRef(null)
     const pendingAutoRun = useRef(null)
+    const selectValueRef = useRef(null) // holds the freshly-clicked value for select tools
 
     const showAlert = props.showAlert
     const navigate = useNavigate()
@@ -375,6 +382,24 @@ export default function TextForm(props) {
         }
     }
 
+    // ── Generic API handler with extra params (for drawer tools) ──
+    const callApiWithParams = async (endpoint, successMsg, extraParams, toolMeta) => {
+        if (!text) return
+        const original = text
+        try {
+            const data = await transformText({ endpoint, text, ...extraParams }).unwrap()
+            if (toolMeta?.toolId) aiResultSourceRef.current = toolMeta.toolId
+            ai.setAiResult({ label: successMsg, result: data.result })
+            setPreviewMode('result')
+            history.pushHistory(successMsg, original, data.result, toolMeta)
+            showAlert(successMsg, 'success')
+            return { success: true, result: data.result }
+        } catch (err) {
+            showAlert(err.data?.detail || 'Something went wrong. Please try again.', 'danger')
+            return { success: false }
+        }
+    }
+
     // ── Clipboard ───────────────────────────────────────────
     const handleClear = () => { setText(''); ai.setAiResult(null); setPreviewMode(null); showAlert('Text cleared', 'success') }
     const handleCopy = () => { navigator.clipboard.writeText(text); showAlert('Copied to clipboard', 'success') }
@@ -527,6 +552,9 @@ export default function TextForm(props) {
         handleChangeTone:       ai.handleChangeTone,
         handleTranslate:        ai.handleTranslate,
         handleTransliterate:    ai.handleTransliterate,
+        handleSplitToLines:     ai.handleSplitToLines,
+        handleJoinLines:        ai.handleJoinLines,
+        handlePadLines:         ai.handlePadLines,
         handleMarkdownMode,
         handleWordFrequency: wordFreq.handleWordFrequency,
     }), [callApi, ai, formatter, wordFreq, handleBase64Encode, handleBase64Decode, handleUrlEncode, handleUrlDecode, handleHexEncode, handleHexDecode, handleMorseEncode, handleMorseDecode, handleMd5, handleSha256, handleJsonEscape, handleJsonUnescape, handleHtmlEscape, handleHtmlUnescape, handleJsonFormat, handleJsonToYaml, handleCsvToJson, handleJsonToCsv, handleJwtDecode, handleMarkdownMode])
@@ -577,7 +605,10 @@ export default function TextForm(props) {
         } else if (tool.type === 'ai' || tool.type === 'local' || tool.type === 'action' || tool.type === 'select') {
             const handler = handlerMap[tool.handlerKey]
             if (handler) {
-                const result = handler()
+                // For select tools, pass the freshly-clicked value from the ref to avoid stale closure
+                const freshVal = selectValueRef.current
+                selectValueRef.current = null
+                const result = handler(freshVal)
                 if (result && typeof result.then === 'function') {
                     result.then(() => {
                         pipeline.addStep(tool.id, tool.label)
@@ -767,6 +798,11 @@ export default function TextForm(props) {
             case 'regex': return <RegexDrawer {...regex} disabled={disabled} />
             case 'templates': return <TemplatesDrawer {...templates} disabled={disabled} />
             case 'history': return <HistoryDrawer {...history} setText={setText} showAlert={showAlert} />
+            case 'wraplines': return null // Renders inline in input area
+            case 'filterlines': return null // Renders inline in input area
+            case 'droplines': return null // Renders inline in input area
+            case 'truncatelines': return null // Renders inline in input area
+            case 'nthlines': return null // Renders inline in input area
             default: return null
         }
     }
@@ -1676,6 +1712,26 @@ export default function TextForm(props) {
                         {workspaceTabs.find(t => t.id === activeWorkspaceId)?.panelId === 'find' && (
                             <FindReplaceDrawer {...findReplace} disabled={disabled} text={text} />
                         )}
+                        {(() => {
+                            const panelId = workspaceTabs.find(t => t.id === activeWorkspaceId)?.panelId
+                            const onPreview = (result) => {
+                                if (result) { ai.setAiResult(result); setPreviewMode('result') }
+                                else { ai.setAiResult(null); setPreviewMode(null) }
+                            }
+                            switch (panelId) {
+                                case 'wraplines': return <WrapLinesDrawer disabled={disabled} text={text} onPreview={onPreview} onApply={({ prefix, suffix }) =>
+                                    callApiWithParams(ENDPOINTS.WRAP_LINES, 'Lines wrapped', { prefix, suffix }, { toolId: 'wrap_lines', toolType: 'drawer' })} />
+                                case 'filterlines': return <FilterLinesDrawer disabled={disabled} mode="keep" text={text} onPreview={onPreview} onApply={({ pattern, case_sensitive, use_regex }) =>
+                                    callApiWithParams(ENDPOINTS.FILTER_LINES, 'Lines filtered (keep)', { pattern, case_sensitive, use_regex }, { toolId: 'filter_lines_contain', toolType: 'drawer' })} />
+                                case 'droplines': return <FilterLinesDrawer disabled={disabled} mode="drop" text={text} onPreview={onPreview} onApply={({ pattern, case_sensitive, use_regex }) =>
+                                    callApiWithParams(ENDPOINTS.REMOVE_LINES, 'Lines filtered (drop)', { pattern, case_sensitive, use_regex }, { toolId: 'remove_lines_contain', toolType: 'drawer' })} />
+                                case 'truncatelines': return <TruncateLinesDrawer disabled={disabled} text={text} onPreview={onPreview} onApply={({ max_length }) =>
+                                    callApiWithParams(ENDPOINTS.TRUNCATE_LINES, 'Lines truncated', { max_length }, { toolId: 'truncate_lines', toolType: 'drawer' })} />
+                                case 'nthlines': return <NthLineDrawer disabled={disabled} text={text} onPreview={onPreview} onApply={({ n, offset }) =>
+                                    callApiWithParams(ENDPOINTS.EXTRACT_NTH_LINES, `Every ${n} lines extracted`, { n, offset }, { toolId: 'extract_nth_lines', toolType: 'drawer' })} />
+                                default: return null
+                            }
+                        })()}
                         {/* Formatter config bar — shown inline for formatter tools */}
                         {(() => {
                             const ws = workspaceTabs.find(t => t.id === activeWorkspaceId)
@@ -1720,7 +1776,8 @@ export default function TextForm(props) {
                                             className={`tu-fmtbar-opt${currentVal === val ? ' tu-fmtbar-opt--on' : ''}`}
                                             onClick={() => {
                                                 if (ai[tool.setterKey]) ai[tool.setterKey](val)
-                                                setTimeout(() => executeToolAction(tool), 100)
+                                                selectValueRef.current = val
+                                                executeToolAction(tool)
                                             }}
                                         >
                                             {label}
@@ -1781,7 +1838,7 @@ export default function TextForm(props) {
                                     return <CompareOutput diffResult={compare.diffResult} compareText={compare.compareText} />
                                 }
                                 // These render inline in input area — fall through to OutputPanel
-                                if (['find', 'password', 'randtext'].includes(ws.panelId)) {
+                                if (['find', 'password', 'randtext', 'wraplines', 'filterlines', 'droplines', 'truncatelines', 'nthlines'].includes(ws.panelId)) {
                                     // fall through to OutputPanel below
                                 } else {
                                     return DRAWERS[ws.panelId] ? (

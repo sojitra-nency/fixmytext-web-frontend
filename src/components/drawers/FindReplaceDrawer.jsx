@@ -32,7 +32,7 @@ export default function FindReplaceDrawer({
         <div className="tu-fr">
             {/* Find row */}
             <div className="tu-fr-row">
-                <div className="tu-fr-field">
+                <div className="tu-fr-field tu-fr-field--has-toggles">
                     <input
                         className="tu-fr-input"
                         placeholder="Find"
@@ -46,26 +46,26 @@ export default function FindReplaceDrawer({
                             {matchCount === 0 ? 'No results' : `${matchCount} found`}
                         </span>
                     )}
-                </div>
-                <div className="tu-fr-toggles">
-                    <button
-                        className={`tu-fr-toggle${findCaseSensitive ? ' tu-fr-toggle--active' : ''}`}
-                        onClick={() => setFindCaseSensitive(v => !v)}
-                        title="Match Case (Aa)"
-                    >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M3 18l5-14h1l5 14"/><path d="M5.5 12h7"/><path d="M17 8v10"/><path d="M15 8h4"/>
-                        </svg>
-                    </button>
-                    <button
-                        className={`tu-fr-toggle${findUseRegex ? ' tu-fr-toggle--active' : ''}`}
-                        onClick={() => setFindUseRegex(v => !v)}
-                        title="Use Regular Expression (.*)"
-                    >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="6" cy="18" r="3"/><path d="M14 4l-2 4 2 4"/><path d="M18 4l2 4-2 4"/><circle cx="18" cy="18" r="1" fill="currentColor" stroke="none"/>
-                        </svg>
-                    </button>
+                    <div className="tu-fr-toggles">
+                        <button
+                            className={`tu-fr-toggle${findCaseSensitive ? ' tu-fr-toggle--active' : ''}`}
+                            onClick={() => setFindCaseSensitive(v => !v)}
+                            title="Match Case (Aa)"
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M3 18l5-14h1l5 14"/><path d="M5.5 12h7"/><path d="M17 8v10"/><path d="M15 8h4"/>
+                            </svg>
+                        </button>
+                        <button
+                            className={`tu-fr-toggle${findUseRegex ? ' tu-fr-toggle--active' : ''}`}
+                            onClick={() => setFindUseRegex(v => !v)}
+                            title="Use Regular Expression (.*)"
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="6" cy="18" r="3"/><path d="M14 4l-2 4 2 4"/><path d="M18 4l2 4-2 4"/><circle cx="18" cy="18" r="1" fill="currentColor" stroke="none"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
 

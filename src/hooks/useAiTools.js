@@ -10,6 +10,9 @@ export default function useAiTools(text, setText, setMarkdownMode, setPreviewMod
     const [formatSetting, setFormatSetting] = useState('paragraph')
     const [translateLang, setTranslateLang] = useState('Spanish')
     const [translitLang, setTranslitLang] = useState('Hindi')
+    const [splitDelimiter, setSplitDelimiter] = useState(',')
+    const [joinSeparator, setJoinSeparator] = useState(', ')
+    const [padAlign, setPadAlign] = useState('left')
     const [autoDetectLang, setAutoDetectLang] = useState(false)
     const [detectedLang, setDetectedLang] = useState(null)
 
@@ -57,31 +60,33 @@ export default function useAiTools(text, setText, setMarkdownMode, setPreviewMod
     const handleRefactorPrompt   = () => callAi(ENDPOINTS.REFACTOR_PROMPT,            'Prompt Refactored', 'Could not refactor prompt. Please try again.')
     const handleEmojify          = () => callAi(ENDPOINTS.EMOJIFY,                   'Emojify',           'Could not add emojis. Please try again.', 'emojify')
 
-    const handleChangeFormat = async () => {
+    const handleChangeFormat = async (overrideVal) => {
         if (!text) return
         const original = text
+        const fmt = overrideVal ?? formatSetting
         try {
-            const label = `Format (${formatSetting})`
-            const data = await transformText({ endpoint: ENDPOINTS.CHANGE_FORMAT, text, format: formatSetting }).unwrap()
+            const label = `Format (${fmt})`
+            const data = await transformText({ endpoint: ENDPOINTS.CHANGE_FORMAT, text, format: fmt }).unwrap()
             setAiResult({ label, result: data.result })
             setPreviewMode('result')
             if (pushHistory) pushHistory(label, original, data.result, { toolId: 'change_format', toolType: 'select' })
-            showAlert(`Reformatted as ${formatSetting}`, 'success')
+            showAlert(`Reformatted as ${fmt}`, 'success')
         } catch (err) {
             showAlert(err.data?.detail || 'Could not change format. Please try again.', 'danger')
         }
     }
 
-    const handleChangeTone = async () => {
+    const handleChangeTone = async (overrideVal) => {
         if (!text) return
         const original = text
+        const tone = overrideVal ?? toneSetting
         try {
-            const label = `Tone (${toneSetting})`
-            const data = await transformText({ endpoint: ENDPOINTS.CHANGE_TONE, text, tone: toneSetting }).unwrap()
+            const label = `Tone (${tone})`
+            const data = await transformText({ endpoint: ENDPOINTS.CHANGE_TONE, text, tone }).unwrap()
             setAiResult({ label, result: data.result })
             setPreviewMode('result')
             if (pushHistory) pushHistory(label, original, data.result, { toolId: 'change_tone', toolType: 'select' })
-            showAlert(`Tone changed to ${toneSetting}`, 'success')
+            showAlert(`Tone changed to ${tone}`, 'success')
         } catch (err) {
             showAlert(err.data?.detail || 'Could not change tone. Please try again.', 'danger')
         }
@@ -99,38 +104,89 @@ export default function useAiTools(text, setText, setMarkdownMode, setPreviewMod
         }
     }
 
-    const handleTranslate = async () => {
+    const handleTranslate = async (overrideVal) => {
         if (!text) return
         const original = text
+        const lang = overrideVal ?? translateLang
         try {
             // Auto-detect source language if enabled
             if (autoDetectLang) {
                 const detected = await handleDetectLanguage()
                 if (detected) showAlert(`Detected: ${detected}`, 'info')
             }
-            const label = `Translation (${translateLang})`
-            const data = await transformText({ endpoint: ENDPOINTS.TRANSLATE, text, target_language: translateLang }).unwrap()
+            const label = `Translation (${lang})`
+            const data = await transformText({ endpoint: ENDPOINTS.TRANSLATE, text, target_language: lang }).unwrap()
             setAiResult({ label, result: data.result })
             setPreviewMode('result')
             if (pushHistory) pushHistory(label, original, data.result, { toolId: 'translate', toolType: 'select' })
-            showAlert(`Translated to ${translateLang}`, 'success')
+            showAlert(`Translated to ${lang}`, 'success')
         } catch (err) {
             showAlert(err.data?.detail || 'Could not translate text. Please try again.', 'danger')
         }
     }
 
-    const handleTransliterate = async () => {
+    const handleTransliterate = async (overrideVal) => {
         if (!text) return
         const original = text
+        const lang = overrideVal ?? translitLang
         try {
-            const label = `Transliteration (${translitLang})`
-            const data = await transformText({ endpoint: ENDPOINTS.TRANSLITERATE, text, target_language: translitLang }).unwrap()
+            const label = `Transliteration (${lang})`
+            const data = await transformText({ endpoint: ENDPOINTS.TRANSLITERATE, text, target_language: lang }).unwrap()
             setAiResult({ label, result: data.result })
             setPreviewMode('result')
             if (pushHistory) pushHistory(label, original, data.result, { toolId: 'transliterate', toolType: 'select' })
-            showAlert(`Transliterated to ${translitLang} script`, 'success')
+            showAlert(`Transliterated to ${lang} script`, 'success')
         } catch (err) {
             showAlert(err.data?.detail || 'Could not transliterate text. Please try again.', 'danger')
+        }
+    }
+
+    const handleSplitToLines = async (overrideVal) => {
+        if (!text) return
+        const original = text
+        const delVal = overrideVal ?? splitDelimiter
+        try {
+            const delim = delVal === '\\t' ? '\t' : delVal
+            const label = `Split to Lines (${delVal === '\\t' ? 'Tab' : delVal})`
+            const data = await transformText({ endpoint: ENDPOINTS.SPLIT_TO_LINES, text, delimiter: delim }).unwrap()
+            setAiResult({ label, result: data.result })
+            setPreviewMode('result')
+            if (pushHistory) pushHistory(label, original, data.result, { toolId: 'split_to_lines', toolType: 'select' })
+            showAlert('Text split to lines', 'success')
+        } catch (err) {
+            showAlert(err.data?.detail || 'Could not split text. Please try again.', 'danger')
+        }
+    }
+
+    const handleJoinLines = async (overrideVal) => {
+        if (!text) return
+        const original = text
+        const sep = overrideVal ?? joinSeparator
+        try {
+            const label = `Join Lines (${sep || 'none'})`
+            const data = await transformText({ endpoint: ENDPOINTS.JOIN_LINES, text, delimiter: sep }).unwrap()
+            setAiResult({ label, result: data.result })
+            setPreviewMode('result')
+            if (pushHistory) pushHistory(label, original, data.result, { toolId: 'join_lines', toolType: 'select' })
+            showAlert('Lines joined', 'success')
+        } catch (err) {
+            showAlert(err.data?.detail || 'Could not join lines. Please try again.', 'danger')
+        }
+    }
+
+    const handlePadLines = async (overrideVal) => {
+        if (!text) return
+        const original = text
+        const align = overrideVal ?? padAlign
+        try {
+            const label = `Pad Lines (${align})`
+            const data = await transformText({ endpoint: ENDPOINTS.PAD_LINES, text, align }).unwrap()
+            setAiResult({ label, result: data.result })
+            setPreviewMode('result')
+            if (pushHistory) pushHistory(label, original, data.result, { toolId: 'pad_lines', toolType: 'select' })
+            showAlert(`Lines padded (${align})`, 'success')
+        } catch (err) {
+            showAlert(err.data?.detail || 'Could not pad lines. Please try again.', 'danger')
         }
     }
 
@@ -158,6 +214,8 @@ export default function useAiTools(text, setText, setMarkdownMode, setPreviewMod
         handleChangeFormat, handleChangeTone, handleTranslate, handleTransliterate,
         handleEmojify, handleDetectLanguage,
         autoDetectLang, setAutoDetectLang, detectedLang, setDetectedLang,
+        splitDelimiter, setSplitDelimiter, joinSeparator, setJoinSeparator, padAlign, setPadAlign,
+        handleSplitToLines, handleJoinLines, handlePadLines,
         handleAiAccept, handleAiDismiss,
     }
 }
