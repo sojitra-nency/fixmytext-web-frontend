@@ -226,7 +226,11 @@
   white-space: nowrap;
   line-height: 1;
   overflow: hidden;
+  letter-spacing: -0.02em;
 }
+/* Uniform sizing for 3-char and 4-char text icons — scale down to fit the same box */
+.tu-titem-icon--3ch { font-size: 0.54rem; letter-spacing: -0.04em; }
+.tu-titem-icon--4ch { font-size: 0.46rem; letter-spacing: -0.04em; }
 .tu-titem-icon svg {
   width: 16px;
   height: 16px;
@@ -483,6 +487,8 @@
   height: 28px;
   font-size: 0.8rem;
 }
+.tu-tgrid-card-icon .tu-titem-icon--3ch { font-size: 0.62rem; }
+.tu-tgrid-card-icon .tu-titem-icon--4ch { font-size: 0.52rem; }
 
 .tu-tgrid-card-icon .tu-titem-icon svg {
   width: 20px;

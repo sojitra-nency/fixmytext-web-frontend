@@ -89,6 +89,8 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 .sh-hero-icon .tu-titem-icon { width: 28px; min-width: 28px; height: 28px; font-size: 0.9rem; }
+.sh-hero-icon .tu-titem-icon--3ch { font-size: 0.7rem; }
+.sh-hero-icon .tu-titem-icon--4ch { font-size: 0.58rem; }
 .sh-hero-icon .tu-titem-icon svg { width: 22px; height: 22px; }
 
 .sh-hero-title {

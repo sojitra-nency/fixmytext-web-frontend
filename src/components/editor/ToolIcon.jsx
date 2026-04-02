@@ -147,14 +147,13 @@ export default function ToolIcon({ icon, color, toolId }) {
         )
     }
 
-    // Fallback for unknown tools: text icon with auto-sizing
+    // Fallback for unknown tools: uniform text icon
     const len = icon ? icon.length : 0
-    const fontSize = len <= 2 ? undefined : len === 3 ? '0.58rem' : '0.5rem'
+    const sizeClass = len <= 2 ? '' : len === 3 ? ' tu-titem-icon--3ch' : ' tu-titem-icon--4ch'
 
     return (
         <span
-            className={`tu-titem-icon${color ? ` tu-titem-icon--${color}` : ''}`}
-            style={fontSize ? { fontSize } : undefined}
+            className={`tu-titem-icon${color ? ` tu-titem-icon--${color}` : ''}${sizeClass}`}
         >
             {icon}
         </span>
