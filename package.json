@@ -2,6 +2,7 @@
   "name": "fixmytext",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "type": "module",
   "dependencies": {
     "@emoji-mart/data": "^1.2.1",
