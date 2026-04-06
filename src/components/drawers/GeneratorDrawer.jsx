@@ -79,7 +79,7 @@ export function RandomTextDrawer({
 
 export function PasswordDrawer({
     pwdLen, setPwdLen, pwdOpts, setPwdOpts,
-    generatedPwd, handleGeneratePassword, showAlert, onResult,
+    handleGeneratePassword, onResult,
 }) {
     const charsets = [
         ['upper',   'A–Z', 'Uppercase letters (A-Z)',    26],
@@ -91,7 +91,6 @@ export function PasswordDrawer({
     const strength = useMemo(() => getStrength(pwdLen, pwdOpts), [pwdLen, pwdOpts])
 
     const poolSize = charsets.reduce((n, [k,,, sz]) => pwdOpts[k] ? n + sz : n, 0)
-    const combinations = poolSize > 0 ? Math.pow(poolSize, pwdLen) : 0
     const entropy = poolSize > 0 ? Math.round(pwdLen * Math.log2(poolSize)) : 0
 
     const handleGen = () => {

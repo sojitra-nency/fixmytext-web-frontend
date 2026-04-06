@@ -21,7 +21,7 @@ import PassPurchaseModal from './components/subscription/PassPurchaseModal';
 import { ROUTES } from './constants';
 
 function AppInner() {
-  const { alert, alerts, showAlert, dismissAlert } = useAlert();
+  const { alerts, showAlert, dismissAlert } = useAlert();
   const { mode, setMode } = useTheme();
   const { user, isAuthenticated } = useAuth();
   const gamification = useGamification();

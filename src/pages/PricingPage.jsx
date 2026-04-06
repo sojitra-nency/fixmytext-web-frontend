@@ -398,7 +398,7 @@ export default function PricingPage({ showAlert, subscription: subProp }) {
               {/* ── Right Column: Details ── */}
               <div className="tu-pass-detail-right">
                 <div className="tu-pass-detail-section">
-                  <h4>What's included</h4>
+                  <h4>What&apos;s included</h4>
                   <ul className="tu-pass-detail-list">
                     <li>{detailPass.uses_per_day} uses per day on {detailPass.tools === -1 ? 'every tool (70+)' : `${detailPass.tools} tool${detailPass.tools > 1 ? 's' : ''} you pick`}</li>
                     <li>Works on AI tools, text transforms, exports — everything</li>
@@ -510,7 +510,7 @@ export default function PricingPage({ showAlert, subscription: subProp }) {
               {/* Right Column */}
               <div className="tu-pass-detail-right">
                 <div className="tu-pass-detail-section">
-                  <h4>What's included</h4>
+                  <h4>What&apos;s included</h4>
                   <ul className="tu-pass-detail-list">
                     <li>{detailCredit.credits} credits that work on any tool</li>
                     <li>1 credit = 1 extra use beyond the daily free limit</li>

@@ -69,7 +69,7 @@ export function MarkdownPreviewDrawer({ text }) {
             .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
             .replace(/\*(.+?)\*/g, '<em>$1</em>')
             .replace(/`(.+?)`/g, '<code>$1</code>')
-            .replace(/^\- (.+)$/gm, '<li>$1</li>')
+            .replace(/^- (.+)$/gm, '<li>$1</li>')
             .replace(/\n\n/g, '<br/><br/>')
             .replace(/\n/g, '<br/>')
         : '<p style="color: var(--text-3)">Enter Markdown in the editor to preview...</p>'

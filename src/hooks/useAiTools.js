@@ -22,7 +22,7 @@ export default function useAiTools(text, setText, setMarkdownMode, setPreviewMod
 
     const [transformText] = useTransformTextMutation()
 
-    const hasMarkdown = (str) => /[|#*\-]{2,}|^\s*[•\-\d]+[.)]\s|^\|.+\|$/m.test(str)
+    const hasMarkdown = (str) => /[|#*-]{2,}|^\s*[•\-\d]+[.)]\s|^\|.+\|$/m.test(str)
 
     const callAi = async (endpoint, label, errorMsg, toolId) => {
         if (!text) return
@@ -314,7 +314,7 @@ export default function useAiTools(text, setText, setMarkdownMode, setPreviewMod
             setPreviewMode('result')
             if (pushHistory) pushHistory(label, original, result, { toolId: 'curl_to_code', toolType: 'select' })
             showAlert(`Converted to ${target}`, 'success')
-        } catch (err) {
+        } catch {
             showAlert('Could not convert cURL command.', 'danger')
         }
     }
@@ -351,7 +351,7 @@ export default function useAiTools(text, setText, setMarkdownMode, setPreviewMod
             setPreviewMode('result')
             if (pushHistory) pushHistory(label, original, result, { toolId: 'date_format', toolType: 'select' })
             showAlert(`Date formatted as ${fmt}`, 'success')
-        } catch (err) {
+        } catch {
             showAlert('Could not format date.', 'danger')
         }
     }

@@ -36,7 +36,7 @@ export default function RegexDrawer({
                         <div key={i} className="tu-diff-line tu-diff-line--added">
                             <span className="tu-diff-marker">{i + 1}</span>
                             <span className="tu-diff-text">
-                                "{m.match}" at index {m.index}
+                                &quot;{m.match}&quot; at index {m.index}
                                 {m.groups.length > 0 && ` [groups: ${m.groups.join(', ')}]`}
                             </span>
                         </div>

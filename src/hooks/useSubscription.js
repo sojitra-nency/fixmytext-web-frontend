@@ -16,7 +16,7 @@ const ALWAYS_FREE_IDS = new Set([
 ])
 
 export default function useSubscription({ showAlert } = {}) {
-  const { accessToken, user } = useSelector((s) => s.auth)
+  const { accessToken } = useSelector((s) => s.auth)
   const isAuthenticated = !!accessToken
   const navigate = useNavigate()
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)

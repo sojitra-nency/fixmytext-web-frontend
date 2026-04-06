@@ -36,7 +36,7 @@ export default function useExport(setLoading, showAlert) {
             doc.text(lines, 14, 20)
             doc.save('fixmytext-output.pdf')
             showAlert('Downloaded as PDF', 'success')
-        } catch (err) {
+        } catch {
             showAlert('PDF export failed', 'danger')
         } finally {
             setLoading(false)
@@ -54,7 +54,7 @@ export default function useExport(setLoading, showAlert) {
             const blob = await Packer.toBlob(wordDoc)
             triggerDownload(blob, 'fixmytext-output.docx')
             showAlert('Downloaded as DOCX', 'success')
-        } catch (err) {
+        } catch {
             showAlert('DOCX export failed', 'danger')
         } finally {
             setLoading(false)

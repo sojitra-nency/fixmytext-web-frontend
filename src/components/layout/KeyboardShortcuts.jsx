@@ -43,7 +43,7 @@ function ShortcutRow({ sc, isCustomized, onStartRecording, onReset, recording, c
             </span>
             {conflict && (
                 <div className="tu-shortcuts-conflict">
-                    Conflicts with "{conflict.label}"
+                    Conflicts with &quot;{conflict.label}&quot;
                 </div>
             )}
         </div>
@@ -209,7 +209,7 @@ export default function KeyboardShortcuts({
                                     exit={{ height: 0, opacity: 0 }}
                                 >
                                     <span className="tu-shortcuts-conflict-msg">
-                                        <b>{formatShortcut(pendingBinding).join(' + ')}</b> is already used by "<b>{conflict.label}</b>"
+                                        <b>{formatShortcut(pendingBinding).join(' + ')}</b> is already used by &quot;<b>{conflict.label}</b>&quot;
                                     </span>
                                     <button className="tu-shortcuts-conflict-btn tu-shortcuts-conflict-btn--cancel" onClick={cancelRecording}>
                                         Cancel

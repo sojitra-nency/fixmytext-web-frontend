@@ -19,8 +19,8 @@ const SIZES = [
 ]
 
 export default memo(function OutputPanel({
-  aiResult, hasMarkdown, onAiDismiss,
-  previewMode, setPreviewMode, showAlert,
+  aiResult, hasMarkdown,
+  previewMode, showAlert,
   text, dyslexiaMode, markdownMode,
   speech, onDyslexiaToggle,
   activeTool, loading, exportTools,
@@ -80,11 +80,6 @@ export default memo(function OutputPanel({
     if (!outputText) return
     navigator.clipboard.writeText(outputText)
     showAlert('Copied output to clipboard', 'success')
-  }
-
-  const handleClear = () => {
-    onAiDismiss()
-    setPreviewMode(null)
   }
 
   const handleTts = () => {

@@ -245,7 +245,7 @@ export default function useGamification() {
       }
 
       const translateOpts = TOOLS.find(t => t.id === 'translate')?.options || []
-      const langCount = translateOpts.filter(([v]) => toolsUsed['translate'] && prev.discoveredTools.includes('translate')).length
+      const langCount = translateOpts.filter(() => toolsUsed['translate'] && prev.discoveredTools.includes('translate')).length
 
       const hour = new Date().getHours()
       const achieveState = {

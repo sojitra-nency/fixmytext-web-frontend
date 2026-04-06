@@ -121,7 +121,7 @@ export default function HistoryDrawer({
                         <div style={{ fontSize: '0.78rem', color: 'var(--fg2)', padding: '0.5rem 0' }}>Loading...</div>
                     ) : !serverHistory || serverHistory.items.length === 0 ? (
                         <div style={{ fontSize: '0.78rem', color: 'var(--fg2)', padding: '0.5rem 0' }}>
-                            No saved history. Operations are saved when you're logged in.
+                            No saved history. Operations are saved when you&apos;re logged in.
                         </div>
                     ) : (
                         <div className="tu-diff-output" style={{ maxHeight: 300, marginTop: '0.5rem' }}>

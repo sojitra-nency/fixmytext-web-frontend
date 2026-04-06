@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 
 export default function DiffDrawer({ activeTool, text, onResult, showAlert }) {
     const [textB, setTextB] = useState('')
@@ -11,11 +11,11 @@ export default function DiffDrawer({ activeTool, text, onResult, showAlert }) {
             case 'char_diff': {
                 // Character-level diff
                 const maxLen = Math.max(text.length, textB.length)
-                let same = 0, diff = 0
+                let diff = 0
                 const lines = []
                 for (let i = 0; i < maxLen; i++) {
                     const a = text[i] || '', b = textB[i] || ''
-                    if (a === b) { same++; lines.push(`  ${a}`) }
+                    if (a === b) { lines.push(`  ${a}`) }
                     else { diff++; lines.push(`- ${a || '(empty)'}\n+ ${b || '(empty)'}`) }
                 }
                 onResult('Character Diff', `${diff} character difference(s)\n${'─'.repeat(30)}\n${lines.join('\n')}`)

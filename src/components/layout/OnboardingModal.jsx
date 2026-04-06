@@ -86,7 +86,7 @@ export default function OnboardingModal({ onComplete }) {
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1 }}
                     >
-                        Pick your path. We'll tailor the experience for you.
+                        Pick your path. We&apos;ll tailor the experience for you.
                     </motion.p>
                 </div>
 

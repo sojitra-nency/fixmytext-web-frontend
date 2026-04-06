@@ -1,83 +1,9 @@
-import { useState, useRef, useCallback, useMemo, memo, useEffect } from 'react'
+import { useState, useRef, useCallback, useMemo, memo } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { USE_CASE_TABS, TOOL_GROUPS } from '../../constants/tools'
 import ToolIcon from './ToolIcon'
 
-/* ── Custom dropdown for select-type tools ─────────── */
-function SelectDropdown({ options, value, onChange, disabled, triggerRef }) {
-  const [open, setOpen] = useState(false)
-  const menuRef = useRef(null)
-  const [pos, setPos] = useState(null)
-
-  const selectedLabel = options.find(([v]) => v === value)?.[1] || value
-
-  const toggle = (e) => {
-    e.stopPropagation()
-    if (disabled) return
-    if (!open && triggerRef.current) {
-      const rect = triggerRef.current.getBoundingClientRect()
-      const menuHeight = Math.min(options.length * 30 + 10, 240)
-      const spaceBelow = window.innerHeight - rect.bottom - 8
-      const showAbove = spaceBelow < menuHeight && rect.top > menuHeight
-
-      setPos({
-        left: rect.left,
-        width: Math.max(rect.width, 160),
-        top: showAbove ? rect.top - menuHeight - 2 : rect.bottom + 2,
-      })
-    }
-    setOpen(o => !o)
-  }
-
-  const select = (val, e) => {
-    e.stopPropagation()
-    onChange(val)
-    setOpen(false)
-  }
-
-  useEffect(() => {
-    if (!open) return
-    const close = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setOpen(false)
-    }
-    document.addEventListener('mousedown', close)
-    return () => document.removeEventListener('mousedown', close)
-  }, [open])
-
-  return (
-    <>
-      <button
-        className={`tu-titem-dropdown-trigger${open ? ' tu-titem-dropdown-trigger--open' : ''}`}
-        onClick={toggle}
-        disabled={disabled}
-        type="button"
-      >
-        <span className="tu-titem-dropdown-value">{selectedLabel}</span>
-        <span className="tu-titem-dropdown-chevron">{open ? '▴' : '▾'}</span>
-      </button>
-      {open && pos && createPortal(
-        <div
-          ref={menuRef}
-          className="tu-titem-dropdown-menu"
-          style={{ left: pos.left, top: pos.top, width: pos.width }}
-        >
-          {options.map(([val, label]) => (
-            <div
-              key={val}
-              className={`tu-titem-dropdown-option${val === value ? ' tu-titem-dropdown-option--active' : ''}`}
-              onClick={(e) => select(val, e)}
-            >
-              {val === value && <span className="tu-titem-dropdown-check">✓</span>}
-              <span>{label}</span>
-            </div>
-          ))}
-        </div>,
-        document.body
-      )}
-    </>
-  )
-}
 
 function ToolPanelItem({ tool, disabled, onClick, isFavorite, onToggleFavorite, isActive, isSuggested, onHover, onLeave }) {
   const [hovered, setHovered] = useState(false)

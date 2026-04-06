@@ -62,7 +62,7 @@ export default function CommandPalette({ search, onToolClick }) {
 
             <div className="tu-palette-results" ref={resultsRef}>
               {results.length === 0 && search.query && (
-                <div className="tu-palette-empty">No tools found for "{search.query}"</div>
+                <div className="tu-palette-empty">No tools found for &quot;{search.query}&quot;</div>
               )}
               {results.map((tool, i) => (
                 <motion.button

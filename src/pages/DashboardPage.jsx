@@ -102,8 +102,6 @@ export default function DashboardPage({ gamification, user, isAuthenticated, sho
     const recentOps = g?.sessionOps || []
 
     // Level milestones for the progress section
-    const completedLevels = LEVELS.filter(l => (g?.xp || 0) >= l.xp)
-
     const sections = [
         { id: 'overview', label: 'Overview', icon: '📊' },
         { id: 'subscription', label: 'Subscription', icon: '⚡' },
@@ -496,7 +494,7 @@ export default function DashboardPage({ gamification, user, isAuthenticated, sho
                 {activeSection === 'history' && (
                     <div className="tu-dash-content">
                         <h2 className="tu-dash-title">Usage History</h2>
-                        <p className="tu-dash-subtitle">This session's activity</p>
+                        <p className="tu-dash-subtitle">This session&apos;s activity</p>
 
                         {recentOps.length === 0 ? (
                             <div className="tu-dash-empty-page">

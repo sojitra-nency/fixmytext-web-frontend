@@ -176,7 +176,7 @@ export default function TextForm(props) {
     const [toolResults, setToolResults] = useState({})  // keyed by tab ID, not tool ID
     const aiResultSourceRef = useRef(null)  // tracks which toolId/panelId produced the current ai.aiResult
     const lastTextPerTab = useRef({})  // tracks last input text per tab for debounce
-    const [savedTabs, setSavedTabs] = useState({})
+    const [, setSavedTabs] = useState({})
     const [saveModal, setSaveModal] = useState(null) // { tabId, defaultName }
 
     // Per-tool text: derived from the active workspace tab
@@ -338,7 +338,6 @@ export default function TextForm(props) {
     }, [ai.aiResult, activeWorkspaceId, workspaceTabs])
 
     const closeWorkspaceTab = (tabId) => {
-        const tab = workspaceTabs.find(t => t.id === tabId)
         setWorkspaceTabs(tabs => {
             const remaining = tabs.filter(t => t.id !== tabId)
             if (activeWorkspaceId === tabId) {
@@ -371,7 +370,7 @@ export default function TextForm(props) {
         const params = new URLSearchParams(window.location.search)
         const shared = params.get('t')
         if (shared) {
-            try { sharedTextRef.current = decodeURIComponent(atob(shared)) } catch {}
+            try { sharedTextRef.current = decodeURIComponent(atob(shared)) } catch { /* ignore invalid shared text */ }
         }
     }, [])
 
@@ -640,7 +639,7 @@ export default function TextForm(props) {
             return `${ch}: ${count} (${pct}%) ${bar}`
         })
         const result = `Letter Frequency Analysis (${total} letters)\n${'─'.repeat(40)}\n${lines.join('\n')}`
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('Frequency analysis complete', 'success')
     }
@@ -652,7 +651,7 @@ export default function TextForm(props) {
         try {
             const m = await import('sql-formatter')
             const result = m.format(t)
-            setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+            setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
             setPreviewMode('result')
             showAlert('SQL formatted', 'success')
         } catch { showAlert('Could not format SQL', 'danger') }
@@ -672,12 +671,12 @@ export default function TextForm(props) {
             // Simple indentation
             let formatted = '', indent = 0
             xml.split(/>\s*</).forEach(node => {
-                if (node.match(/^\/\w/)) indent--
+                if (node.match(/^\//)) indent--
                 formatted += '  '.repeat(Math.max(indent, 0)) + '<' + node + '>\n'
-                if (node.match(/^<?\w[^>]*[^\/]$/) && !node.startsWith('?')) indent++
+                if (node.match(/^<?\w[^>]*[^/]$/) && !node.startsWith('?')) indent++
             })
             formatted = formatted.replace(/^</, '').replace(/>$/, '')
-            setToolResults(prev => ({ ...prev, [activeTabId]: formatted }))
+            setToolResults(prev => ({ ...prev, [activeWorkspaceId]: formatted }))
             setPreviewMode('result')
             showAlert('XML formatted', 'success')
         } catch { showAlert('Invalid XML input', 'danger') }
@@ -688,7 +687,7 @@ export default function TextForm(props) {
         if (!t) return
         try {
             const result = JSON.stringify(JSON.parse(t))
-            setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+            setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
             setPreviewMode('result')
             showAlert('JSON minified', 'success')
         } catch { showAlert('Invalid JSON input', 'danger') }
@@ -717,7 +716,7 @@ export default function TextForm(props) {
                 return typeof val
             }
             const result = inferType(obj)
-            setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+            setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
             setPreviewMode('result')
             showAlert('TypeScript interface generated', 'success')
         } catch { showAlert('Invalid JSON input', 'danger') }
@@ -725,7 +724,7 @@ export default function TextForm(props) {
 
     const handleUuidGen = () => {
         const uuids = Array.from({ length: 5 }, () => crypto.randomUUID()).join('\n')
-        setToolResults(prev => ({ ...prev, [activeTabId]: uuids }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: uuids }))
         setPreviewMode('result')
         showAlert('UUIDs generated', 'success')
     }
@@ -742,7 +741,7 @@ export default function TextForm(props) {
         }
         if (isNaN(date.getTime())) { showAlert('Could not parse date/timestamp', 'danger'); return }
         const result = `Unix (s):  ${Math.floor(date.getTime() / 1000)}\nUnix (ms): ${date.getTime()}\nISO 8601:  ${date.toISOString()}\nUTC:       ${date.toUTCString()}\nLocal:     ${date.toLocaleString()}`
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('Timestamp converted', 'success')
     }
@@ -772,22 +771,19 @@ export default function TextForm(props) {
             else h = ((rn - gn) / d + 4) / 6
         }
         const result = `HEX: ${hex}\nRGB: rgb(${r}, ${g}, ${b})\nHSL: hsl(${Math.round(h*360)}, ${Math.round(s*100)}%, ${Math.round(l*100)}%)`
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('Color converted', 'success')
     }
 
     const handleUlidGen = () => {
         // Simple ULID-like generator (timestamp + random)
-        const ts = Date.now().toString(36).toUpperCase().padStart(10, '0')
-        const rand = Array.from({ length: 16 }, () => '0123456789ABCDEFGHJKMNPQRSTVWXYZ'[Math.floor(Math.random() * 32)]).join('')
-        const ulidStr = ts + rand
         const result = Array.from({ length: 5 }, (_, i) => {
             const t = (Date.now() + i).toString(36).toUpperCase().padStart(10, '0')
             const r = Array.from({ length: 16 }, () => '0123456789ABCDEFGHJKMNPQRSTVWXYZ'[Math.floor(Math.random() * 32)]).join('')
             return t + r
         }).join('\n')
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('ULIDs generated', 'success')
     }
@@ -816,7 +812,7 @@ export default function TextForm(props) {
             descs.push(`on ${dayStr}`)
         }
         const result = `Cron: ${t}\n\n${descs.join(', ')}.`
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('Cron expression explained', 'success')
     }
@@ -830,7 +826,7 @@ export default function TextForm(props) {
             return `| ${l.slice(0, idx).trim().padEnd(30)} | ${l.slice(idx + 1).trim()} |`
         })
         const result = `| ${'Header'.padEnd(30)} | Value |\n| ${'-'.repeat(30)} | ----- |\n${headers.join('\n')}`
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('HTTP headers parsed', 'success')
     }
@@ -842,7 +838,7 @@ export default function TextForm(props) {
             const url = new URL(t)
             const params = [...url.searchParams.entries()].map(([k, v]) => `  ${k} = ${v}`).join('\n')
             const result = `Protocol: ${url.protocol}\nHost:     ${url.hostname}\nPort:     ${url.port || '(default)'}\nPath:     ${url.pathname}\nSearch:   ${url.search}\nHash:     ${url.hash}\n${params ? `\nQuery Parameters:\n${params}` : ''}`
-            setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+            setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
             setPreviewMode('result')
             showAlert('URL parsed', 'success')
         } catch { showAlert('Invalid URL', 'danger') }
@@ -853,7 +849,7 @@ export default function TextForm(props) {
         if (!t) return
         const stopWords = new Set(['a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'is', 'it', 'as'])
         const slug = t.toLowerCase().replace(/[^\w\s-]/g, '').split(/\s+/).filter(w => !stopWords.has(w)).join('-').replace(/-+/g, '-').replace(/^-|-$/g, '').slice(0, 80)
-        setToolResults(prev => ({ ...prev, [activeTabId]: slug }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: slug }))
         setPreviewMode('result')
         showAlert('URL slug generated', 'success')
     }
@@ -877,7 +873,7 @@ export default function TextForm(props) {
         else if (fkGrade <= 8) level = 'Middle School'
         else if (fkGrade <= 12) level = 'High School'
         const result = `Reading Level Analysis\n${'─'.repeat(30)}\nFlesch Score:    ${flesch.toFixed(1)}\nGrade Level:     ${fkGrade.toFixed(1)} (${level})\nReading Time:    ~${readTime} min (238 WPM)\nSpeaking Time:   ~${speakTime} min (150 WPM)\nWords:           ${wc}\nSentences:       ${sc}\nAvg Words/Sent:  ${(wc/sc).toFixed(1)}`
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('Reading level analyzed', 'success')
     }
@@ -887,7 +883,7 @@ export default function TextForm(props) {
         if (!t) return
         const words = t.split(/\s+/).filter(Boolean).length
         const result = `Reading Time:  ~${Math.ceil(words / 238)} min (238 WPM)\nSpeaking Time: ~${Math.ceil(words / 150)} min (150 WPM)\nWords: ${words}`
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('Reading time estimated', 'success')
     }
@@ -900,7 +896,7 @@ export default function TextForm(props) {
         const paragraphs = t.split(/\n\s*\n/).filter(p => p.trim()).length
         const lines = t.split('\n').length
         const result = `Characters:     ${chars}\nNo Spaces:      ${charsNoSpaces}\nWords:          ${words}\nSentences:      ${sentences}\nParagraphs:     ${paragraphs}\nLines:          ${lines}`
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('Characters counted', 'success')
     }
@@ -914,7 +910,7 @@ export default function TextForm(props) {
         const avgWordLen = words.reduce((s, w) => s + w.length, 0) / words.length
         const avgSentLen = words.length / sentences.length
         const result = `Text Statistics\n${'─'.repeat(30)}\nTotal Words:       ${words.length}\nUnique Words:      ${uniqueWords.size}\nVocabulary Ratio:  ${((uniqueWords.size / words.length) * 100).toFixed(1)}%\nAvg Word Length:   ${avgWordLen.toFixed(1)} chars\nAvg Sentence Len:  ${avgSentLen.toFixed(1)} words\nLongest Word:      ${words.reduce((a, b) => a.length > b.length ? a : b, '')}`
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('Text statistics computed', 'success')
     }
@@ -927,7 +923,7 @@ export default function TextForm(props) {
         words.forEach(w => { freq[w] = (freq[w] || 0) + 1 })
         const dupes = Object.entries(freq).filter(([, c]) => c > 1).sort((a, b) => b[1] - a[1])
         const result = dupes.length ? dupes.map(([w, c]) => `${w}: ${c}×`).join('\n') : 'No duplicate words found!'
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('Duplicate words found', 'success')
     }
@@ -944,7 +940,7 @@ export default function TextForm(props) {
         const result = overused.length
             ? `Overused Words (>3% frequency)\n${'─'.repeat(30)}\n` + overused.map(([w, c]) => `⚠ "${w}" — ${c}× (${((c/total)*100).toFixed(1)}%)`).join('\n')
             : 'No overused words detected!'
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('Overused words analyzed', 'success')
     }
@@ -968,7 +964,7 @@ export default function TextForm(props) {
         }
         const num = parseFloat(t.replace(/,/g, ''))
         if (isNaN(num)) { showAlert('Enter a valid number', 'danger'); return }
-        setToolResults(prev => ({ ...prev, [activeTabId]: convert(Math.floor(num)) }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: convert(Math.floor(num)) }))
         setPreviewMode('result')
         showAlert('Number converted to words', 'success')
     }
@@ -987,7 +983,7 @@ export default function TextForm(props) {
             else if (multipliers[w]) { result += current * (multipliers[w] / (w === 'hundred' ? 1 : 1)); current *= multipliers[w]; if (w !== 'hundred') { result += current; current = 0 } }
         }
         result += current
-        setToolResults(prev => ({ ...prev, [activeTabId]: result.toString() }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result.toString() }))
         setPreviewMode('result')
         showAlert('Words converted to number', 'success')
     }
@@ -999,7 +995,7 @@ export default function TextForm(props) {
             let n = parseInt(t), result = ''
             const vals = [[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']]
             for (const [val, sym] of vals) { while (n >= val) { result += sym; n -= val } }
-            setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+            setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         } else {
             const roman = { M:1000, D:500, C:100, L:50, X:10, V:5, I:1 }
             const upper = t.toUpperCase()
@@ -1008,7 +1004,7 @@ export default function TextForm(props) {
                 const curr = roman[upper[i]], next = roman[upper[i + 1]]
                 if (next && curr < next) result -= curr; else result += curr
             }
-            setToolResults(prev => ({ ...prev, [activeTabId]: result.toString() }))
+            setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result.toString() }))
         }
         setPreviewMode('result')
         showAlert('Roman numeral converted', 'success')
@@ -1021,7 +1017,7 @@ export default function TextForm(props) {
             const QRCode = (await import('qrcode')).default
             const dataUrl = await QRCode.toDataURL(t, { width: 300, margin: 2 })
             const result = `[QR Code Generated]\n\nData URL (paste in browser):\n${dataUrl}`
-            setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+            setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
             setPreviewMode('result')
             showAlert('QR code generated', 'success')
         } catch { showAlert('Could not generate QR code', 'danger') }
@@ -1039,11 +1035,11 @@ export default function TextForm(props) {
                 .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.+?)\*/g, '<em>$1</em>')
                 .replace(/`(.+?)`/g, '<code>$1</code>')
-                .replace(/^\- (.+)$/gm, '<li>$1</li>')
+                .replace(/^- (.+)$/gm, '<li>$1</li>')
                 .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
                 .replace(/\n\n/g, '</p>\n<p>')
             html = '<p>' + html + '</p>'
-            setToolResults(prev => ({ ...prev, [activeTabId]: html }))
+            setToolResults(prev => ({ ...prev, [activeWorkspaceId]: html }))
             setPreviewMode('result')
             showAlert('Markdown converted to HTML', 'success')
         } catch { showAlert('Could not convert Markdown', 'danger') }
@@ -1060,7 +1056,7 @@ export default function TextForm(props) {
         const header = '| ' + rows[0].map((c, i) => c.padEnd(widths[i])).join(' | ') + ' |'
         const divider = '| ' + widths.map(w => '-'.repeat(w)).join(' | ') + ' |'
         const body = rows.slice(1).map(r => '| ' + r.map((c, i) => (c || '').padEnd(widths[i] || 0)).join(' | ') + ' |').join('\n')
-        setToolResults(prev => ({ ...prev, [activeTabId]: `${header}\n${divider}\n${body}` }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: `${header}\n${divider}\n${body}` }))
         setPreviewMode('result')
         showAlert('Text converted to table', 'success')
     }
@@ -1069,7 +1065,7 @@ export default function TextForm(props) {
         const t = textRef.current
         if (!t) return
         const emails = [...new Set(t.match(/[\w.+-]+@[\w-]+\.[\w.]+/g) || [])]
-        setToolResults(prev => ({ ...prev, [activeTabId]: emails.length ? emails.join('\n') : 'No email addresses found' }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: emails.length ? emails.join('\n') : 'No email addresses found' }))
         setPreviewMode('result')
         showAlert(`Found ${emails.length} email(s)`, 'success')
     }
@@ -1077,8 +1073,8 @@ export default function TextForm(props) {
     const handleExtractUrls = () => {
         const t = textRef.current
         if (!t) return
-        const urls = [...new Set(t.match(/https?:\/\/[^\s<>"{}|\\^`\[\]]+/g) || [])]
-        setToolResults(prev => ({ ...prev, [activeTabId]: urls.length ? urls.join('\n') : 'No URLs found' }))
+        const urls = [...new Set(t.match(/https?:\/\/[^\s<>"{}|\\^`[\]]+/g) || [])]
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: urls.length ? urls.join('\n') : 'No URLs found' }))
         setPreviewMode('result')
         showAlert(`Found ${urls.length} URL(s)`, 'success')
     }
@@ -1087,7 +1083,7 @@ export default function TextForm(props) {
         const t = textRef.current
         if (!t) return
         const numbers = t.match(/-?\d+\.?\d*/g) || []
-        setToolResults(prev => ({ ...prev, [activeTabId]: numbers.length ? numbers.join('\n') : 'No numbers found' }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: numbers.length ? numbers.join('\n') : 'No numbers found' }))
         setPreviewMode('result')
         showAlert(`Found ${numbers.length} number(s)`, 'success')
     }
@@ -1096,7 +1092,7 @@ export default function TextForm(props) {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-'
         const gen = () => Array.from(crypto.getRandomValues(new Uint8Array(21)), b => chars[b % 64]).join('')
         const result = Array.from({ length: 5 }, gen).join('\n')
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('Nano IDs generated', 'success')
     }
@@ -1104,7 +1100,7 @@ export default function TextForm(props) {
     const handleTimestampGen = () => {
         const now = new Date()
         const result = `Unix (s):  ${Math.floor(now.getTime() / 1000)}\nUnix (ms): ${now.getTime()}\nISO 8601:  ${now.toISOString()}\nRFC 2822:  ${now.toUTCString()}\nLocal:     ${now.toLocaleString()}`
-        setToolResults(prev => ({ ...prev, [activeTabId]: result }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: result }))
         setPreviewMode('result')
         showAlert('Timestamps generated', 'success')
     }
@@ -1124,7 +1120,7 @@ export default function TextForm(props) {
             words[0] + '_dev',
             words.reverse().join('_'),
         ]
-        setToolResults(prev => ({ ...prev, [activeTabId]: [...new Set(combos)].join('\n') }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: [...new Set(combos)].join('\n') }))
         setPreviewMode('result')
         showAlert('Usernames generated', 'success')
     }
@@ -1139,7 +1135,7 @@ export default function TextForm(props) {
             `https://placehold.co/${w}x${h}/gray/white`,
             `https://placehold.co/${w}x${h}/000/fff?text=Placeholder`,
         ]
-        setToolResults(prev => ({ ...prev, [activeTabId]: urls.join('\n') }))
+        setToolResults(prev => ({ ...prev, [activeWorkspaceId]: urls.join('\n') }))
         setPreviewMode('result')
         showAlert('Placeholder URLs generated', 'success')
     }
@@ -1495,7 +1491,6 @@ export default function TextForm(props) {
         undo: () => history.handleUndo(),
         redo: () => history.handleRedo(),
         copyOutput: () => {
-            const ws = workspaceTabs.find(t => t.id === activeWorkspaceId)
             const result = toolResults[activeWorkspaceId] || ai.aiResult
             if (result?.result) {
                 navigator.clipboard.writeText(result.result)
@@ -1781,7 +1776,7 @@ export default function TextForm(props) {
                         <div className="tu-tpanel">
                             {newTools.length === 0 ? (
                                 <div className="tu-sidebar-panel-empty">
-                                    You've discovered all tools!
+                                    You&apos;ve discovered all tools!
                                 </div>
                             ) : toolViewMode === 'grid' ? (
                                 <div className="tu-tpanel-list">
@@ -2899,7 +2894,7 @@ export default function TextForm(props) {
                     </div>
                     <div className="tu-modal-body">
                         <p style={{ margin: '0 0 8px', fontSize: '0.85rem', color: 'var(--text-2)' }}>
-                            You've used your <b>3 free tool runs</b>. Sign in to unlock unlimited access to all {TOOLS.length}+ tools.
+                            You&apos;ve used your <b>3 free tool runs</b>. Sign in to unlock unlimited access to all {TOOLS.length}+ tools.
                         </p>
                     </div>
                     <div className="tu-modal-footer">

@@ -87,7 +87,7 @@ export default function LoginPage({ showAlert }) {
                 </form>
 
                 <p className="auth-footer">
-                    Don't have an account? <Link to={ROUTES.SIGNUP}>Sign up</Link>
+                    Don&apos;t have an account? <Link to={ROUTES.SIGNUP}>Sign up</Link>
                 </p>
             </div>
         </div>
