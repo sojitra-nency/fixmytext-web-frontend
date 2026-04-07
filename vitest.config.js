@@ -16,7 +16,7 @@ export default defineConfig({
         'dist/',
         'src/test/',
         '**/*.config.js',
-        'src/main.jsx',
+        'src/index.jsx',
       ],
       thresholds: {
         lines: 70,

@@ -1,20 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, fireEvent, act } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
 import FormatToolbar from './FormatToolbar';
-
-function makeRef(selStart = 0, selEnd = 0) {
-  const el = document.createElement('textarea');
-  el.value = 'hello world';
-  Object.defineProperty(el, 'selectionStart', { get: () => selStart, configurable: true });
-  Object.defineProperty(el, 'selectionEnd', { get: () => selEnd, configurable: true });
-  el.getBoundingClientRect = () => ({ top: 100, left: 0, right: 400, width: 400 });
-  el.scrollTop = 0;
-  el.setSelectionRange = vi.fn();
-  el.focus = vi.fn();
-  // Mock getComputedStyle lineHeight
-  return { current: el };
-}
 
 describe('FormatToolbar', () => {
   it('returns null when not enabled', () => {

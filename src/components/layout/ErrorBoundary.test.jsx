@@ -58,7 +58,7 @@ describe('ErrorBoundary', () => {
   });
 
   it('resets error state when Try Again is clicked', () => {
-    const { rerender } = render(
+    render(
       <ErrorBoundary>
         <ThrowingChild shouldThrow />
       </ErrorBoundary>

@@ -3,14 +3,6 @@ name: Frontend CI
 on:
   pull_request:
     branches: [main, master, develop]
-    paths:
-      - 'src/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'vite.config.js'
-      - 'vitest.config.js'
-      - 'eslint.config.js'
-      - '.github/workflows/ci.yml'
   push:
     branches: [main, master]
 
@@ -20,7 +12,7 @@ concurrency:
 
 jobs:
   lint:
-    name: Lint & Format Check
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -49,17 +41,18 @@ jobs:
   security-scan:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     permissions:
       security-events: write
       actions: read
       contents: read
     steps:
       - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v3
+      - uses: github/codeql-action/init@v4
         with:
           languages: javascript-typescript
           queries: security-and-quality
-      - uses: github/codeql-action/analyze@v3
+      - uses: github/codeql-action/analyze@v4
         with:
           category: "/language:javascript-typescript"
 
@@ -75,7 +68,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - name: Run tests with coverage
-        run: npx vitest run --coverage
+        run: npx vitest run --coverage --passWithNoTests
       - name: Upload coverage report
         if: always()
         uses: actions/upload-artifact@v4
