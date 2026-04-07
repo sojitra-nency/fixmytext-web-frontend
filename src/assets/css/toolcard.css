@@ -63,7 +63,7 @@
   line-height: 14px;
   text-align: center;
   border-radius: var(--r-pill);
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   color: var(--text-3);
   margin-left: 2px;
   padding: 0 3px;
@@ -147,7 +147,7 @@
   line-height: 16px;
   text-align: center;
   border-radius: 8px;
-  background: var(--sidebar-highlight, rgba(255,255,255,0.08));
+  background: var(--sidebar-highlight, rgba(255, 255, 255, 0.08));
   color: var(--text-3);
   flex-shrink: 0;
 }
@@ -181,7 +181,7 @@
   position: fixed;
   padding: 4px 8px;
   background: #252526;
-  color: #CCCCCC;
+  color: #cccccc;
   font-size: 0.75rem;
   font-weight: 400;
   font-family: var(--font-display);
@@ -189,7 +189,7 @@
   max-width: 280px;
   border: 1px solid #454545;
   border-radius: 3px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.36);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.36);
   z-index: 1100;
   pointer-events: none;
   line-height: 1.35;
@@ -229,8 +229,14 @@
   letter-spacing: -0.02em;
 }
 /* Uniform sizing for 3-char and 4-char text icons — scale down to fit the same box */
-.tu-titem-icon--3ch { font-size: 0.54rem; letter-spacing: -0.04em; }
-.tu-titem-icon--4ch { font-size: 0.46rem; letter-spacing: -0.04em; }
+.tu-titem-icon--3ch {
+  font-size: 0.54rem;
+  letter-spacing: -0.04em;
+}
+.tu-titem-icon--4ch {
+  font-size: 0.46rem;
+  letter-spacing: -0.04em;
+}
 .tu-titem-icon svg {
   width: 16px;
   height: 16px;
@@ -238,18 +244,42 @@
 }
 
 /* VSCode-style icon colors (subtle, no background) — one per tool group */
-.tu-titem-icon--violet  { color: var(--violet); }  /* case transform */
-.tu-titem-icon--blush   { color: #ded2d2; }         /* whitespace */
-.tu-titem-icon--teal    { color: var(--teal); }     /* lines & sort */
-.tu-titem-icon--indigo  { color: var(--indigo); }   /* encoding */
-.tu-titem-icon--emerald { color: var(--emerald); }   /* hashing */
-.tu-titem-icon--green    { color: #bbdda0; }         /* developer tools */
-.tu-titem-icon--pink    { color: #D16D9E; }         /* ai writing */
-.tu-titem-icon--orange  { color: var(--orange); }   /* ai content */
-.tu-titem-icon--skyblue { color: #9CDCFE; }         /* language */
-.tu-titem-icon--amber   { color: var(--amber); }    /* generate */
-.tu-titem-icon--purple  { color: #B267E6; }         /* compare */
-.tu-titem-icon--rose    { color: var(--rose); }     /* utility */
+.tu-titem-icon--violet {
+  color: var(--violet);
+} /* case transform */
+.tu-titem-icon--blush {
+  color: #ded2d2;
+} /* whitespace */
+.tu-titem-icon--teal {
+  color: var(--teal);
+} /* lines & sort */
+.tu-titem-icon--indigo {
+  color: var(--indigo);
+} /* encoding */
+.tu-titem-icon--emerald {
+  color: var(--emerald);
+} /* hashing */
+.tu-titem-icon--green {
+  color: #bbdda0;
+} /* developer tools */
+.tu-titem-icon--pink {
+  color: #d16d9e;
+} /* ai writing */
+.tu-titem-icon--orange {
+  color: var(--orange);
+} /* ai content */
+.tu-titem-icon--skyblue {
+  color: #9cdcfe;
+} /* language */
+.tu-titem-icon--amber {
+  color: var(--amber);
+} /* generate */
+.tu-titem-icon--purple {
+  color: #b267e6;
+} /* compare */
+.tu-titem-icon--rose {
+  color: var(--rose);
+} /* utility */
 
 /* Name */
 .tu-titem-name {
@@ -283,7 +313,7 @@
 }
 
 .tu-titem-suggested {
-  background: var(--accent, #007ACC);
+  background: var(--accent, #007acc);
   color: #fff;
 }
 
@@ -351,8 +381,14 @@
 }
 
 @keyframes tu-dropdown-in {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .tu-titem-dropdown-option {
@@ -423,11 +459,21 @@
 }
 
 @keyframes heart-shake {
-  0%   { transform: scale(1.35); }
-  25%  { transform: scale(1.35) rotate(-12deg); }
-  50%  { transform: scale(1.35) rotate(12deg); }
-  75%  { transform: scale(1.35) rotate(-6deg); }
-  100% { transform: scale(1.35) rotate(0deg); }
+  0% {
+    transform: scale(1.35);
+  }
+  25% {
+    transform: scale(1.35) rotate(-12deg);
+  }
+  50% {
+    transform: scale(1.35) rotate(12deg);
+  }
+  75% {
+    transform: scale(1.35) rotate(-6deg);
+  }
+  100% {
+    transform: scale(1.35) rotate(0deg);
+  }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -487,8 +533,12 @@
   height: 28px;
   font-size: 0.8rem;
 }
-.tu-tgrid-card-icon .tu-titem-icon--3ch { font-size: 0.62rem; }
-.tu-tgrid-card-icon .tu-titem-icon--4ch { font-size: 0.52rem; }
+.tu-tgrid-card-icon .tu-titem-icon--3ch {
+  font-size: 0.62rem;
+}
+.tu-tgrid-card-icon .tu-titem-icon--4ch {
+  font-size: 0.52rem;
+}
 
 .tu-tgrid-card-icon .tu-titem-icon svg {
   width: 20px;
@@ -543,5 +593,7 @@
 
 /* ── Responsive: hide panel on mobile ─────────────── */
 @media (max-width: 768px) {
-  .tu-tpanel { display: none; }
+  .tu-tpanel {
+    display: none;
+  }
 }

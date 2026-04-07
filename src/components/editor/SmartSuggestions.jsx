@@ -1,8 +1,8 @@
-import { memo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { memo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default memo(function SmartSuggestions({ suggestions, onToolClick, onDismiss }) {
-  if (!suggestions || suggestions.length === 0) return null
+  if (!suggestions || suggestions.length === 0) return null;
 
   return (
     <div className="tu-suggestions">
@@ -23,7 +23,10 @@ export default memo(function SmartSuggestions({ suggestions, onToolClick, onDism
             <span>{tool.label}</span>
             <span
               className="tu-suggestion-dismiss"
-              onClick={e => { e.stopPropagation(); onDismiss(tool.id) }}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDismiss(tool.id);
+              }}
             >
               ✕
             </span>
@@ -31,5 +34,5 @@ export default memo(function SmartSuggestions({ suggestions, onToolClick, onDism
         ))}
       </AnimatePresence>
     </div>
-  )
-})
+  );
+});

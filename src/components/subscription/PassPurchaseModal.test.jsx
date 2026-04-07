@@ -1,40 +1,48 @@
-import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
-import PassPurchaseModal from './PassPurchaseModal'
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import PassPurchaseModal from './PassPurchaseModal';
 
 vi.mock('framer-motion', () => {
-  const m = (tag) => ({ children, ...props }) => React.createElement(tag || 'div', props, children)
+  const m =
+    (tag) =>
+    ({ children, ...props }) =>
+      React.createElement(tag || 'div', props, children);
   return {
     motion: new Proxy({}, { get: (_, tag) => m(tag) }),
     AnimatePresence: ({ children }) => children,
     useReducedMotion: () => false,
-  }
-})
+  };
+});
 
 vi.mock('react-router-dom', () => ({
   Link: ({ children, to, ...props }) => React.createElement('a', { href: to, ...props }, children),
   useNavigate: () => vi.fn(),
   useSearchParams: () => [new URLSearchParams(), vi.fn()],
   useParams: () => ({}),
-}))
+}));
 
 vi.mock('../../store/api/passesApi', () => ({
   useGetPassCatalogQuery: vi.fn(() => ({
     data: {
       passes: [
-        { id: 'day_single', name: 'Day Single', price: 99, uses_per_day: 10, symbol: '$', currency: 'usd' },
+        {
+          id: 'day_single',
+          name: 'Day Single',
+          price: 99,
+          uses_per_day: 10,
+          symbol: '$',
+          currency: 'usd',
+        },
         { id: 'day_triple', name: 'Day Triple', price: 199, symbol: '$', currency: 'usd' },
       ],
-      credit_packs: [
-        { id: 'pack_5', name: '5 Credits', credits: 5, price: 299 },
-      ],
+      credit_packs: [{ id: 'pack_5', name: '5 Credits', credits: 5, price: 299 }],
     },
   })),
-}))
+}));
 
 vi.mock('../../utils/formatPrice', () => ({
   default: (price) => `$${(price / 100).toFixed(2)}`,
-}))
+}));
 
 describe('PassPurchaseModal', () => {
   const baseProps = {
@@ -47,95 +55,99 @@ describe('PassPurchaseModal', () => {
       handleBuyCredits: vi.fn(),
       handleUpgrade: vi.fn(),
     },
-  }
+  };
 
-  beforeEach(() => { vi.clearAllMocks() })
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
   it('returns null when show is false', () => {
-    const { container } = render(<PassPurchaseModal {...baseProps} show={false} />)
-    expect(container.innerHTML).toBe('')
-  })
+    const { container } = render(<PassPurchaseModal {...baseProps} show={false} />);
+    expect(container.innerHTML).toBe('');
+  });
 
   it('returns null when blockedTool is null', () => {
-    const { container } = render(<PassPurchaseModal {...baseProps} blockedTool={null} />)
-    expect(container.innerHTML).toBe('')
-  })
+    const { container } = render(<PassPurchaseModal {...baseProps} blockedTool={null} />);
+    expect(container.innerHTML).toBe('');
+  });
 
   it('renders the modal title', () => {
-    render(<PassPurchaseModal {...baseProps} />)
-    expect(screen.getByText('Daily Limit Reached')).toBeInTheDocument()
-  })
+    render(<PassPurchaseModal {...baseProps} />);
+    expect(screen.getByText('Daily Limit Reached')).toBeInTheDocument();
+  });
 
   it('shows blocked tool usage', () => {
-    render(<PassPurchaseModal {...baseProps} />)
+    render(<PassPurchaseModal {...baseProps} />);
     // 'Fix Grammar' may appear multiple times (title + body) — check at least one
-    expect(screen.getAllByText(/Fix Grammar/).length).toBeGreaterThan(0)
-    expect(screen.getByText('3/3')).toBeInTheDocument()
-  })
+    expect(screen.getAllByText(/Fix Grammar/).length).toBeGreaterThan(0);
+    expect(screen.getByText('3/3')).toBeInTheDocument();
+  });
 
   it('shows pass options', () => {
-    render(<PassPurchaseModal {...baseProps} />)
-    expect(screen.getByText('Day Single')).toBeInTheDocument()
-    expect(screen.getByText('Day Triple')).toBeInTheDocument()
-    expect(screen.getByText('5 Credits')).toBeInTheDocument()
-  })
+    render(<PassPurchaseModal {...baseProps} />);
+    expect(screen.getByText('Day Single')).toBeInTheDocument();
+    expect(screen.getByText('Day Triple')).toBeInTheDocument();
+    expect(screen.getByText('5 Credits')).toBeInTheDocument();
+  });
 
   it('shows pro upsell', () => {
-    render(<PassPurchaseModal {...baseProps} />)
-    expect(screen.getByText(/unlimited everything/)).toBeInTheDocument()
-  })
+    render(<PassPurchaseModal {...baseProps} />);
+    expect(screen.getByText(/unlimited everything/)).toBeInTheDocument();
+  });
 
   it('calls onDismiss when close button clicked', () => {
-    render(<PassPurchaseModal {...baseProps} />)
-    fireEvent.click(screen.getByLabelText('Close'))
-    expect(baseProps.onDismiss).toHaveBeenCalled()
-  })
+    render(<PassPurchaseModal {...baseProps} />);
+    fireEvent.click(screen.getByLabelText('Close'));
+    expect(baseProps.onDismiss).toHaveBeenCalled();
+  });
 
   it('calls onDismiss when overlay clicked', () => {
-    render(<PassPurchaseModal {...baseProps} />)
-    const overlay = screen.getByText('Daily Limit Reached').closest('.tu-upgrade-overlay')
-    fireEvent.click(overlay)
-    expect(baseProps.onDismiss).toHaveBeenCalled()
-  })
+    render(<PassPurchaseModal {...baseProps} />);
+    const overlay = screen.getByText('Daily Limit Reached').closest('.tu-upgrade-overlay');
+    fireEvent.click(overlay);
+    expect(baseProps.onDismiss).toHaveBeenCalled();
+  });
 
   it('shows quest hint', () => {
-    render(<PassPurchaseModal {...baseProps} />)
-    expect(screen.getByText(/Complete today/)).toBeInTheDocument()
-  })
+    render(<PassPurchaseModal {...baseProps} />);
+    expect(screen.getByText(/Complete today/)).toBeInTheDocument();
+  });
 
   it('shows browse all passes link', () => {
-    render(<PassPurchaseModal {...baseProps} />)
-    expect(screen.getByText('Browse all passes')).toBeInTheDocument()
-  })
+    render(<PassPurchaseModal {...baseProps} />);
+    expect(screen.getByText('Browse all passes')).toBeInTheDocument();
+  });
 
   it('calls handleBuyPass when single pass option is clicked', async () => {
-    render(<PassPurchaseModal {...baseProps} />)
+    render(<PassPurchaseModal {...baseProps} />);
     // Click the Day Single pass option
-    fireEvent.click(screen.getByText('Day Single').closest('div').parentElement)
-    expect(baseProps.subscription.handleBuyPass).toHaveBeenCalledWith('day_single', ['fix_grammar'])
-  })
+    fireEvent.click(screen.getByText('Day Single').closest('div').parentElement);
+    expect(baseProps.subscription.handleBuyPass).toHaveBeenCalledWith('day_single', [
+      'fix_grammar',
+    ]);
+  });
 
   it('calls handleBuyCredits when credit option is clicked', async () => {
-    render(<PassPurchaseModal {...baseProps} />)
-    fireEvent.click(screen.getByText('5 Credits').closest('div').parentElement)
-    expect(baseProps.subscription.handleBuyCredits).toHaveBeenCalledWith('pack_5')
-  })
+    render(<PassPurchaseModal {...baseProps} />);
+    fireEvent.click(screen.getByText('5 Credits').closest('div').parentElement);
+    expect(baseProps.subscription.handleBuyCredits).toHaveBeenCalledWith('pack_5');
+  });
 
   it('calls handleUpgrade when pro upsell is clicked', () => {
-    render(<PassPurchaseModal {...baseProps} />)
-    fireEvent.click(screen.getByText(/unlimited everything/).closest('div').parentElement)
-    expect(baseProps.subscription.handleUpgrade).toHaveBeenCalled()
-  })
+    render(<PassPurchaseModal {...baseProps} />);
+    fireEvent.click(screen.getByText(/unlimited everything/).closest('div').parentElement);
+    expect(baseProps.subscription.handleUpgrade).toHaveBeenCalled();
+  });
 
   it('calls onDismiss when Browse all passes is clicked', () => {
-    render(<PassPurchaseModal {...baseProps} />)
-    fireEvent.click(screen.getByText('Browse all passes'))
-    expect(baseProps.onDismiss).toHaveBeenCalled()
-  })
+    render(<PassPurchaseModal {...baseProps} />);
+    fireEvent.click(screen.getByText('Browse all passes'));
+    expect(baseProps.onDismiss).toHaveBeenCalled();
+  });
 
   it('calls onDismiss when Day Triple option is clicked', () => {
-    render(<PassPurchaseModal {...baseProps} />)
-    fireEvent.click(screen.getByText('Day Triple').closest('div').parentElement)
-    expect(baseProps.onDismiss).toHaveBeenCalled()
-  })
-})
+    render(<PassPurchaseModal {...baseProps} />);
+    fireEvent.click(screen.getByText('Day Triple').closest('div').parentElement);
+    expect(baseProps.onDismiss).toHaveBeenCalled();
+  });
+});

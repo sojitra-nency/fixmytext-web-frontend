@@ -145,7 +145,9 @@
   position: relative;
 }
 
-.tu-pricing-pro-left { flex: 1; }
+.tu-pricing-pro-left {
+  flex: 1;
+}
 
 .tu-pricing-pro-name {
   font-size: 24px;
@@ -156,7 +158,9 @@
   align-items: center;
   gap: 8px;
 }
-.tu-pricing-pro-name svg { stroke: var(--accent); }
+.tu-pricing-pro-name svg {
+  stroke: var(--accent);
+}
 
 .tu-pricing-pro-desc {
   font-size: 14px;
@@ -217,7 +221,10 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 16px #007acc44;
 }
-.tu-pricing-pro-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.tu-pricing-pro-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 .tu-pricing-pro-current {
   padding: 10px 20px;
@@ -270,7 +277,9 @@
   padding-bottom: 4px;
   scrollbar-width: none;
 }
-.tu-pricing-tabs::-webkit-scrollbar { display: none; }
+.tu-pricing-tabs::-webkit-scrollbar {
+  display: none;
+}
 
 .tu-pricing-tab {
   display: flex;
@@ -296,8 +305,14 @@
   border-color: var(--accent);
   color: #fff;
 }
-.tu-pricing-tab-icon { display: flex; align-items: center; color: var(--accent); }
-.tu-pricing-tab--active .tu-pricing-tab-icon { color: #fff; }
+.tu-pricing-tab-icon {
+  display: flex;
+  align-items: center;
+  color: var(--accent);
+}
+.tu-pricing-tab--active .tu-pricing-tab-icon {
+  color: #fff;
+}
 
 .tu-pricing-group-desc {
   font-size: 12px;
@@ -332,7 +347,7 @@
   box-shadow: var(--card-hover-shadow);
 }
 .tu-pricing-card--featured {
-  border-color: var(--accent)88;
+  border-color: var(--accent) 88;
   background: linear-gradient(180deg, #007acc0a, var(--surface));
 }
 
@@ -355,7 +370,11 @@
   align-items: center;
   justify-content: space-between;
 }
-.tu-pricing-card-icon { display: flex; align-items: center; color: var(--accent); }
+.tu-pricing-card-icon {
+  display: flex;
+  align-items: center;
+  color: var(--accent);
+}
 .tu-pricing-card-price {
   font-size: 20px;
   font-weight: 800;
@@ -413,9 +432,13 @@
 
 /* ── Credit Packs ───────────────────────────────────── */
 
-.tu-pricing-section { margin-top: 40px; }
+.tu-pricing-section {
+  margin-top: 40px;
+}
 
-.tu-pricing-section-header { margin-bottom: 16px; }
+.tu-pricing-section-header {
+  margin-bottom: 16px;
+}
 .tu-pricing-section-title {
   font-size: 20px;
   font-weight: 700;
@@ -452,7 +475,12 @@
   box-shadow: var(--card-hover-shadow);
 }
 
-.tu-pricing-credit-icon { display: flex; align-items: center; justify-content: center; color: var(--accent); }
+.tu-pricing-credit-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+}
 .tu-pricing-credit-name {
   font-size: 14px;
   font-weight: 700;
@@ -482,7 +510,13 @@
   border: 1px solid var(--border);
   background: var(--surface);
 }
-.tu-pricing-free-icon { display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 8px; }
+.tu-pricing-free-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
 .tu-pricing-free h3 {
   font-size: 18px;
   color: var(--text);
@@ -494,7 +528,9 @@
   margin: 0;
   line-height: 1.7;
 }
-.tu-pricing-free strong { color: var(--accent); }
+.tu-pricing-free strong {
+  color: var(--accent);
+}
 
 /* ── Loading ────────────────────────────────────────── */
 
@@ -515,7 +551,11 @@
   border-radius: 50%;
   animation: pricing-spin 0.6s linear infinite;
 }
-@keyframes pricing-spin { to { transform: rotate(360deg); } }
+@keyframes pricing-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* ══════════════════════════════════════════════════════
    Pass Detail Drawer (slides in from right)
@@ -583,7 +623,13 @@
 .tu-pass-detail-hero {
   text-align: center;
 }
-.tu-pass-detail-icon { display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 8px; }
+.tu-pass-detail-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
 .tu-pass-detail-name {
   font-size: 22px;
   font-weight: 800;
@@ -745,13 +791,28 @@
 /* ── Responsive ─────────────────────────────────────── */
 
 @media (max-width: 640px) {
-  .tu-pricing-pro-content { flex-direction: column; text-align: center; }
-  .tu-pricing-pro-left { text-align: center; }
-  .tu-pricing-pro-features { text-align: left; }
-  .tu-pricing-grid { grid-template-columns: 1fr 1fr; }
-  .tu-pricing-credit-grid { grid-template-columns: 1fr 1fr; }
-  .tu-pricing-hero { padding: 32px 0 20px; }
-  .tu-pricing-title { font-size: 24px; }
+  .tu-pricing-pro-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  .tu-pricing-pro-left {
+    text-align: center;
+  }
+  .tu-pricing-pro-features {
+    text-align: left;
+  }
+  .tu-pricing-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .tu-pricing-credit-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .tu-pricing-hero {
+    padding: 32px 0 20px;
+  }
+  .tu-pricing-title {
+    font-size: 24px;
+  }
   .tu-pass-detail {
     grid-template-columns: 1fr;
     width: 96vw;
@@ -766,11 +827,21 @@
     flex-wrap: wrap;
     justify-content: center;
   }
-  .tu-pass-detail-stats { flex-direction: row; flex-wrap: wrap; }
-  .tu-pass-detail-stat { flex: 1; min-width: 100px; }
+  .tu-pass-detail-stats {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .tu-pass-detail-stat {
+    flex: 1;
+    min-width: 100px;
+  }
 }
 
 @media (max-width: 400px) {
-  .tu-pricing-grid { grid-template-columns: 1fr; }
-  .tu-pricing-credit-grid { grid-template-columns: 1fr; }
+  .tu-pricing-grid {
+    grid-template-columns: 1fr;
+  }
+  .tu-pricing-credit-grid {
+    grid-template-columns: 1fr;
+  }
 }

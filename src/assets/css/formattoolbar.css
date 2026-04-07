@@ -12,15 +12,19 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.24),
-    0 0 0 1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.24), 0 0 0 1px rgba(0, 0, 0, 0.06);
   animation: tu-fmt-in 0.12s ease-out;
 }
 
 @keyframes tu-fmt-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .tu-fmt-toolbar-group {
@@ -97,8 +101,8 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 3px 8px;
-  background: #1E1E1E;
-  color: #CCC;
+  background: #1e1e1e;
+  color: #ccc;
   font-size: 0.62rem;
   font-weight: 500;
   font-family: var(--font-display);

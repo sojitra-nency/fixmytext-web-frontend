@@ -22,7 +22,7 @@
   border-radius: var(--r-lg);
   padding: 28px 24px 20px;
   text-align: center;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
 }
 
 .tu-upgrade-close {
@@ -50,7 +50,7 @@
   width: 56px;
   height: 56px;
   border-radius: 14px;
-  background: linear-gradient(135deg, rgba(0,122,204,0.15), rgba(197,134,192,0.12));
+  background: linear-gradient(135deg, rgba(0, 122, 204, 0.15), rgba(197, 134, 192, 0.12));
   color: var(--accent);
   margin-bottom: 14px;
   position: relative;
@@ -60,7 +60,7 @@
   position: absolute;
   inset: -1px;
   border-radius: 15px;
-  background: linear-gradient(135deg, rgba(0,122,204,0.3), rgba(197,134,192,0.2));
+  background: linear-gradient(135deg, rgba(0, 122, 204, 0.3), rgba(197, 134, 192, 0.2));
   z-index: -1;
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
@@ -146,8 +146,8 @@
   transition: border-color var(--t);
 }
 .tu-sub-plan-card--pro {
-  border-color: rgba(0,122,204,0.3);
-  background: linear-gradient(135deg, var(--surface), rgba(0,122,204,0.04));
+  border-color: rgba(0, 122, 204, 0.3);
+  background: linear-gradient(135deg, var(--surface), rgba(0, 122, 204, 0.04));
 }
 
 .tu-sub-plan-header {
@@ -177,7 +177,7 @@
   color: var(--text-3);
 }
 .tu-sub-plan-badge--pro {
-  background: linear-gradient(135deg, rgba(0,122,204,0.18), rgba(197,134,192,0.14));
+  background: linear-gradient(135deg, rgba(0, 122, 204, 0.18), rgba(197, 134, 192, 0.14));
   color: var(--accent);
 }
 
@@ -225,7 +225,7 @@
 }
 .tu-sub-btn--primary:hover {
   background: var(--accent-hover);
-  box-shadow: 0 2px 8px rgba(0,122,204,0.25);
+  box-shadow: 0 2px 8px rgba(0, 122, 204, 0.25);
 }
 .tu-sub-btn--primary:active {
   transform: scale(0.97);
@@ -327,13 +327,13 @@
   border-bottom: none;
 }
 .tu-sub-compare-row:hover {
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.02);
 }
 .tu-sub-compare-row--highlight {
-  background: rgba(0,122,204,0.04);
+  background: rgba(0, 122, 204, 0.04);
 }
 .tu-sub-compare-row--highlight:hover {
-  background: rgba(0,122,204,0.06);
+  background: rgba(0, 122, 204, 0.06);
 }
 
 .tu-sub-compare-feature {
@@ -387,7 +387,7 @@
 .tu-sub-pro-card {
   position: relative;
   background: var(--surface);
-  border: 1px solid rgba(0,122,204,0.3);
+  border: 1px solid rgba(0, 122, 204, 0.3);
   border-radius: var(--r-lg);
   padding: 24px;
   margin-bottom: 16px;
@@ -399,7 +399,7 @@
   right: -40px;
   width: 180px;
   height: 180px;
-  background: radial-gradient(circle, rgba(0,122,204,0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 122, 204, 0.08) 0%, transparent 70%);
   pointer-events: none;
 }
 .tu-sub-pro-content {
@@ -537,7 +537,7 @@
 }
 .tu-sub-pass-card:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px rgba(0,122,204,0.08);
+  box-shadow: 0 0 0 1px rgba(0, 122, 204, 0.08);
 }
 .tu-sub-pass-top {
   display: flex;
@@ -622,7 +622,7 @@
 }
 .tu-sub-credit-card:hover {
   border-color: var(--cyan);
-  box-shadow: 0 0 0 1px rgba(78,201,176,0.08);
+  box-shadow: 0 0 0 1px rgba(78, 201, 176, 0.08);
 }
 .tu-sub-credit-amount {
   font-size: 22px;

@@ -1,10 +1,20 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { baseQueryWithReauth } from './baseQuery'
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithReauth } from './baseQuery';
 
 export const userDataApi = createApi({
   reducerPath: 'userDataApi',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['Preferences', 'Gamification', 'Templates', 'UiSettings', 'Favorites', 'ToolStats', 'Pipelines', 'DiscoveredTools', 'SpinHistory'],
+  tagTypes: [
+    'Preferences',
+    'Gamification',
+    'Templates',
+    'UiSettings',
+    'Favorites',
+    'ToolStats',
+    'Pipelines',
+    'DiscoveredTools',
+    'SpinHistory',
+  ],
   endpoints: (builder) => ({
     // Preferences
     getPreferences: builder.query({
@@ -104,7 +114,7 @@ export const userDataApi = createApi({
       invalidatesTags: ['Pipelines'],
     }),
   }),
-})
+});
 
 export const {
   useGetPreferencesQuery,
@@ -124,4 +134,4 @@ export const {
   useGetDiscoveredToolsQuery,
   useGetSpinHistoryQuery,
   useGetPipelinesQuery,
-} = userDataApi
+} = userDataApi;

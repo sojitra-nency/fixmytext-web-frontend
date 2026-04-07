@@ -1,32 +1,41 @@
-import { useState, useRef, useCallback, useMemo, memo } from 'react'
-import { createPortal } from 'react-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { USE_CASE_TABS, TOOL_GROUPS } from '../../constants/tools'
-import ToolIcon from './ToolIcon'
+import { useState, useRef, useCallback, useMemo, memo } from 'react';
+import { createPortal } from 'react-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { USE_CASE_TABS, TOOL_GROUPS } from '../../constants/tools';
+import ToolIcon from './ToolIcon';
 
-
-function ToolPanelItem({ tool, disabled, onClick, isFavorite, onToggleFavorite, isActive, isSuggested, onHover, onLeave }) {
-  const [hovered, setHovered] = useState(false)
-  const isDisabled = disabled && tool.type !== 'drawer' && tool.type !== 'action'
-  const itemRef = useRef(null)
+function ToolPanelItem({
+  tool,
+  disabled,
+  onClick,
+  isFavorite,
+  onToggleFavorite,
+  isActive,
+  isSuggested,
+  onHover,
+  onLeave,
+}) {
+  const [hovered, setHovered] = useState(false);
+  const isDisabled = disabled && tool.type !== 'drawer' && tool.type !== 'action';
+  const itemRef = useRef(null);
 
   const handleClick = () => {
-    if (isDisabled) return
-    onClick()
-  }
+    if (isDisabled) return;
+    onClick();
+  };
 
   const handleMouseEnter = () => {
-    setHovered(true)
+    setHovered(true);
     if (tool.description && itemRef.current) {
-      const rect = itemRef.current.getBoundingClientRect()
-      onHover(tool.description, rect)
+      const rect = itemRef.current.getBoundingClientRect();
+      onHover(tool.description, rect);
     }
-  }
+  };
 
   const handleMouseLeave = () => {
-    setHovered(false)
-    onLeave()
-  }
+    setHovered(false);
+    onLeave();
+  };
 
   return (
     <div
@@ -36,7 +45,9 @@ function ToolPanelItem({ tool, disabled, onClick, isFavorite, onToggleFavorite, 
       onMouseLeave={handleMouseLeave}
     >
       <div
-        className={`tu-titem${isActive ? ' tu-titem--active' : ''}${isDisabled ? ' tu-titem--disabled' : ''}`}
+        className={`tu-titem${isActive ? ' tu-titem--active' : ''}${
+          isDisabled ? ' tu-titem--disabled' : ''
+        }`}
         onClick={handleClick}
       >
         <ToolIcon icon={tool.icon} color={tool.color} toolId={tool.id} />
@@ -44,54 +55,95 @@ function ToolPanelItem({ tool, disabled, onClick, isFavorite, onToggleFavorite, 
         {isSuggested && <span className="tu-titem-suggested">suggested</span>}
         <button
           className={`tu-titem-fav${isFavorite ? ' tu-titem-fav--active' : ''}`}
-          onClick={e => { e.stopPropagation(); onToggleFavorite?.(tool.id) }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleFavorite?.(tool.id);
+          }}
         >
           {isFavorite ? '♥' : '♡'}
         </button>
       </div>
     </div>
-  )
+  );
 }
 
 /* ── Collapsible group header (VSCode Source Control style) ── */
 function GroupHeader({ label, count, collapsed, onToggle, pinned }) {
   return (
-    <button className={`tu-group-header${collapsed ? ' tu-group-header--collapsed' : ''}${pinned ? ' tu-group-header--pinned' : ''}`} onClick={onToggle}>
-      <svg className="tu-group-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="6 9 12 15 18 9"/>
+    <button
+      className={`tu-group-header${collapsed ? ' tu-group-header--collapsed' : ''}${
+        pinned ? ' tu-group-header--pinned' : ''
+      }`}
+      onClick={onToggle}
+    >
+      <svg
+        className="tu-group-chevron"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <polyline points="6 9 12 15 18 9" />
       </svg>
       {pinned && (
-        <svg className="tu-group-pin" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16h14v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1h1V4H7v2h1a1 1 0 0 1 1 1z"/>
+        <svg
+          className="tu-group-pin"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M12 17v5" />
+          <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16h14v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1h1V4H7v2h1a1 1 0 0 1 1 1z" />
         </svg>
       )}
       <span className="tu-group-label">{label}</span>
       <span className="tu-group-count">{count}</span>
     </button>
-  )
+  );
 }
 
 /* ── Grid view tool card ───────────────────────────── */
-function ToolGridCard({ tool, disabled, onClick, isFavorite, onToggleFavorite, isActive, isSuggested, onHover, onLeave }) {
-  const isDisabled = disabled && tool.type !== 'drawer' && tool.type !== 'action'
-  const cardRef = useRef(null)
+function ToolGridCard({
+  tool,
+  disabled,
+  onClick,
+  isFavorite,
+  onToggleFavorite,
+  isActive,
+  isSuggested,
+  onHover,
+  onLeave,
+}) {
+  const isDisabled = disabled && tool.type !== 'drawer' && tool.type !== 'action';
+  const cardRef = useRef(null);
 
   const handleClick = () => {
-    if (isDisabled) return
-    onClick()
-  }
+    if (isDisabled) return;
+    onClick();
+  };
 
   const handleMouseEnter = () => {
     if (tool.description && cardRef.current) {
-      const rect = cardRef.current.getBoundingClientRect()
-      onHover(tool.description, rect)
+      const rect = cardRef.current.getBoundingClientRect();
+      onHover(tool.description, rect);
     }
-  }
+  };
 
   return (
     <div
       ref={cardRef}
-      className={`tu-tgrid-card${isActive ? ' tu-tgrid-card--active' : ''}${isDisabled ? ' tu-tgrid-card--disabled' : ''}`}
+      className={`tu-tgrid-card${isActive ? ' tu-tgrid-card--active' : ''}${
+        isDisabled ? ' tu-tgrid-card--disabled' : ''
+      }`}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={onLeave}
@@ -103,113 +155,127 @@ function ToolGridCard({ tool, disabled, onClick, isFavorite, onToggleFavorite, i
       {isSuggested && <span className="tu-tgrid-card-badge">suggested</span>}
       <button
         className={`tu-titem-fav tu-tgrid-card-fav${isFavorite ? ' tu-titem-fav--active' : ''}`}
-        onClick={e => { e.stopPropagation(); onToggleFavorite?.(tool.id) }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggleFavorite?.(tool.id);
+        }}
       >
         {isFavorite ? '♥' : '♡'}
       </button>
     </div>
-  )
+  );
 }
 
 export default memo(function ToolPanel({
-  tools, activeTab, onTabChange, onToolClick,
-  disabled, gamification, activeToolId,
-  hideTabs, viewMode = 'list', suggestedToolIds = [],
+  tools,
+  activeTab,
+  onTabChange,
+  onToolClick,
+  disabled,
+  gamification,
+  activeToolId,
+  hideTabs,
+  viewMode = 'list',
+  suggestedToolIds = [],
 }) {
-  const [tooltip, setTooltip] = useState(null)
-  const [collapsedGroups, setCollapsedGroups] = useState({})
+  const [tooltip, setTooltip] = useState(null);
+  const [collapsedGroups, setCollapsedGroups] = useState({});
 
   const toggleGroup = useCallback((groupId) => {
-    setCollapsedGroups(prev => ({ ...prev, [groupId]: !prev[groupId] }))
-  }, [])
+    setCollapsedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }));
+  }, []);
 
   const handleHover = useCallback((text, rect) => {
-    const tooltipWidth = 280
-    const tooltipHeight = 40
-    const gap = 8
+    const tooltipWidth = 280;
+    const tooltipHeight = 40;
+    const gap = 8;
 
-    let left = rect.right + gap
+    let left = rect.right + gap;
     if (left + tooltipWidth > window.innerWidth) {
-      left = rect.left - tooltipWidth - gap
+      left = rect.left - tooltipWidth - gap;
     }
 
-    let top = rect.top + rect.height / 2
-    top = Math.max(tooltipHeight / 2 + 4, top)
-    top = Math.min(window.innerHeight - tooltipHeight / 2 - 4, top)
+    let top = rect.top + rect.height / 2;
+    top = Math.max(tooltipHeight / 2 + 4, top);
+    top = Math.min(window.innerHeight - tooltipHeight / 2 - 4, top);
 
-    setTooltip({ text, top, left })
-  }, [])
+    setTooltip({ text, top, left });
+  }, []);
 
-  const handleLeave = useCallback(() => setTooltip(null), [])
+  const handleLeave = useCallback(() => setTooltip(null), []);
 
   // Count tools per tab
   const tabCounts = useMemo(() => {
-    const counts = { all: tools.length }
+    const counts = { all: tools.length };
     for (const tab of USE_CASE_TABS) {
       if (!counts[tab.id]) {
-        counts[tab.id] = tools.filter(t => t.tabs?.includes(tab.id)).length
+        counts[tab.id] = tools.filter((t) => t.tabs?.includes(tab.id)).length;
       }
     }
-    return counts
-  }, [tools])
+    return counts;
+  }, [tools]);
 
   // Filter tools by active tab
   const filteredTools = useMemo(() => {
-    if (activeTab === 'all') return [...tools].sort((a, b) => a.label.localeCompare(b.label))
-    return tools.filter(t => t.tabs?.includes(activeTab))
-  }, [tools, activeTab])
+    if (activeTab === 'all') return [...tools].sort((a, b) => a.label.localeCompare(b.label));
+    return tools.filter((t) => t.tabs?.includes(activeTab));
+  }, [tools, activeTab]);
 
   // Group tools — each group contains tools sorted alphabetically
   // Favorites are pinned at the top as their own group
-  const favorites = gamification?.favorites || []
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const favorites = gamification?.favorites || [];
   const groupedTools = useMemo(() => {
-    const groups = []
-    const groupMap = {}
+    const groups = [];
+    const groupMap = {};
 
     // Collect pinned favorites from the filtered set
-    const pinnedTools = favorites.length > 0
-      ? filteredTools.filter(t => favorites.includes(t.id)).sort((a, b) => a.label.localeCompare(b.label))
-      : []
+    const pinnedTools =
+      favorites.length > 0
+        ? filteredTools
+            .filter((t) => favorites.includes(t.id))
+            .sort((a, b) => a.label.localeCompare(b.label))
+        : [];
 
     if (pinnedTools.length > 0) {
-      groups.push({ id: '_pinned', label: 'Pinned', tools: pinnedTools })
+      groups.push({ id: '_pinned', label: 'Pinned', tools: pinnedTools });
     }
 
     for (const tool of filteredTools) {
-      const gid = tool.group || 'other'
+      const gid = tool.group || 'other';
       if (!groupMap[gid]) {
-        groupMap[gid] = []
+        groupMap[gid] = [];
       }
-      groupMap[gid].push(tool)
+      groupMap[gid].push(tool);
     }
 
     // Sort each group's tools alphabetically
     for (const gid of Object.keys(groupMap)) {
-      groupMap[gid].sort((a, b) => a.label.localeCompare(b.label))
+      groupMap[gid].sort((a, b) => a.label.localeCompare(b.label));
     }
 
     // Maintain TOOL_GROUPS order, then add any ungrouped
     for (const g of TOOL_GROUPS) {
       if (groupMap[g.id]?.length > 0) {
-        groups.push({ id: g.id, label: g.label, tools: groupMap[g.id] })
-        delete groupMap[g.id]
+        groups.push({ id: g.id, label: g.label, tools: groupMap[g.id] });
+        delete groupMap[g.id];
       }
     }
     // Any remaining groups not in TOOL_GROUPS
     for (const [gid, gTools] of Object.entries(groupMap)) {
       if (gTools.length > 0) {
-        groups.push({ id: gid, label: gid.charAt(0).toUpperCase() + gid.slice(1), tools: gTools })
+        groups.push({ id: gid, label: gid.charAt(0).toUpperCase() + gid.slice(1), tools: gTools });
       }
     }
 
-    return groups
-  }, [filteredTools, favorites])
+    return groups;
+  }, [filteredTools, favorites]);
 
   return (
     <div className="tu-tpanel">
       {!hideTabs && (
         <div className="tu-tpanel-tabs">
-          {USE_CASE_TABS.map(tab => (
+          {USE_CASE_TABS.map((tab) => (
             <button
               key={tab.id}
               className={`tu-tpanel-tab${activeTab === tab.id ? ' tu-tpanel-tab--active' : ''}`}
@@ -233,7 +299,7 @@ export default memo(function ToolPanel({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.12 }}
           >
-            {groupedTools.map(group => (
+            {groupedTools.map((group) => (
               <div key={group.id} className="tu-group">
                 <GroupHeader
                   label={group.label}
@@ -242,10 +308,10 @@ export default memo(function ToolPanel({
                   onToggle={() => toggleGroup(group.id)}
                   pinned={group.id === '_pinned'}
                 />
-                {!collapsedGroups[group.id] && (
-                  viewMode === 'grid' ? (
+                {!collapsedGroups[group.id] &&
+                  (viewMode === 'grid' ? (
                     <div className="tu-group-grid">
-                      {group.tools.map(tool => (
+                      {group.tools.map((tool) => (
                         <ToolGridCard
                           key={tool.id}
                           tool={tool}
@@ -262,7 +328,7 @@ export default memo(function ToolPanel({
                     </div>
                   ) : (
                     <div className="tu-group-items">
-                      {group.tools.map(tool => (
+                      {group.tools.map((tool) => (
                         <ToolPanelItem
                           key={tool.id}
                           tool={tool}
@@ -277,8 +343,7 @@ export default memo(function ToolPanel({
                         />
                       ))}
                     </div>
-                  )
-                )}
+                  ))}
               </div>
             ))}
           </motion.div>
@@ -286,15 +351,16 @@ export default memo(function ToolPanel({
       </div>
 
       {/* Portal tooltip */}
-      {tooltip && createPortal(
-        <div
-          className="tu-titem-tooltip"
-          style={{ top: tooltip.top, left: tooltip.left, transform: 'translateY(-50%)' }}
-        >
-          {tooltip.text}
-        </div>,
-        document.body
-      )}
+      {tooltip &&
+        createPortal(
+          <div
+            className="tu-titem-tooltip"
+            style={{ top: tooltip.top, left: tooltip.left, transform: 'translateY(-50%)' }}
+          >
+            {tooltip.text}
+          </div>,
+          document.body
+        )}
     </div>
-  )
-})
+  );
+});

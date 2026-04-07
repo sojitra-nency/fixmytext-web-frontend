@@ -1,53 +1,65 @@
-import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // ── framer-motion mock ──
 vi.mock('framer-motion', () => {
-  const m = (tag) => ({ children, ...props }) => {
-    const p = { ...props }
-    ;['initial', 'animate', 'exit', 'transition', 'whileTap', 'whileHover', 'whileInView', 'viewport', 'variants'].forEach(k => delete p[k])
-    return React.createElement(tag || 'div', p, children)
-  }
+  const m =
+    (tag) =>
+    ({ children, ...props }) => {
+      const p = { ...props };
+      [
+        'initial',
+        'animate',
+        'exit',
+        'transition',
+        'whileTap',
+        'whileHover',
+        'whileInView',
+        'viewport',
+        'variants',
+      ].forEach((k) => delete p[k]);
+      return React.createElement(tag || 'div', p, children);
+    };
   return {
     motion: new Proxy({}, { get: (_, t) => m(t) }),
     AnimatePresence: ({ children }) => children,
     useReducedMotion: () => false,
-  }
-})
+  };
+});
 
 // ── react-router-dom mock ──
-const mockNavigate = vi.fn()
+const mockNavigate = vi.fn();
 vi.mock('react-router-dom', () => ({
   useNavigate: () => mockNavigate,
   useLocation: () => ({ pathname: '/pricing', search: '' }),
   useSearchParams: () => [new URLSearchParams(), vi.fn()],
   Link: ({ children, to, ...p }) => React.createElement('a', { href: to, ...p }, children),
-}))
+}));
 
 // ── react-redux mock ──
-const mockUseSelector = vi.fn()
+const mockUseSelector = vi.fn();
 vi.mock('react-redux', () => ({
   useSelector: (fn) => mockUseSelector(fn),
   useDispatch: () => vi.fn(),
   Provider: ({ children }) => children,
-}))
+}));
 
 // ── hooks mock ──
 vi.mock('../hooks/useSubscription', () => ({
   default: () => defaultSubscription,
-}))
+}));
 
 // ── API mock ──
-const mockCatalogQuery = vi.fn()
+const mockCatalogQuery = vi.fn();
 vi.mock('../store/api/passesApi', () => ({
   useGetPassCatalogQuery: () => mockCatalogQuery(),
-}))
+}));
 
 // ── formatPrice mock ──
 vi.mock('../utils/formatPrice', () => ({
   default: (price) => `$${price}`,
-}))
+}));
 
 const samplePass = {
   id: 'day_single',
@@ -59,7 +71,7 @@ const samplePass = {
   duration_days: 1,
   symbol: '$',
   currency: 'usd',
-}
+};
 
 const samplePassMultiDay = {
   id: 'sprint_all',
@@ -71,7 +83,7 @@ const samplePassMultiDay = {
   duration_days: 3,
   symbol: '$',
   currency: 'usd',
-}
+};
 
 const sampleCredit = {
   id: 'credits_5',
@@ -80,7 +92,7 @@ const sampleCredit = {
   price: 50,
   symbol: '$',
   currency: 'usd',
-}
+};
 
 const defaultSubscription = {
   isPro: false,
@@ -91,219 +103,215 @@ const defaultSubscription = {
   handleBuyPass: vi.fn().mockResolvedValue({}),
   handleBuyCredits: vi.fn().mockResolvedValue({}),
   handleCancelSubscription: vi.fn(),
-}
+};
 
 function renderPricing(props = {}, catalogOverride) {
-  mockUseSelector.mockReturnValue({ accessToken: 'token123' })
+  mockUseSelector.mockReturnValue({ accessToken: 'token123' });
   mockCatalogQuery.mockReturnValue(
     catalogOverride ?? {
       data: { passes: [samplePass, samplePassMultiDay], credit_packs: [sampleCredit] },
       isLoading: false,
       error: null,
     }
-  )
-  return render(
-    <PricingPage
-      showAlert={vi.fn()}
-      subscription={defaultSubscription}
-      {...props}
-    />
-  )
+  );
+  return render(<PricingPage showAlert={vi.fn()} subscription={defaultSubscription} {...props} />);
 }
 
-import PricingPage from './PricingPage'
+import PricingPage from './PricingPage';
 
 describe('PricingPage', () => {
   beforeEach(() => {
-    mockNavigate.mockReset()
-    defaultSubscription.handleUpgrade.mockReset()
-    defaultSubscription.handleBuyPass.mockResolvedValue({})
-    defaultSubscription.handleBuyCredits.mockResolvedValue({})
-  })
+    mockNavigate.mockReset();
+    defaultSubscription.handleUpgrade.mockReset();
+    defaultSubscription.handleBuyPass.mockResolvedValue({});
+    defaultSubscription.handleBuyCredits.mockResolvedValue({});
+  });
 
   // ── Basic render ──
   it('renders without crashing', () => {
-    renderPricing()
-  })
+    renderPricing();
+  });
 
   it('renders the page title', () => {
-    renderPricing()
-    expect(screen.getByText('Simple, Flexible Pricing')).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText('Simple, Flexible Pricing')).toBeInTheDocument();
+  });
 
   it('renders the subtitle about free uses', () => {
-    renderPricing()
-    expect(screen.getByText(/3 free uses\/day/i)).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText(/3 free uses\/day/i)).toBeInTheDocument();
+  });
 
   it('renders the 70+ Tools badge', () => {
-    renderPricing()
-    expect(screen.getByText('70+ Tools')).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText('70+ Tools')).toBeInTheDocument();
+  });
 
   it('renders the Cancel Anytime badge', () => {
-    renderPricing()
-    expect(screen.getByText('Cancel Anytime')).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText('Cancel Anytime')).toBeInTheDocument();
+  });
 
   it('renders the Earn Free Passes badge', () => {
-    renderPricing()
-    expect(screen.getByText('Earn Free Passes')).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText('Earn Free Passes')).toBeInTheDocument();
+  });
 
   // ── Pro card ──
   it('renders the Pro section', () => {
-    renderPricing()
-    expect(screen.getByText('Pro')).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText('Pro')).toBeInTheDocument();
+  });
 
   it('renders Upgrade to Pro button for free users', () => {
-    renderPricing()
-    expect(screen.getByText('Upgrade to Pro')).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText('Upgrade to Pro')).toBeInTheDocument();
+  });
 
   it('shows Your Current Plan when isPro', () => {
-    renderPricing({ subscription: { ...defaultSubscription, isPro: true } })
-    expect(screen.getByText('Your Current Plan')).toBeInTheDocument()
-  })
+    renderPricing({ subscription: { ...defaultSubscription, isPro: true } });
+    expect(screen.getByText('Your Current Plan')).toBeInTheDocument();
+  });
 
   it('calls handleUpgrade when Upgrade to Pro is clicked', () => {
-    renderPricing()
-    fireEvent.click(screen.getByText('Upgrade to Pro'))
-    expect(defaultSubscription.handleUpgrade).toHaveBeenCalled()
-  })
+    renderPricing();
+    fireEvent.click(screen.getByText('Upgrade to Pro'));
+    expect(defaultSubscription.handleUpgrade).toHaveBeenCalled();
+  });
 
   it('navigates to login if not authenticated when upgrading', () => {
-    mockUseSelector.mockReturnValue({ accessToken: null })
+    mockUseSelector.mockReturnValue({ accessToken: null });
     mockCatalogQuery.mockReturnValue({
       data: { passes: [samplePass], credit_packs: [] },
       isLoading: false,
       error: null,
-    })
-    render(<PricingPage showAlert={vi.fn()} subscription={defaultSubscription} />)
-    fireEvent.click(screen.getByText('Upgrade to Pro'))
-    expect(mockNavigate).toHaveBeenCalledWith('/login')
-  })
+    });
+    render(<PricingPage showAlert={vi.fn()} subscription={defaultSubscription} />);
+    fireEvent.click(screen.getByText('Upgrade to Pro'));
+    expect(mockNavigate).toHaveBeenCalledWith('/login');
+  });
 
   // ── Pass group tabs ──
   it('renders all pass group tabs', () => {
-    renderPricing()
-    expect(screen.getByText('Micro')).toBeInTheDocument()
-    expect(screen.getByText('Day')).toBeInTheDocument()
-    expect(screen.getByText('Multi-Day')).toBeInTheDocument()
-    expect(screen.getByText('Monthly')).toBeInTheDocument()
-    expect(screen.getByText('Long-Term')).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText('Micro')).toBeInTheDocument();
+    expect(screen.getByText('Day')).toBeInTheDocument();
+    expect(screen.getByText('Multi-Day')).toBeInTheDocument();
+    expect(screen.getByText('Monthly')).toBeInTheDocument();
+    expect(screen.getByText('Long-Term')).toBeInTheDocument();
+  });
 
   it('switches pass group by clicking tabs', () => {
-    renderPricing()
-    fireEvent.click(screen.getByText('Multi-Day'))
+    renderPricing();
+    fireEvent.click(screen.getByText('Multi-Day'));
     // multiday tab active — day pass group desc changes
-    expect(screen.getByText('Short-term commitment')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Short-term commitment')).toBeInTheDocument();
+  });
 
   // ── Pass cards ──
   it('renders pass cards from catalog', () => {
-    renderPricing()
-    expect(screen.getByText('1-Day Single')).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText('1-Day Single')).toBeInTheDocument();
+  });
 
   it('renders Buy Now button on pass cards', () => {
-    renderPricing()
-    const buyBtns = screen.getAllByText('Buy Now')
-    expect(buyBtns.length).toBeGreaterThan(0)
-  })
+    renderPricing();
+    const buyBtns = screen.getAllByText('Buy Now');
+    expect(buyBtns.length).toBeGreaterThan(0);
+  });
 
   it('calls handleBuyPass when Buy Now is clicked', async () => {
-    renderPricing()
-    const buyBtns = screen.getAllByText('Buy Now')
-    fireEvent.click(buyBtns[0])
+    renderPricing();
+    const buyBtns = screen.getAllByText('Buy Now');
+    fireEvent.click(buyBtns[0]);
     await waitFor(() => {
-      expect(defaultSubscription.handleBuyPass).toHaveBeenCalled()
-    })
-  })
+      expect(defaultSubscription.handleBuyPass).toHaveBeenCalled();
+    });
+  });
 
   it('navigates to login if not authenticated when buying pass', async () => {
-    mockUseSelector.mockReturnValue({ accessToken: null })
+    mockUseSelector.mockReturnValue({ accessToken: null });
     mockCatalogQuery.mockReturnValue({
       data: { passes: [samplePass], credit_packs: [] },
       isLoading: false,
       error: null,
-    })
-    const mockShowAlert = vi.fn()
-    render(<PricingPage showAlert={mockShowAlert} subscription={defaultSubscription} />)
-    fireEvent.click(screen.getByText('Buy Now'))
-    expect(mockShowAlert).toHaveBeenCalledWith('Sign in to purchase a pass', 'warning')
-    expect(mockNavigate).toHaveBeenCalledWith('/login')
-  })
+    });
+    const mockShowAlert = vi.fn();
+    render(<PricingPage showAlert={mockShowAlert} subscription={defaultSubscription} />);
+    fireEvent.click(screen.getByText('Buy Now'));
+    expect(mockShowAlert).toHaveBeenCalledWith('Sign in to purchase a pass', 'warning');
+    expect(mockNavigate).toHaveBeenCalledWith('/login');
+  });
 
   // ── Credit packs ──
   it('renders Credit Packs section', () => {
-    renderPricing()
-    expect(screen.getByText('Credit Packs')).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText('Credit Packs')).toBeInTheDocument();
+  });
 
   it('renders credit pack Buy button', () => {
-    renderPricing()
-    expect(screen.getByText('Buy')).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText('Buy')).toBeInTheDocument();
+  });
 
   it('calls handleBuyCredits when credit Buy is clicked', async () => {
-    renderPricing()
-    fireEvent.click(screen.getByText('Buy'))
+    renderPricing();
+    fireEvent.click(screen.getByText('Buy'));
     await waitFor(() => {
-      expect(defaultSubscription.handleBuyCredits).toHaveBeenCalled()
-    })
-  })
+      expect(defaultSubscription.handleBuyCredits).toHaveBeenCalled();
+    });
+  });
 
   // ── Loading / Error states ──
   it('shows loading spinner while catalog loads', () => {
-    renderPricing({}, { data: null, isLoading: true, error: null })
-    expect(screen.getByText(/Loading passes/i)).toBeInTheDocument()
-  })
+    renderPricing({}, { data: null, isLoading: true, error: null });
+    expect(screen.getByText(/Loading passes/i)).toBeInTheDocument();
+  });
 
   it('shows error message when catalog fails', () => {
-    renderPricing({}, { data: null, isLoading: false, error: { status: 500 } })
-    expect(screen.getByText(/Failed to load passes/i)).toBeInTheDocument()
-  })
+    renderPricing({}, { data: null, isLoading: false, error: { status: 500 } });
+    expect(screen.getByText(/Failed to load passes/i)).toBeInTheDocument();
+  });
 
   // ── Free section ──
   it('renders Free Forever section', () => {
-    renderPricing()
-    expect(screen.getByText('Free Forever')).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText('Free Forever')).toBeInTheDocument();
+  });
 
   it('renders back button', () => {
-    renderPricing()
-    expect(screen.getByText('Back to Editor')).toBeInTheDocument()
-  })
+    renderPricing();
+    expect(screen.getByText('Back to Editor')).toBeInTheDocument();
+  });
 
   it('navigates to home when back button clicked', () => {
-    renderPricing()
-    fireEvent.click(screen.getByText('Back to Editor'))
-    expect(mockNavigate).toHaveBeenCalledWith('/')
-  })
+    renderPricing();
+    fireEvent.click(screen.getByText('Back to Editor'));
+    expect(mockNavigate).toHaveBeenCalledWith('/');
+  });
 
   // ── Pass detail drawer ──
   it('opens pass detail drawer when pass card clicked', () => {
-    renderPricing()
-    const passCard = screen.getByLabelText(/View 1-Day Single details/i)
-    fireEvent.click(passCard)
+    renderPricing();
+    const passCard = screen.getByLabelText(/View 1-Day Single details/i);
+    fireEvent.click(passCard);
     // subtitle appears in both grid card and drawer — check drawer content
-    expect(screen.getAllByText('One tool for a day').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText('One tool for a day').length).toBeGreaterThanOrEqual(1);
     // Drawer-specific content: "What's included" heading
-    expect(screen.getByText("What's included")).toBeInTheDocument()
-  })
+    expect(screen.getByText("What's included")).toBeInTheDocument();
+  });
 
   it('closes pass detail drawer when overlay clicked', () => {
-    renderPricing()
-    fireEvent.click(screen.getByLabelText(/View 1-Day Single details/i))
+    renderPricing();
+    fireEvent.click(screen.getByLabelText(/View 1-Day Single details/i));
     // Close by clicking the close button
-    const closeBtns = screen.getAllByRole('button').filter(b => b.className.includes('tu-pass-detail-close'))
+    const closeBtns = screen
+      .getAllByRole('button')
+      .filter((b) => b.className.includes('tu-pass-detail-close'));
     if (closeBtns.length > 0) {
-      fireEvent.click(closeBtns[0])
+      fireEvent.click(closeBtns[0]);
     }
-  })
+  });
 
   it('shows per-day price for multi-day passes', () => {
     // Sprint all pass has 3 days, should show per/day
@@ -311,144 +319,146 @@ describe('PricingPage', () => {
       data: { passes: [samplePassMultiDay], credit_packs: [] },
       isLoading: false,
       error: null,
-    })
+    });
     // switch to multiday tab
-    render(<PricingPage showAlert={vi.fn()} subscription={defaultSubscription} />)
-    fireEvent.click(screen.getByText('Multi-Day'))
+    render(<PricingPage showAlert={vi.fn()} subscription={defaultSubscription} />);
+    fireEvent.click(screen.getByText('Multi-Day'));
     // perDay price should appear (price/days = 300/3 = 100)
-    expect(screen.getAllByText(/\$100/).length).toBeGreaterThan(0)
-  })
+    expect(screen.getAllByText(/\$100/).length).toBeGreaterThan(0);
+  });
 
   // ── Pass group tab switching ──
   it('switches to Micro tab', () => {
-    renderPricing()
-    fireEvent.click(screen.getByText('Micro'))
-    expect(screen.getByText('Just a taste — pocket change')).toBeInTheDocument()
-  })
+    renderPricing();
+    fireEvent.click(screen.getByText('Micro'));
+    expect(screen.getByText('Just a taste — pocket change')).toBeInTheDocument();
+  });
 
   it('switches to Day tab', () => {
-    renderPricing()
-    fireEvent.click(screen.getByText('Multi-Day'))
-    fireEvent.click(screen.getByText('Day'))
-    expect(screen.getByText('One productive day')).toBeInTheDocument()
-  })
+    renderPricing();
+    fireEvent.click(screen.getByText('Multi-Day'));
+    fireEvent.click(screen.getByText('Day'));
+    expect(screen.getByText('One productive day')).toBeInTheDocument();
+  });
 
   it('switches to Monthly tab', () => {
-    renderPricing()
-    fireEvent.click(screen.getByText('Monthly'))
-    expect(screen.getByText('Regular power user')).toBeInTheDocument()
-  })
+    renderPricing();
+    fireEvent.click(screen.getByText('Monthly'));
+    expect(screen.getByText('Regular power user')).toBeInTheDocument();
+  });
 
   it('switches to Long-Term tab', () => {
-    renderPricing()
-    fireEvent.click(screen.getByText('Long-Term'))
-    expect(screen.getByText('Best value for pros')).toBeInTheDocument()
-  })
+    renderPricing();
+    fireEvent.click(screen.getByText('Long-Term'));
+    expect(screen.getByText('Best value for pros')).toBeInTheDocument();
+  });
 
   // ── Credit card interactions ──
   it('opens credit detail drawer when credit card clicked', () => {
-    renderPricing()
-    const creditCard = screen.getByLabelText(/View 5 Credits details/i)
-    fireEvent.click(creditCard)
-    expect(screen.getAllByText('5 Credits').length).toBeGreaterThanOrEqual(1)
-  })
+    renderPricing();
+    const creditCard = screen.getByLabelText(/View 5 Credits details/i);
+    fireEvent.click(creditCard);
+    expect(screen.getAllByText('5 Credits').length).toBeGreaterThanOrEqual(1);
+  });
 
   it('calls handleBuyCredits via unauthenticated user shows alert', async () => {
-    mockUseSelector.mockReturnValue({ accessToken: null })
+    mockUseSelector.mockReturnValue({ accessToken: null });
     mockCatalogQuery.mockReturnValue({
       data: { passes: [], credit_packs: [sampleCredit] },
       isLoading: false,
       error: null,
-    })
-    const mockShowAlert = vi.fn()
-    render(<PricingPage showAlert={mockShowAlert} subscription={defaultSubscription} />)
-    fireEvent.click(screen.getByText('Buy'))
-    expect(mockShowAlert).toHaveBeenCalledWith('Sign in to purchase credits', 'warning')
-  })
+    });
+    const mockShowAlert = vi.fn();
+    render(<PricingPage showAlert={mockShowAlert} subscription={defaultSubscription} />);
+    fireEvent.click(screen.getByText('Buy'));
+    expect(mockShowAlert).toHaveBeenCalledWith('Sign in to purchase credits', 'warning');
+  });
 
   // ── Pass detail drawer interactions ──
   it('closes pass detail drawer when overlay clicked', () => {
-    renderPricing()
-    fireEvent.click(screen.getByLabelText(/View 1-Day Single details/i))
-    expect(screen.getByText("What's included")).toBeInTheDocument()
+    renderPricing();
+    fireEvent.click(screen.getByLabelText(/View 1-Day Single details/i));
+    expect(screen.getByText("What's included")).toBeInTheDocument();
     // Click overlay to close
-    const overlay = document.querySelector('.tu-pass-detail-overlay')
-    if (overlay) fireEvent.click(overlay)
-  })
+    const overlay = document.querySelector('.tu-pass-detail-overlay');
+    if (overlay) fireEvent.click(overlay);
+  });
 
   it('calls handleBuyPass from within drawer detail CTA', async () => {
-    renderPricing()
-    fireEvent.click(screen.getByLabelText(/View 1-Day Single details/i))
+    renderPricing();
+    fireEvent.click(screen.getByLabelText(/View 1-Day Single details/i));
     // Find the CTA buy button inside the detail panel
-    const buyNowBtns = screen.getAllByRole('button').filter(b => b.textContent.includes('Buy Now'))
-    fireEvent.click(buyNowBtns[buyNowBtns.length - 1])
+    const buyNowBtns = screen
+      .getAllByRole('button')
+      .filter((b) => b.textContent.includes('Buy Now'));
+    fireEvent.click(buyNowBtns[buyNowBtns.length - 1]);
     await waitFor(() => {
-      expect(defaultSubscription.handleBuyPass).toHaveBeenCalled()
-    })
-  })
+      expect(defaultSubscription.handleBuyPass).toHaveBeenCalled();
+    });
+  });
 
   it('handles keyboard Enter on pass card to open detail', () => {
-    renderPricing()
-    const passCard = screen.getByLabelText(/View 1-Day Single details/i)
-    fireEvent.keyDown(passCard, { key: 'Enter' })
-    expect(screen.getByText("What's included")).toBeInTheDocument()
-  })
+    renderPricing();
+    const passCard = screen.getByLabelText(/View 1-Day Single details/i);
+    fireEvent.keyDown(passCard, { key: 'Enter' });
+    expect(screen.getByText("What's included")).toBeInTheDocument();
+  });
 
   it('handles keyboard Space on pass card to open detail', () => {
-    renderPricing()
-    const passCard = screen.getByLabelText(/View 1-Day Single details/i)
-    fireEvent.keyDown(passCard, { key: ' ' })
-    expect(screen.getByText("What's included")).toBeInTheDocument()
-  })
+    renderPricing();
+    const passCard = screen.getByLabelText(/View 1-Day Single details/i);
+    fireEvent.keyDown(passCard, { key: ' ' });
+    expect(screen.getByText("What's included")).toBeInTheDocument();
+  });
 
   it('handles keyboard Enter on credit card to open detail', () => {
-    renderPricing()
-    const creditCard = screen.getByLabelText(/View 5 Credits details/i)
-    fireEvent.keyDown(creditCard, { key: 'Enter' })
-    expect(screen.getAllByText('5 Credits').length).toBeGreaterThanOrEqual(1)
-  })
+    renderPricing();
+    const creditCard = screen.getByLabelText(/View 5 Credits details/i);
+    fireEvent.keyDown(creditCard, { key: 'Enter' });
+    expect(screen.getAllByText('5 Credits').length).toBeGreaterThanOrEqual(1);
+  });
 
   it('handles keyboard Space on credit card to open detail', () => {
-    renderPricing()
-    const creditCard = screen.getByLabelText(/View 5 Credits details/i)
-    fireEvent.keyDown(creditCard, { key: ' ' })
-    expect(screen.getAllByText('5 Credits').length).toBeGreaterThanOrEqual(1)
-  })
+    renderPricing();
+    const creditCard = screen.getByLabelText(/View 5 Credits details/i);
+    fireEvent.keyDown(creditCard, { key: ' ' });
+    expect(screen.getAllByText('5 Credits').length).toBeGreaterThanOrEqual(1);
+  });
 
   it('shows upgradeLoading state on pro button', () => {
-    renderPricing({ subscription: { ...defaultSubscription, upgradeLoading: true } })
-    expect(screen.getByText('Redirecting...')).toBeInTheDocument()
-  })
+    renderPricing({ subscription: { ...defaultSubscription, upgradeLoading: true } });
+    expect(screen.getByText('Redirecting...')).toBeInTheDocument();
+  });
 
   it('retry button is visible on catalog error', () => {
-    renderPricing({}, { data: null, isLoading: false, error: { status: 500 } })
-    expect(screen.getByText('Retry')).toBeInTheDocument()
-  })
+    renderPricing({}, { data: null, isLoading: false, error: { status: 500 } });
+    expect(screen.getByText('Retry')).toBeInTheDocument();
+  });
 
   it('shows cancel subscription button for pro users', () => {
-    renderPricing({ subscription: { ...defaultSubscription, isPro: true } })
+    renderPricing({ subscription: { ...defaultSubscription, isPro: true } });
     // pro users see "Your Current Plan" (no cancel button in pricing page, only in dashboard)
-    expect(screen.getByText('Your Current Plan')).toBeInTheDocument()
-  })
+    expect(screen.getByText('Your Current Plan')).toBeInTheDocument();
+  });
 
   it('renders pass card with All tools chip for all-tools pass', () => {
     mockCatalogQuery.mockReturnValue({
       data: { passes: [samplePassMultiDay], credit_packs: [] },
       isLoading: false,
       error: null,
-    })
-    render(<PricingPage showAlert={vi.fn()} subscription={defaultSubscription} />)
-    fireEvent.click(screen.getByText('Multi-Day'))
-    expect(screen.getAllByText('All tools').length).toBeGreaterThan(0)
-  })
+    });
+    render(<PricingPage showAlert={vi.fn()} subscription={defaultSubscription} />);
+    fireEvent.click(screen.getByText('Multi-Day'));
+    expect(screen.getAllByText('All tools').length).toBeGreaterThan(0);
+  });
 
   it('shows single tool chip for single-tool pass', () => {
-    renderPricing()
-    expect(screen.getAllByText('1 tool').length).toBeGreaterThan(0)
-  })
+    renderPricing();
+    expect(screen.getAllByText('1 tool').length).toBeGreaterThan(0);
+  });
 
   it('shows uses per day chip', () => {
-    renderPricing()
-    expect(screen.getAllByText('20 uses/day').length).toBeGreaterThan(0)
-  })
-})
+    renderPricing();
+    expect(screen.getAllByText('20 uses/day').length).toBeGreaterThan(0);
+  });
+});

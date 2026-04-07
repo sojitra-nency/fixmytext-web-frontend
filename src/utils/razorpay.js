@@ -1,10 +1,20 @@
 /**
  * Opens the Razorpay checkout modal for one-time payments (passes/credits).
  */
-export function openRazorpayCheckout({ orderId, amount, currency, keyId, userEmail, userName, description, onSuccess, onFailure }) {
+export function openRazorpayCheckout({
+  orderId,
+  amount,
+  currency,
+  keyId,
+  userEmail,
+  userName,
+  description,
+  onSuccess,
+  onFailure,
+}) {
   if (!window.Razorpay) {
-    onFailure?.('Payment service unavailable. Please refresh the page.')
-    return
+    onFailure?.('Payment service unavailable. Please refresh the page.');
+    return;
   }
   const options = {
     key: keyId,
@@ -17,16 +27,16 @@ export function openRazorpayCheckout({ orderId, amount, currency, keyId, userEma
     theme: { color: '#007ACC' },
     handler(response) {
       // response = { razorpay_payment_id, razorpay_order_id, razorpay_signature }
-      onSuccess(response)
+      onSuccess(response);
     },
     modal: {
       ondismiss() {
-        onFailure?.('Payment cancelled')
+        onFailure?.('Payment cancelled');
       },
     },
-  }
-  const rzp = new window.Razorpay(options)
-  rzp.open()
+  };
+  const rzp = new window.Razorpay(options);
+  rzp.open();
 }
 
 /**
@@ -44,20 +54,20 @@ export async function executeCheckoutFlow({
   errorMessage = 'Failed to create order. Please try again.',
 }) {
   try {
-    const orderData = await createOrder()
+    const orderData = await createOrder();
     openCheckout({
       ...orderData,
       onSuccess: async (response) => {
         try {
-          await verifyPayment(response)
-          navigate(successPath)
+          await verifyPayment(response);
+          navigate(successPath);
         } catch {
-          navigate(failPath)
+          navigate(failPath);
         }
       },
       onFailure: (msg) => showAlert?.(msg || 'Payment cancelled', 'info'),
-    })
+    });
   } catch (err) {
-    showAlert?.(err?.data?.detail || errorMessage, 'danger')
+    showAlert?.(err?.data?.detail || errorMessage, 'danger');
   }
 }

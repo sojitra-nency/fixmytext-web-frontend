@@ -1,5 +1,5 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { baseQueryWithReauth } from './baseQuery'
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithReauth } from './baseQuery';
 
 export const subscriptionApi = createApi({
   reducerPath: 'subscriptionApi',
@@ -28,11 +28,11 @@ export const subscriptionApi = createApi({
       invalidatesTags: ['Subscription'],
     }),
   }),
-})
+});
 
 export const {
   useGetSubscriptionStatusQuery,
   useCreateProCheckoutMutation,
   useVerifyProPaymentMutation,
   useCancelSubscriptionMutation,
-} = subscriptionApi
+} = subscriptionApi;

@@ -1,14 +1,14 @@
-import { useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const CONFETTI = ['🎉', '🎊', '✨', '⭐', '🌟', '💫', '🏆', '🔥']
+const CONFETTI = ['🎉', '🎊', '✨', '⭐', '🌟', '💫', '🏆', '🔥'];
 
 function ConfettiParticle({ index }) {
-  const emoji = CONFETTI[index % CONFETTI.length]
-  const left = 10 + Math.random() * 80
-  const delay = Math.random() * 0.6
-  const duration = 1.5 + Math.random() * 1.5
-  const size = 0.7 + Math.random() * 0.8
+  const emoji = CONFETTI[index % CONFETTI.length];
+  const left = 10 + Math.random() * 80;
+  const delay = Math.random() * 0.6;
+  const duration = 1.5 + Math.random() * 1.5;
+  const size = 0.7 + Math.random() * 0.8;
 
   return (
     <motion.span
@@ -20,28 +20,30 @@ function ConfettiParticle({ index }) {
     >
       {emoji}
     </motion.span>
-  )
+  );
 }
 
 export default function AchievementToast({ achievement, onDismiss }) {
   const dismiss = useCallback(() => {
-    if (onDismiss) onDismiss()
-  }, [onDismiss])
+    if (onDismiss) onDismiss();
+  }, [onDismiss]);
 
   // Auto-close after 5 seconds
   useEffect(() => {
-    if (!achievement) return
-    const timer = setTimeout(dismiss, 5000)
-    return () => clearTimeout(timer)
-  }, [achievement, dismiss])
+    if (!achievement) return;
+    const timer = setTimeout(dismiss, 5000);
+    return () => clearTimeout(timer);
+  }, [achievement, dismiss]);
 
   // Close on Escape
   useEffect(() => {
-    if (!achievement) return
-    const handleKey = (e) => { if (e.key === 'Escape') dismiss() }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [achievement, dismiss])
+    if (!achievement) return;
+    const handleKey = (e) => {
+      if (e.key === 'Escape') dismiss();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [achievement, dismiss]);
 
   return (
     <AnimatePresence>
@@ -60,7 +62,7 @@ export default function AchievementToast({ achievement, onDismiss }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-            onClick={e => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Confetti burst */}
             <div className="tu-achieve-confetti-wrap">
@@ -140,5 +142,5 @@ export default function AchievementToast({ achievement, onDismiss }) {
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

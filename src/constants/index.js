@@ -7,11 +7,11 @@
 
 /** Route paths */
 export const ROUTES = {
-    HOME: '/',
-    ABOUT: '/about',
-    LOGIN: '/login',
-    SIGNUP: '/signup',
-    DASHBOARD: '/dashboard',
-    PRICING: '/pricing',
-    SHARE: '/share/:id',
+  HOME: '/',
+  ABOUT: '/about',
+  LOGIN: '/login',
+  SIGNUP: '/signup',
+  DASHBOARD: '/dashboard',
+  PRICING: '/pricing',
+  SHARE: '/share/:id',
 };

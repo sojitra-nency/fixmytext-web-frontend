@@ -1,13 +1,13 @@
-import { configureStore } from '@reduxjs/toolkit'
-import { textApi } from './api/textApi'
-import { authApi } from './api/authApi'
-import { userDataApi } from './api/userDataApi'
-import { subscriptionApi } from './api/subscriptionApi'
-import { passesApi } from './api/passesApi'
-import { historyApi } from './api/historyApi'
-import { shareApi } from './api/shareApi'
-import authReducer from './slices/authSlice'
-import { errorMiddleware } from './middleware/errorMiddleware'
+import { configureStore } from '@reduxjs/toolkit';
+import { textApi } from './api/textApi';
+import { authApi } from './api/authApi';
+import { userDataApi } from './api/userDataApi';
+import { subscriptionApi } from './api/subscriptionApi';
+import { passesApi } from './api/passesApi';
+import { historyApi } from './api/historyApi';
+import { shareApi } from './api/shareApi';
+import authReducer from './slices/authSlice';
+import { errorMiddleware } from './middleware/errorMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -30,4 +30,4 @@ export const store = configureStore({
       .concat(historyApi.middleware)
       .concat(shareApi.middleware)
       .concat(errorMiddleware),
-})
+});

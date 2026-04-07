@@ -4,7 +4,7 @@
   top: 0;
   z-index: 200;
   background: var(--titlebar-bg);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   padding: 0 20px;
   height: 44px;
   display: flex;
@@ -16,7 +16,7 @@
 .tu-titlebar-brand {
   font-size: 1.15rem;
   font-weight: 800;
-  color: #F0F0F0;
+  color: #f0f0f0;
   text-decoration: none;
   letter-spacing: -0.03em;
   flex-shrink: 0;
@@ -27,7 +27,7 @@
 }
 
 .tu-titlebar-brand-accent {
-  background: linear-gradient(135deg, #007ACC, #1C8CD9);
+  background: linear-gradient(135deg, #007acc, #1c8cd9);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -45,8 +45,13 @@
 }
 
 @keyframes blink-cursor {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 /* ── Right section ────────────────────────────────── */
@@ -65,7 +70,7 @@
   padding: 5px 14px;
   border-radius: 6px;
   border: 1px solid #505052;
-  background: #3C3C3E;
+  background: #3c3c3e;
   cursor: pointer;
   transition: border-color var(--t);
   max-width: 280px;
@@ -78,7 +83,7 @@
 
 .tu-titlebar-search-text {
   font-size: 0.82rem;
-  color: #A0A0A0;
+  color: #a0a0a0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -90,8 +95,8 @@
   font-weight: 600;
   padding: 2px 6px;
   border-radius: 3px;
-  background: #2A2A2C;
-  color: #A0A0A0;
+  background: #2a2a2c;
+  color: #a0a0a0;
   border: 1px solid #505052;
   font-family: var(--font-mono);
 }
@@ -104,9 +109,9 @@
   padding: 5px 12px;
   border-radius: 6px;
   border: 1px solid #505052;
-  background: #3C3C3E;
+  background: #3c3c3e;
   cursor: pointer;
-  color: #A0A0A0;
+  color: #a0a0a0;
   font-size: 0.82rem;
   font-family: inherit;
   transition: all var(--t);
@@ -116,7 +121,7 @@
 
 .tu-titlebar-share:hover {
   border-color: var(--accent);
-  color: #E0E0E0;
+  color: #e0e0e0;
   background: #454547;
 }
 
@@ -174,12 +179,20 @@
 }
 
 /* ── Responsive ───────────────────────────────────── */
-.d-none { display: none !important; }
-.d-md-flex { display: none !important; }
+.d-none {
+  display: none !important;
+}
+.d-md-flex {
+  display: none !important;
+}
 
 @media (min-width: 768px) {
-  .d-md-flex { display: flex !important; }
-  .d-md-none { display: none !important; }
+  .d-md-flex {
+    display: flex !important;
+  }
+  .d-md-none {
+    display: none !important;
+  }
 }
 
 /* ── Mobile menu ─────────────────────────────────── */
@@ -229,5 +242,5 @@
 }
 
 .tu-theme-btn:hover {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
 }

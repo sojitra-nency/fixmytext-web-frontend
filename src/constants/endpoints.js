@@ -71,7 +71,7 @@ export const ENDPOINTS = {
   SORT_BY_LENGTH: '/api/v1/text/sort-by-length',
   SORT_NUMERIC: '/api/v1/text/sort-numeric',
   LINE_FREQUENCY: '/api/v1/text/line-frequency',
-SPLIT_TO_LINES: '/api/v1/text/split-to-lines',
+  SPLIT_TO_LINES: '/api/v1/text/split-to-lines',
   JOIN_LINES: '/api/v1/text/join-lines',
   PAD_LINES: '/api/v1/text/pad-lines',
   WRAP_LINES: '/api/v1/text/wrap-lines',
@@ -206,4 +206,4 @@ SPLIT_TO_LINES: '/api/v1/text/split-to-lines',
   GENERATE_TITLE: '/api/v1/text/generate-title',
   REFACTOR_PROMPT: '/api/v1/text/refactor-prompt',
   CHANGE_FORMAT: '/api/v1/text/change-format',
-}
+};

@@ -1,12 +1,12 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { createBaseQueryWithReauth } from './baseQuery'
-import { getVisitorId } from '../../hooks/useFingerprint'
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { createBaseQueryWithReauth } from './baseQuery';
+import { getVisitorId } from '../../hooks/useFingerprint';
 
 export const textApi = createApi({
   reducerPath: 'textApi',
   baseQuery: createBaseQueryWithReauth((headers) => {
     // Always send visitor fingerprint for server-side trial tracking
-    headers.set('X-Visitor-Id', getVisitorId())
+    headers.set('X-Visitor-Id', getVisitorId());
   }),
   endpoints: (builder) => ({
     transformText: builder.mutation({
@@ -17,6 +17,6 @@ export const textApi = createApi({
       }),
     }),
   }),
-})
+});
 
-export const { useTransformTextMutation } = textApi
+export const { useTransformTextMutation } = textApi;

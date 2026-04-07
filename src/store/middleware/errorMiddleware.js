@@ -1,4 +1,4 @@
-import { isRejectedWithValue } from '@reduxjs/toolkit'
+import { isRejectedWithValue } from '@reduxjs/toolkit';
 
 /**
  * Global RTK Query error middleware.
@@ -8,32 +8,39 @@ import { isRejectedWithValue } from '@reduxjs/toolkit'
  * locally via .unwrap() + try/catch, so we skip them to avoid duplicates.
  */
 export const errorMiddleware = () => (next) => (action) => {
-    if (isRejectedWithValue(action)) {
-        const { type: queryType } = action.meta?.arg ?? {}
-        const endpoint = action.meta?.arg?.endpointName
+  if (isRejectedWithValue(action)) {
+    const { type: queryType } = action.meta?.arg ?? {};
+    const endpoint = action.meta?.arg?.endpointName;
 
-        // Skip all mutations — they're handled at the component level
-        if (queryType === 'mutation') {
-            return next(action)
-        }
-
-        // Skip silent query endpoints (token refresh, getMe)
-        const silentEndpoints = ['refresh', 'getMe', 'getPreferences', 'getGamification', 'getTemplates', 'getHistory']
-        if (silentEndpoints.includes(endpoint)) {
-            return next(action)
-        }
-
-        // Only fire for unhandled query failures
-        const error = action.payload
-        const detail = error?.data?.detail
-        const message = typeof detail === 'string' ? detail : 'Something went wrong. Please try again.'
-
-        window.dispatchEvent(
-            new CustomEvent('rtk-api-error', {
-                detail: { message, type: 'danger', endpoint, status: error?.status },
-            })
-        )
+    // Skip all mutations — they're handled at the component level
+    if (queryType === 'mutation') {
+      return next(action);
     }
 
-    return next(action)
-}
+    // Skip silent query endpoints (token refresh, getMe)
+    const silentEndpoints = [
+      'refresh',
+      'getMe',
+      'getPreferences',
+      'getGamification',
+      'getTemplates',
+      'getHistory',
+    ];
+    if (silentEndpoints.includes(endpoint)) {
+      return next(action);
+    }
+
+    // Only fire for unhandled query failures
+    const error = action.payload;
+    const detail = error?.data?.detail;
+    const message = typeof detail === 'string' ? detail : 'Something went wrong. Please try again.';
+
+    window.dispatchEvent(
+      new CustomEvent('rtk-api-error', {
+        detail: { message, type: 'danger', endpoint, status: error?.status },
+      })
+    );
+  }
+
+  return next(action);
+};

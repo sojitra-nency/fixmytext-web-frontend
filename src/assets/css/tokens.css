@@ -5,222 +5,222 @@
 
 :root {
   /* VSCode accent colors */
-  --accent:        #007ACC;
-  --accent-hover:  #1C8CD9;
-  --accent-glow:   rgba(0, 122, 204, 0.18);
-  --violet:        #C586C0;
-  --pink:          #C586C0;
-  --cyan:          #4EC9B0;
-  --emerald:       #4EC9B0;
-  --amber:         #DCDCAA;
-  --rose:          #F44747;
-  --teal:          #4EC9B0;
-  --indigo:        #569CD6;
-  --purple:        #C586C0;
-  --orange:        #CE9178;
-  --green:         #6A9955;
-  --yellow:        #D7BA7D;
+  --accent: #007acc;
+  --accent-hover: #1c8cd9;
+  --accent-glow: rgba(0, 122, 204, 0.18);
+  --violet: #c586c0;
+  --pink: #c586c0;
+  --cyan: #4ec9b0;
+  --emerald: #4ec9b0;
+  --amber: #dcdcaa;
+  --rose: #f44747;
+  --teal: #4ec9b0;
+  --indigo: #569cd6;
+  --purple: #c586c0;
+  --orange: #ce9178;
+  --green: #6a9955;
+  --yellow: #d7ba7d;
 
-  --r-sm:   4px;
-  --r-md:   6px;
-  --r-lg:   8px;
-  --r-xl:   10px;
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 8px;
+  --r-xl: 10px;
   --r-pill: 999px;
 
-  --t:        0.12s ease;
+  --t: 0.12s ease;
 }
 
 /* ═══════════════════════════════════════════════════════
    Light Theme (default) — Clean, readable, VSCode Light inspired
    ═══════════════════════════════════════════════════════ */
 body {
-  --bg:            #F8F8F8;
-  --bg2:           #EAEAEB;
-  --surface:       #EAEAEB;
-  --surface-2:     #E0E0E1;
-  --border:        #C8C8C8;
-  --border-strong: #A0A0A0;
-  --text:          #1A1A1A;
-  --text-2:        #3A3A3A;
-  --text-3:        #6B6B6B;
-  --nav-bg:        #2C2C2C;
+  --bg: #f8f8f8;
+  --bg2: #eaeaeb;
+  --surface: #eaeaeb;
+  --surface-2: #e0e0e1;
+  --border: #c8c8c8;
+  --border-strong: #a0a0a0;
+  --text: #1a1a1a;
+  --text-2: #3a3a3a;
+  --text-3: #6b6b6b;
+  --nav-bg: #2c2c2c;
 
-  --card-hover-shadow: 0 2px 10px rgba(0,0,0,0.10);
+  --card-hover-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 
-  --font-display:  'Segoe UI', system-ui, -apple-system, sans-serif;
-  --font-mono:     'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --font-display: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
 
   /* Activity bar */
-  --activitybar-bg:      #2C2C2C;
-  --activitybar-fg:      #FFFFFF;
+  --activitybar-bg: #2c2c2c;
+  --activitybar-fg: #ffffff;
   --activitybar-inactive: #959595;
-  --activitybar-border:  #2C2C2C;
-  --activitybar-badge:   #007ACC;
+  --activitybar-border: #2c2c2c;
+  --activitybar-badge: #007acc;
 
   /* Sidebar — darker tint for depth */
-  --sidebar-bg:       #E4E4E5;
-  --sidebar-fg:       #2A2A2A;
-  --sidebar-border:   #C8C8C8;
-  --sidebar-heading:  #444444;
-  --sidebar-highlight: rgba(0,0,0,0.06);
+  --sidebar-bg: #e4e4e5;
+  --sidebar-fg: #2a2a2a;
+  --sidebar-border: #c8c8c8;
+  --sidebar-heading: #444444;
+  --sidebar-highlight: rgba(0, 0, 0, 0.06);
 
   /* Tabs */
-  --tab-bg:           #DCDCDD;
-  --tab-active-bg:    #F8F8F8;
-  --tab-active-text:  #1A1A1A;
-  --tab-inactive-fg:  #5A5A5A;
-  --tab-border:       #EAEAEB;
+  --tab-bg: #dcdcdd;
+  --tab-active-bg: #f8f8f8;
+  --tab-active-text: #1a1a1a;
+  --tab-inactive-fg: #5a5a5a;
+  --tab-border: #eaeaeb;
 
   /* Editor */
-  --editor-bg:        #F8F8F8;
-  --editor-fg:        #1A1A1A;
-  --editor-line:      #EEEEEE;
-  --editor-selection: #ADD6FF;
-  --editor-gutter:    #6E7681;
+  --editor-bg: #f8f8f8;
+  --editor-fg: #1a1a1a;
+  --editor-line: #eeeeee;
+  --editor-selection: #add6ff;
+  --editor-gutter: #6e7681;
 
   /* Status bar */
-  --statusbar-bg:     #007ACC;
-  --statusbar-fg:     #FFFFFF;
-  --statusbar-border: #007ACC;
-  --statusbar-hover:  rgba(255,255,255,0.12);
+  --statusbar-bg: #007acc;
+  --statusbar-fg: #ffffff;
+  --statusbar-border: #007acc;
+  --statusbar-hover: rgba(255, 255, 255, 0.12);
 
   /* Title bar */
-  --titlebar-bg:      #2C2C2C;
-  --titlebar-fg:      #CCCCCC;
+  --titlebar-bg: #2c2c2c;
+  --titlebar-fg: #cccccc;
 
   /* Input */
-  --input-bg:         #FFFFFF;
-  --input-fg:         #1A1A1A;
-  --input-border:     #B8B8B8;
+  --input-bg: #ffffff;
+  --input-fg: #1a1a1a;
+  --input-border: #b8b8b8;
 
   /* Badge */
-  --badge-bg:         #007ACC;
-  --badge-fg:         #FFFFFF;
+  --badge-bg: #007acc;
+  --badge-fg: #ffffff;
 
   /* Button */
-  --button-bg:        #007ACC;
-  --button-fg:        #FFFFFF;
-  --button-hover:     #0062A3;
+  --button-bg: #007acc;
+  --button-fg: #ffffff;
+  --button-hover: #0062a3;
 
   /* Lists */
-  --list-hover:       #D6D6D7;
-  --list-active:      #C4DFFA;
-  --list-focus:       #B0D0EE;
+  --list-hover: #d6d6d7;
+  --list-active: #c4dffa;
+  --list-focus: #b0d0ee;
 
   /* Suggestions */
-  --suggestion-bg:    #EAEAEB;
-  --suggestion-border: #C8C8C8;
+  --suggestion-bg: #eaeaeb;
+  --suggestion-border: #c8c8c8;
 
   /* XP / Progress */
-  --xp-bar-bg:        #C8C8C8;
-  --xp-bar-fill:      linear-gradient(90deg, #007ACC, #1C8CD9);
+  --xp-bar-bg: #c8c8c8;
+  --xp-bar-fill: linear-gradient(90deg, #007acc, #1c8cd9);
 
   /* Pipeline */
-  --pipeline-bg:      #F0F0F0;
-  --pipeline-line:    #C8C8C8;
-  --pipeline-node:    #007ACC;
+  --pipeline-bg: #f0f0f0;
+  --pipeline-line: #c8c8c8;
+  --pipeline-node: #007acc;
 
   /* Scrollbar */
-  --scrollbar-thumb:   #C1C1C1;
-  --scrollbar-thumb-hover: #A0A0A0;
-  --scrollbar-track:   transparent;
-  --scrollbar-width:   8px;
+  --scrollbar-thumb: #c1c1c1;
+  --scrollbar-thumb-hover: #a0a0a0;
+  --scrollbar-track: transparent;
+  --scrollbar-width: 8px;
 
   /* Light-friendly accent overrides (dark-theme values are too faint on white) */
-  --amber:         #B5920A;
-  --yellow:        #9E7B00;
-  --orange:        #B5461E;
-  --green:         #388A34;
-  --emerald:       #1B8A6E;
-  --teal:          #1B8A6E;
-  --violet:        #9B4D96;
-  --pink:          #9B4D96;
-  --purple:        #9B4D96;
-  --indigo:        #3A6DB5;
-  --rose:          #CD3131;
-  --cyan:          #1B8A6E;
+  --amber: #b5920a;
+  --yellow: #9e7b00;
+  --orange: #b5461e;
+  --green: #388a34;
+  --emerald: #1b8a6e;
+  --teal: #1b8a6e;
+  --violet: #9b4d96;
+  --pink: #9b4d96;
+  --purple: #9b4d96;
+  --indigo: #3a6db5;
+  --rose: #cd3131;
+  --cyan: #1b8a6e;
 }
 
 /* ═══════════════════════════════════════════════════════
    Dark Theme — VSCode Dark+
    ═══════════════════════════════════════════════════════ */
 body.dark {
-  --bg:            #1E1E1E;
-  --bg2:           #252526;
-  --surface:       #252526;
-  --surface-2:     #2D2D2D;
-  --border:        #3C3C3C;
-  --border-strong: #4D4D4D;
-  --text:          #D4D4D4;
-  --text-2:        #ABABAB;
-  --text-3:        #858585;
-  --nav-bg:        #323233;
+  --bg: #1e1e1e;
+  --bg2: #252526;
+  --surface: #252526;
+  --surface-2: #2d2d2d;
+  --border: #3c3c3c;
+  --border-strong: #4d4d4d;
+  --text: #d4d4d4;
+  --text-2: #ababab;
+  --text-3: #858585;
+  --nav-bg: #323233;
 
-  --card-hover-shadow: 0 0 8px rgba(0,122,204,0.08);
+  --card-hover-shadow: 0 0 8px rgba(0, 122, 204, 0.08);
 
   --activitybar-bg: #333333;
-  --activitybar-fg: #FFFFFF;
+  --activitybar-fg: #ffffff;
   --activitybar-inactive: #858585;
   --activitybar-border: #333333;
 
-  --sidebar-bg:    #252526;
-  --sidebar-fg:    #CCCCCC;
-  --sidebar-border: #3C3C3C;
-  --sidebar-heading: #BBBBBB;
-  --sidebar-highlight: rgba(255,255,255,0.04);
+  --sidebar-bg: #252526;
+  --sidebar-fg: #cccccc;
+  --sidebar-border: #3c3c3c;
+  --sidebar-heading: #bbbbbb;
+  --sidebar-highlight: rgba(255, 255, 255, 0.04);
 
-  --tab-bg:        #2D2D2D;
-  --tab-active-bg: #1E1E1E;
-  --tab-active-text: #FFFFFF;
+  --tab-bg: #2d2d2d;
+  --tab-active-bg: #1e1e1e;
+  --tab-active-text: #ffffff;
   --tab-inactive-fg: #969696;
-  --tab-border:    #252526;
+  --tab-border: #252526;
 
-  --editor-bg:     #1E1E1E;
-  --editor-fg:     #D4D4D4;
-  --editor-line:   #2A2A2A;
-  --editor-selection: #264F78;
+  --editor-bg: #1e1e1e;
+  --editor-fg: #d4d4d4;
+  --editor-line: #2a2a2a;
+  --editor-selection: #264f78;
   --editor-gutter: #858585;
 
-  --titlebar-bg:   #323233;
-  --titlebar-fg:   #CCCCCC;
+  --titlebar-bg: #323233;
+  --titlebar-fg: #cccccc;
 
-  --input-bg:      #3C3C3C;
-  --input-fg:      #D4D4D4;
-  --input-border:  #3C3C3C;
+  --input-bg: #3c3c3c;
+  --input-fg: #d4d4d4;
+  --input-border: #3c3c3c;
 
-  --button-bg:     #0E639C;
-  --button-fg:     #FFFFFF;
-  --button-hover:  #1177BB;
+  --button-bg: #0e639c;
+  --button-fg: #ffffff;
+  --button-hover: #1177bb;
 
-  --list-hover:    #2A2D2E;
-  --list-active:   #094771;
-  --list-focus:    #062F4A;
+  --list-hover: #2a2d2e;
+  --list-active: #094771;
+  --list-focus: #062f4a;
 
-  --xp-bar-bg:     #3C3C3C;
-  --pipeline-bg:   #1E1E1E;
-  --pipeline-line: #3C3C3C;
+  --xp-bar-bg: #3c3c3c;
+  --pipeline-bg: #1e1e1e;
+  --pipeline-line: #3c3c3c;
   --suggestion-bg: #252526;
-  --suggestion-border: #3C3C3C;
+  --suggestion-border: #3c3c3c;
 
   /* Scrollbar */
-  --scrollbar-thumb:   #424242;
+  --scrollbar-thumb: #424242;
   --scrollbar-thumb-hover: #555555;
-  --scrollbar-track:   transparent;
-  --scrollbar-width:   8px;
+  --scrollbar-track: transparent;
+  --scrollbar-width: 8px;
 
   /* Dark-friendly accent colors */
-  --amber:         #DCDCAA;
-  --yellow:        #D7BA7D;
-  --orange:        #CE9178;
-  --green:         #6A9955;
-  --emerald:       #4EC9B0;
-  --teal:          #4EC9B0;
-  --violet:        #C586C0;
-  --pink:          #C586C0;
-  --purple:        #C586C0;
-  --indigo:        #569CD6;
-  --rose:          #F44747;
-  --cyan:          #4EC9B0;
+  --amber: #dcdcaa;
+  --yellow: #d7ba7d;
+  --orange: #ce9178;
+  --green: #6a9955;
+  --emerald: #4ec9b0;
+  --teal: #4ec9b0;
+  --violet: #c586c0;
+  --pink: #c586c0;
+  --purple: #c586c0;
+  --indigo: #569cd6;
+  --rose: #f44747;
+  --cyan: #4ec9b0;
 }
 
 /* ═══════════════════════════════════════════════════════
