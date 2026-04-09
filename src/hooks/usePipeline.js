@@ -1,15 +1,15 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback } from 'react';
 
 export default function usePipeline() {
-  const [steps, setSteps] = useState([])
+  const [steps, setSteps] = useState([]);
 
   const addStep = useCallback((toolId, label, result) => {
-    setSteps(prev => [...prev, { toolId, label, result, timestamp: Date.now() }])
-  }, [])
+    setSteps((prev) => [...prev, { toolId, label, result, timestamp: Date.now() }]);
+  }, []);
 
   const clearPipeline = useCallback(() => {
-    setSteps([])
-  }, [])
+    setSteps([]);
+  }, []);
 
-  return { steps, addStep, clearPipeline }
+  return { steps, addStep, clearPipeline };
 }

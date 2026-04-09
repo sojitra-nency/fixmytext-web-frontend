@@ -9,5 +9,7 @@
 
 /* ── Responsive tweaks ───────────────────────────────── */
 @media (max-width: 480px) {
-  .tu-navbar { padding: 0 1rem; }
+  .tu-navbar {
+    padding: 0 1rem;
+  }
 }

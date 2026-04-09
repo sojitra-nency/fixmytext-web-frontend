@@ -1,5 +1,5 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { baseQueryWithReauth } from './baseQuery'
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithReauth } from './baseQuery';
 
 export const authApi = createApi({
   reducerPath: 'authApi',
@@ -26,7 +26,7 @@ export const authApi = createApi({
       providesTags: ['Me'],
     }),
   }),
-})
+});
 
 export const {
   useRegisterMutation,
@@ -35,4 +35,4 @@ export const {
   useRefreshMutation,
 
   useGetMeQuery,
-} = authApi
+} = authApi;

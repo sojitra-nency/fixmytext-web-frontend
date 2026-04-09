@@ -574,7 +574,7 @@
 }
 
 .tu-dash-settings-badge--ok {
-  background: rgba(78,201,176,0.15);
+  background: rgba(78, 201, 176, 0.15);
   color: var(--emerald);
 }
 
@@ -630,7 +630,7 @@
   transition: background var(--t);
 }
 .tu-dash-card-link:hover {
-  background: rgba(0,122,204,0.1);
+  background: rgba(0, 122, 204, 0.1);
 }
 
 .tu-dash-card-desc {
@@ -747,7 +747,7 @@
   font-size: 0.58rem;
   font-family: var(--font-mono);
   color: var(--accent);
-  background: rgba(0,122,204,0.12);
+  background: rgba(0, 122, 204, 0.12);
   padding: 1px 6px;
   border-radius: var(--r-pill);
   font-weight: 600;
@@ -858,7 +858,7 @@
 }
 .tu-dash-profile-edit-btn:hover {
   color: var(--accent);
-  background: rgba(0,122,204,0.1);
+  background: rgba(0, 122, 204, 0.1);
 }
 
 .tu-dash-profile-edit-row {
@@ -942,7 +942,7 @@
 
 .tu-dash-persona-card--active {
   border-color: var(--accent);
-  background: rgba(0,122,204,0.08);
+  background: rgba(0, 122, 204, 0.08);
   box-shadow: 0 0 8px var(--accent-glow);
 }
 
@@ -970,7 +970,7 @@
   font-size: 0.55rem;
   font-weight: 700;
   color: var(--emerald);
-  background: rgba(78,201,176,0.15);
+  background: rgba(78, 201, 176, 0.15);
   padding: 2px 8px;
   border-radius: var(--r-pill);
   text-transform: uppercase;

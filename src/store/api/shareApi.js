@@ -1,5 +1,5 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { baseQueryWithReauth } from './baseQuery'
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithReauth } from './baseQuery';
 
 export const shareApi = createApi({
   reducerPath: 'shareApi',
@@ -12,6 +12,6 @@ export const shareApi = createApi({
       query: (id) => `/api/v1/share/${id}`,
     }),
   }),
-})
+});
 
-export const { useCreateShareMutation, useGetShareQuery } = shareApi
+export const { useCreateShareMutation, useGetShareQuery } = shareApi;

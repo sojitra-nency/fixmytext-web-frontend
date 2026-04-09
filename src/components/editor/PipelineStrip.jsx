@@ -1,7 +1,7 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function PipelineStrip({ steps, onClear }) {
-  if (!steps || steps.length === 0) return null
+  if (!steps || steps.length === 0) return null;
 
   return (
     <div className="tu-pipeline">
@@ -23,7 +23,9 @@ export default function PipelineStrip({ steps, onClear }) {
       </AnimatePresence>
       <span className="tu-pipeline-arrow">→</span>
       <span className="tu-pipeline-node tu-pipeline-node--output">Output</span>
-      <button className="tu-pipeline-clear" onClick={onClear}>Clear</button>
+      <button className="tu-pipeline-clear" onClick={onClear}>
+        Clear
+      </button>
     </div>
-  )
+  );
 }

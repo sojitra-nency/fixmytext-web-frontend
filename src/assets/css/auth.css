@@ -106,7 +106,7 @@
   cursor: pointer;
 }
 
-.auth-checkbox-label input[type="checkbox"] {
+.auth-checkbox-label input[type='checkbox'] {
   width: 14px;
   height: 14px;
   accent-color: var(--accent);
@@ -161,4 +161,3 @@
 .auth-footer a:hover {
   text-decoration: underline;
 }
-

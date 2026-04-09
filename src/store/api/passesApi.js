@@ -1,6 +1,6 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { baseQueryWithReauth } from './baseQuery'
-import { BROWSER_REGION } from '../../utils/region'
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithReauth } from './baseQuery';
+import { BROWSER_REGION } from '../../utils/region';
 
 export const passesApi = createApi({
   reducerPath: 'passesApi',
@@ -39,9 +39,8 @@ export const passesApi = createApi({
       query: () => ({ url: '/api/v1/passes/spin', method: 'POST' }),
       invalidatesTags: ['Passes', 'Credits'],
     }),
-
   }),
-})
+});
 
 export const {
   useGetPassCatalogQuery,
@@ -50,4 +49,4 @@ export const {
   useCreateCreditOrderMutation,
   useVerifyPaymentMutation,
   useSpinWheelMutation,
-} = passesApi
+} = passesApi;

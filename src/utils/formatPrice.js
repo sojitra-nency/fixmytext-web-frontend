@@ -6,9 +6,9 @@
  * @param {number} [decimals] — override decimal places (INR auto-detects)
  */
 export default function formatPrice(price, currency, symbol, decimals) {
-  const val = price / 100
+  const val = price / 100;
   if (currency === 'inr') {
-    return val % 1 === 0 ? `${symbol}${val.toFixed(0)}` : `${symbol}${val.toFixed(decimals ?? 2)}`
+    return val % 1 === 0 ? `${symbol}${val.toFixed(0)}` : `${symbol}${val.toFixed(decimals ?? 2)}`;
   }
-  return `${symbol}${val.toFixed(2)}`
+  return `${symbol}${val.toFixed(2)}`;
 }

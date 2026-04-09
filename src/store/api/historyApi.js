@@ -1,5 +1,5 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { baseQueryWithReauth } from './baseQuery'
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithReauth } from './baseQuery';
 
 export const historyApi = createApi({
   reducerPath: 'historyApi',
@@ -9,9 +9,9 @@ export const historyApi = createApi({
     // Paginated list
     getHistory: builder.query({
       query: ({ page = 1, pageSize = 25, toolId } = {}) => {
-        const params = new URLSearchParams({ page, page_size: pageSize })
-        if (toolId) params.set('tool_id', toolId)
-        return `/api/v1/history?${params}`
+        const params = new URLSearchParams({ page, page_size: pageSize });
+        if (toolId) params.set('tool_id', toolId);
+        return `/api/v1/history?${params}`;
       },
       providesTags: ['History'],
     }),
@@ -33,13 +33,12 @@ export const historyApi = createApi({
       query: () => ({ url: '/api/v1/history', method: 'DELETE' }),
       invalidatesTags: ['History'],
     }),
-
   }),
-})
+});
 
 export const {
   useGetHistoryQuery,
   useRecordOperationMutation,
   useDeleteHistoryEntryMutation,
   useClearHistoryMutation,
-} = historyApi
+} = historyApi;

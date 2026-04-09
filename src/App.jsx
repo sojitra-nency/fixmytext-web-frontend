@@ -21,7 +21,7 @@ import PassPurchaseModal from './components/subscription/PassPurchaseModal';
 import { ROUTES } from './constants';
 
 function AppInner() {
-  const { alert, alerts, showAlert, dismissAlert } = useAlert();
+  const { alerts, showAlert, dismissAlert } = useAlert();
   const { mode, setMode } = useTheme();
   const { user, isAuthenticated } = useAuth();
   const gamification = useGamification();
@@ -43,9 +43,7 @@ function AppInner() {
 
   return (
     <>
-      {!gamification.onboarded && (
-        <OnboardingModal onComplete={handleOnboardingComplete} />
-      )}
+      {!gamification.onboarded && <OnboardingModal onComplete={handleOnboardingComplete} />}
 
       <Navbar showAlert={showAlert} />
       <Alert alerts={alerts} dismissAlert={dismissAlert} />
@@ -60,33 +58,40 @@ function AppInner() {
           <Route
             exact
             path={ROUTES.HOME}
-            element={<Home mode={mode} setMode={setMode} showAlert={showAlert} gamification={gamification} user={user} isAuthenticated={isAuthenticated} subscription={subscription} />}
+            element={
+              <Home
+                mode={mode}
+                setMode={setMode}
+                showAlert={showAlert}
+                gamification={gamification}
+                user={user}
+                isAuthenticated={isAuthenticated}
+                subscription={subscription}
+              />
+            }
           />
-          <Route
-            exact
-            path={ROUTES.ABOUT}
-            element={<AboutPage />}
-          />
-          <Route
-            path={ROUTES.LOGIN}
-            element={<LoginPage showAlert={showAlert} />}
-          />
-          <Route
-            path={ROUTES.SIGNUP}
-            element={<SignupPage showAlert={showAlert} />}
-          />
+          <Route exact path={ROUTES.ABOUT} element={<AboutPage />} />
+          <Route path={ROUTES.LOGIN} element={<LoginPage showAlert={showAlert} />} />
+          <Route path={ROUTES.SIGNUP} element={<SignupPage showAlert={showAlert} />} />
           <Route
             path={ROUTES.PRICING}
             element={<PricingPage showAlert={showAlert} subscription={subscription} />}
           />
           <Route
             path={ROUTES.DASHBOARD}
-            element={<DashboardPage gamification={gamification} user={user} isAuthenticated={isAuthenticated} showAlert={showAlert} mode={mode} setMode={setMode} subscription={subscription} />}
+            element={
+              <DashboardPage
+                gamification={gamification}
+                user={user}
+                isAuthenticated={isAuthenticated}
+                showAlert={showAlert}
+                mode={mode}
+                setMode={setMode}
+                subscription={subscription}
+              />
+            }
           />
-          <Route
-            path={ROUTES.SHARE}
-            element={<SharePage showAlert={showAlert} />}
-          />
+          <Route path={ROUTES.SHARE} element={<SharePage showAlert={showAlert} />} />
         </Routes>
       </Suspense>
     </>
