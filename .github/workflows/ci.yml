@@ -25,7 +25,7 @@ jobs:
         run: npm ci
 
       - name: Lint
-        run: npx eslint src/ --max-warnings=0 || echo "ESLint not fully configured yet"
+        run: npx eslint src/
 
       - name: Build
         run: npm run build
@@ -48,4 +48,4 @@ jobs:
         run: npm ci
 
       - name: Audit for vulnerabilities
-        run: npm audit --audit-level=high || true
+        run: npm audit --audit-level=high
