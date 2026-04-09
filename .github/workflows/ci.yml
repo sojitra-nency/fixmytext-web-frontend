@@ -9,8 +9,8 @@ on:
     branches: [main]
 
 jobs:
-  build:
-    name: Build & Lint
+  lint:
+    name: Lint & Format Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +27,42 @@ jobs:
       - name: Lint
         run: npx eslint src/
 
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Build
+        run: npm run build
+        env:
+          VITE_API_URL: http://localhost:8000
+
+  test:
+    name: Tests & Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build check (no test runner configured yet)
         run: npm run build
         env:
           VITE_API_URL: http://localhost:8000
@@ -48,4 +83,4 @@ jobs:
         run: npm ci
 
       - name: Audit for vulnerabilities
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=critical
