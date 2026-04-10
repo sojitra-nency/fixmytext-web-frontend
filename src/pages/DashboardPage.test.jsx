@@ -313,10 +313,10 @@ describe('DashboardPage', () => {
     expect(screen.getByText('Credits')).toBeInTheDocument();
   });
 
-  it('shows Plan Comparison table', () => {
+  it('shows subscription tab content', () => {
     renderDash();
     fireEvent.click(screen.getByText('Subscription'));
-    expect(screen.getByText('Plan Comparison')).toBeInTheDocument();
+    expect(screen.getByText('Free Plan')).toBeInTheDocument();
   });
 
   it('shows upgrade button for free user', () => {

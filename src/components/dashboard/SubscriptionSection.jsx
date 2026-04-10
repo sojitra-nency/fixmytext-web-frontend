@@ -20,7 +20,7 @@ export default function SubscriptionSection({ subscription, showAlert, navigate,
   const { data: catalog, isLoading: catalogLoading, error: catalogError, refetch } = useGetPassCatalogQuery();
   const [buyingId, setBuyingId] = useState(null);
 
-  const passes = catalog?.passes || [];
+  const passes = useMemo(() => catalog?.passes || [], [catalog?.passes]);
   const symbol = passes[0]?.symbol || '$';
   const currency = passes[0]?.currency || 'usd';
   const formatPrice = (price) => formatPriceUtil(price, currency, symbol);

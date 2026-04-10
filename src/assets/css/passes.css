@@ -156,69 +156,6 @@
   color: var(--amber);
 }
 
-/* ── Pass Card ────────────────────────────────────────────────────── */
-
-.tu-pass-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  transition: border-color 0.15s;
-}
-.tu-pass-card:hover {
-  border-color: var(--accent);
-}
-.tu-pass-card--highlight {
-  border-color: var(--accent);
-  background: linear-gradient(180deg, #007acc0d, transparent);
-}
-
-.tu-pass-card-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.tu-pass-card-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-}
-.tu-pass-card-subtitle {
-  font-size: 11px;
-  color: var(--text-3);
-}
-
-.tu-pass-card-action {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.tu-pass-card-price {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--accent);
-}
-.tu-pass-card-btn {
-  padding: 5px 14px;
-  border: none;
-  border-radius: 4px;
-  background: var(--accent);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.tu-pass-card-btn:hover:not(:disabled) {
-  background: #005fa3;
-}
-.tu-pass-card-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 /* ── Tool Usage Badge (in ToolPanel) ─────────────────────────────── */
 
 .tu-titem-usage {

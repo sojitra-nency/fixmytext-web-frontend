@@ -12,7 +12,6 @@
     "blueimp-md5": "^2.19.0",
     "docx": "^9.6.0",
     "dompurify": "^3.1.0",
-    "emoji-mart": "^5.6.0",
     "framer-motion": "^12.35.2",
     "js-sha256": "^0.11.1",
     "js-sha3": "^0.9.3",
@@ -26,7 +25,6 @@
     "react-dom": "^18.2.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.22.3",
-    "ripemd160": "^2.0.3",
     "sql-formatter": "^15.7.3",
     "whirlpool-hash": "^1.1.6",
     "xxhashjs": "^0.2.2"
