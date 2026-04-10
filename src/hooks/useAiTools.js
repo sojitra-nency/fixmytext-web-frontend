@@ -1,8 +1,96 @@
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useTransformTextMutation } from '../store/api/textApi';
 import { ENDPOINTS } from '../constants/endpoints';
 
+/**
+ * AI tool handler definitions.
+ * Each entry maps to a callAi() invocation with specific endpoint and label.
+ * Adding a new AI tool only requires adding an entry here.
+ * @type {Array<{handlerName: string, endpoint: string, label: string, errorMsg: string, toolId?: string}>}
+ */
+const AI_TOOL_DEFINITIONS = [
+  // Original AI tools
+  { handlerName: 'handleHashtags', endpoint: ENDPOINTS.GENERATE_HASHTAGS, label: 'Hashtags', errorMsg: 'Could not generate hashtags. Please try again.' },
+  { handlerName: 'handleSeoTitles', endpoint: ENDPOINTS.GENERATE_SEO_TITLES, label: 'SEO Titles', errorMsg: 'Could not generate SEO titles. Please try again.' },
+  { handlerName: 'handleMetaDescriptions', endpoint: ENDPOINTS.GENERATE_META_DESCRIPTIONS, label: 'Meta Descriptions', errorMsg: 'Could not generate meta descriptions. Please try again.' },
+  { handlerName: 'handleBlogOutline', endpoint: ENDPOINTS.GENERATE_BLOG_OUTLINE, label: 'Blog Outline', errorMsg: 'Could not generate blog outline. Please try again.' },
+  { handlerName: 'handleTweetShorten', endpoint: ENDPOINTS.SHORTEN_FOR_TWEET, label: 'Tweet', errorMsg: 'Could not shorten for tweet. Please try again.' },
+  { handlerName: 'handleEmailRewrite', endpoint: ENDPOINTS.REWRITE_EMAIL, label: 'Email', errorMsg: 'Could not rewrite email. Please try again.' },
+  { handlerName: 'handleKeywords', endpoint: ENDPOINTS.EXTRACT_KEYWORDS, label: 'Keywords', errorMsg: 'Could not extract keywords. Please try again.' },
+  { handlerName: 'handleSummarize', endpoint: ENDPOINTS.SUMMARIZE, label: 'Summary', errorMsg: 'Could not summarize text. Please try again.' },
+  { handlerName: 'handleFixGrammar', endpoint: ENDPOINTS.FIX_GRAMMAR, label: 'Grammar Fix', errorMsg: 'Could not fix grammar. Please try again.' },
+  { handlerName: 'handleParaphrase', endpoint: ENDPOINTS.PARAPHRASE, label: 'Paraphrase', errorMsg: 'Could not paraphrase text. Please try again.' },
+  { handlerName: 'handleSentiment', endpoint: ENDPOINTS.ANALYZE_SENTIMENT, label: 'Sentiment', errorMsg: 'Could not analyze sentiment. Please try again.' },
+  { handlerName: 'handleLengthenText', endpoint: ENDPOINTS.LENGTHEN_TEXT, label: 'Lengthened', errorMsg: 'Could not lengthen text. Please try again.' },
+  { handlerName: 'handleEli5', endpoint: ENDPOINTS.ELI5, label: 'ELI5', errorMsg: 'Could not simplify text. Please try again.' },
+  { handlerName: 'handleProofread', endpoint: ENDPOINTS.PROOFREAD, label: 'Proofread', errorMsg: 'Could not proofread text. Please try again.' },
+  { handlerName: 'handleGenerateTitle', endpoint: ENDPOINTS.GENERATE_TITLE, label: 'Titles', errorMsg: 'Could not generate titles. Please try again.' },
+  { handlerName: 'handleRefactorPrompt', endpoint: ENDPOINTS.REFACTOR_PROMPT, label: 'Prompt Refactored', errorMsg: 'Could not refactor prompt. Please try again.' },
+  { handlerName: 'handleEmojify', endpoint: ENDPOINTS.EMOJIFY, label: 'Emojify', errorMsg: 'Could not add emojis. Please try again.', toolId: 'emojify' },
+  // AI Writing handlers
+  { handlerName: 'handleAcademicStyle', endpoint: ENDPOINTS.ACADEMIC_STYLE, label: 'Academic Style', errorMsg: 'Could not convert to academic style.', toolId: 'academic_style' },
+  { handlerName: 'handleCreativeStyle', endpoint: ENDPOINTS.CREATIVE_STYLE, label: 'Creative Style', errorMsg: 'Could not convert to creative style.', toolId: 'creative_style' },
+  { handlerName: 'handleTechnicalStyle', endpoint: ENDPOINTS.TECHNICAL_STYLE, label: 'Technical Style', errorMsg: 'Could not convert to technical style.', toolId: 'technical_style' },
+  { handlerName: 'handleActiveVoice', endpoint: ENDPOINTS.ACTIVE_VOICE, label: 'Active Voice', errorMsg: 'Could not convert to active voice.', toolId: 'active_voice' },
+  { handlerName: 'handleRedundancyRemover', endpoint: ENDPOINTS.REDUNDANCY_REMOVER, label: 'Remove Redundancy', errorMsg: 'Could not remove redundancy.', toolId: 'redundancy_remover' },
+  { handlerName: 'handleSentenceSplitter', endpoint: ENDPOINTS.SENTENCE_SPLITTER, label: 'Split Sentences', errorMsg: 'Could not split sentences.', toolId: 'sentence_splitter' },
+  { handlerName: 'handleConciseness', endpoint: ENDPOINTS.CONCISENESS, label: 'Make Concise', errorMsg: 'Could not make text concise.', toolId: 'conciseness' },
+  { handlerName: 'handleResumeBullets', endpoint: ENDPOINTS.RESUME_BULLETS, label: 'Resume Bullets', errorMsg: 'Could not generate resume bullets.', toolId: 'resume_bullets' },
+  { handlerName: 'handleMeetingNotes', endpoint: ENDPOINTS.MEETING_NOTES, label: 'Meeting Notes', errorMsg: 'Could not generate meeting notes.', toolId: 'meeting_notes' },
+  { handlerName: 'handleCoverLetter', endpoint: ENDPOINTS.COVER_LETTER, label: 'Cover Letter', errorMsg: 'Could not generate cover letter.', toolId: 'cover_letter' },
+  { handlerName: 'handleOutlineToDraft', endpoint: ENDPOINTS.OUTLINE_TO_DRAFT, label: 'Outline→Draft', errorMsg: 'Could not expand outline.', toolId: 'outline_to_draft' },
+  { handlerName: 'handleContinueWriting', endpoint: ENDPOINTS.CONTINUE_WRITING, label: 'Continue Writing', errorMsg: 'Could not continue writing.', toolId: 'continue_writing' },
+  { handlerName: 'handleRewriteUnique', endpoint: ENDPOINTS.REWRITE_UNIQUE, label: 'Rewrite Unique', errorMsg: 'Could not rewrite uniquely.', toolId: 'rewrite_unique' },
+  { handlerName: 'handleToneAnalyzer', endpoint: ENDPOINTS.TONE_ANALYZER, label: 'Tone Analysis', errorMsg: 'Could not analyze tone.', toolId: 'tone_analyzer' },
+  // AI Content handlers
+  { handlerName: 'handleLinkedinPost', endpoint: ENDPOINTS.LINKEDIN_POST, label: 'LinkedIn Post', errorMsg: 'Could not generate LinkedIn post.', toolId: 'linkedin_post' },
+  { handlerName: 'handleTwitterThread', endpoint: ENDPOINTS.TWITTER_THREAD, label: 'Twitter Thread', errorMsg: 'Could not generate Twitter thread.', toolId: 'twitter_thread' },
+  { handlerName: 'handleInstagramCaption', endpoint: ENDPOINTS.INSTAGRAM_CAPTION, label: 'Instagram Caption', errorMsg: 'Could not generate Instagram caption.', toolId: 'instagram_caption' },
+  { handlerName: 'handleYoutubeDesc', endpoint: ENDPOINTS.YOUTUBE_DESC, label: 'YouTube Description', errorMsg: 'Could not generate YouTube description.', toolId: 'youtube_desc' },
+  { handlerName: 'handleSocialBio', endpoint: ENDPOINTS.SOCIAL_BIO, label: 'Social Bio', errorMsg: 'Could not generate social bio.', toolId: 'social_bio' },
+  { handlerName: 'handleProductDesc', endpoint: ENDPOINTS.PRODUCT_DESC, label: 'Product Description', errorMsg: 'Could not generate product description.', toolId: 'product_desc' },
+  { handlerName: 'handleCtaGenerator', endpoint: ENDPOINTS.CTA_GENERATOR, label: 'CTAs', errorMsg: 'Could not generate CTAs.', toolId: 'cta_generator' },
+  { handlerName: 'handleAdCopy', endpoint: ENDPOINTS.AD_COPY, label: 'Ad Copy', errorMsg: 'Could not generate ad copy.', toolId: 'ad_copy' },
+  { handlerName: 'handleLandingHeadline', endpoint: ENDPOINTS.LANDING_HEADLINE, label: 'Landing Headline', errorMsg: 'Could not generate headlines.', toolId: 'landing_headline' },
+  { handlerName: 'handleEmailSubject', endpoint: ENDPOINTS.EMAIL_SUBJECT, label: 'Email Subject', errorMsg: 'Could not generate subject lines.', toolId: 'email_subject' },
+  { handlerName: 'handleContentIdeas', endpoint: ENDPOINTS.CONTENT_IDEAS, label: 'Content Ideas', errorMsg: 'Could not generate content ideas.', toolId: 'content_ideas' },
+  { handlerName: 'handleHookGenerator', endpoint: ENDPOINTS.HOOK_GENERATOR, label: 'Hooks', errorMsg: 'Could not generate hooks.', toolId: 'hook_generator' },
+  { handlerName: 'handleAngleGenerator', endpoint: ENDPOINTS.ANGLE_GENERATOR, label: 'Angles', errorMsg: 'Could not generate angles.', toolId: 'angle_generator' },
+  { handlerName: 'handleFaqSchema', endpoint: ENDPOINTS.FAQ_SCHEMA, label: 'FAQ Schema', errorMsg: 'Could not generate FAQ schema.', toolId: 'faq_schema' },
+  // Language handlers
+  { handlerName: 'handlePosTagger', endpoint: ENDPOINTS.POS_TAGGER, label: 'Parts of Speech', errorMsg: 'Could not tag parts of speech.', toolId: 'pos_tagger' },
+  { handlerName: 'handleSentenceType', endpoint: ENDPOINTS.SENTENCE_TYPE, label: 'Sentence Type', errorMsg: 'Could not classify sentences.', toolId: 'sentence_type' },
+  { handlerName: 'handleGrammarExplain', endpoint: ENDPOINTS.GRAMMAR_EXPLAIN, label: 'Grammar Explain', errorMsg: 'Could not explain grammar.', toolId: 'grammar_explain' },
+  { handlerName: 'handleSynonymFinder', endpoint: ENDPOINTS.SYNONYM_FINDER, label: 'Synonyms', errorMsg: 'Could not find synonyms.', toolId: 'synonym_finder' },
+  { handlerName: 'handleAntonymFinder', endpoint: ENDPOINTS.ANTONYM_FINDER, label: 'Antonyms', errorMsg: 'Could not find antonyms.', toolId: 'antonym_finder' },
+  { handlerName: 'handleDefineWords', endpoint: ENDPOINTS.DEFINE_WORDS, label: 'Definitions', errorMsg: 'Could not define words.', toolId: 'define_words' },
+  { handlerName: 'handleWordPower', endpoint: ENDPOINTS.WORD_POWER, label: 'Power Words', errorMsg: 'Could not enhance words.', toolId: 'word_power' },
+  { handlerName: 'handleVocabComplexity', endpoint: ENDPOINTS.VOCAB_COMPLEXITY, label: 'Vocab Complexity', errorMsg: 'Could not analyze vocabulary.', toolId: 'vocab_complexity' },
+  { handlerName: 'handleJargonSimplifier', endpoint: ENDPOINTS.JARGON_SIMPLIFIER, label: 'Jargon Simplifier', errorMsg: 'Could not simplify jargon.', toolId: 'jargon_simplifier' },
+  { handlerName: 'handleFormalityDetector', endpoint: ENDPOINTS.FORMALITY_DETECTOR, label: 'Formality', errorMsg: 'Could not detect formality.', toolId: 'formality_detector' },
+  { handlerName: 'handleClicheDetector', endpoint: ENDPOINTS.CLICHE_DETECTOR, label: 'Cliche Detector', errorMsg: 'Could not detect cliches.', toolId: 'cliche_detector' },
+  // Generator AI handlers
+  { handlerName: 'handleRegexGen', endpoint: ENDPOINTS.REGEX_GEN, label: 'Regex Pattern', errorMsg: 'Could not generate regex.', toolId: 'regex_gen' },
+  { handlerName: 'handleWritingPrompt', endpoint: ENDPOINTS.WRITING_PROMPT, label: 'Writing Prompt', errorMsg: 'Could not generate prompt.', toolId: 'writing_prompt' },
+  { handlerName: 'handleTeamNameGen', endpoint: ENDPOINTS.TEAM_NAME_GEN, label: 'Team Names', errorMsg: 'Could not generate names.', toolId: 'team_name_gen' },
+  { handlerName: 'handleMockApiResponse', endpoint: ENDPOINTS.MOCK_API_RESPONSE, label: 'Mock API', errorMsg: 'Could not generate mock response.', toolId: 'mock_api_response' },
+];
+
+/**
+ * Hook that provides AI-powered text transformation tools.
+ * Uses a data-driven factory pattern: simple callAi handlers are generated
+ * from AI_TOOL_DEFINITIONS, while parameterized handlers (translate, tone, etc.)
+ * are defined individually.
+ *
+ * @param {string} text - The current input text.
+ * @param {function} setText - Setter for the input text.
+ * @param {function} setMarkdownMode - Setter to toggle markdown mode.
+ * @param {function} setPreviewMode - Setter to change the preview mode.
+ * @param {function} showAlert - Callback to display an alert notification.
+ * @param {function} pushHistory - Callback to record an operation in history.
+ * @returns {object} AI tool handlers, state setters, and result data.
+ */
 export default function useAiTools(
   text,
   setText,
@@ -29,9 +117,17 @@ export default function useAiTools(
 
   const [transformText] = useTransformTextMutation();
 
+  /** @param {string} str - Text to check for markdown syntax. */
   const hasMarkdown = (str) => /[|#*-]{2,}|^\s*[•\-\d]+[.)]\s|^\|.+\|$/m.test(str);
 
-  const callAi = async (endpoint, label, errorMsg, toolId) => {
+  /**
+   * Core AI call function. Sends text to an endpoint and processes the result.
+   * @param {string} endpoint - API endpoint path.
+   * @param {string} label - Display label for the result.
+   * @param {string} errorMsg - Fallback error message.
+   * @param {string} [toolId] - Optional tool identifier for history tracking.
+   */
+  const callAi = useCallback(async (endpoint, label, errorMsg, toolId) => {
     if (!text) return;
     if (!accessToken) {
       showAlert('Please log in to use AI tools', 'warning');
@@ -58,301 +154,26 @@ export default function useAiTools(
         showAlert(err.data?.detail || errorMsg, 'danger');
       }
     }
-  };
+  }, [text, accessToken, transformText, setAiResult, setPreviewMode, pushHistory, showAlert]);
 
-  const handleHashtags = () =>
-    callAi(
-      ENDPOINTS.GENERATE_HASHTAGS,
-      'Hashtags',
-      'Could not generate hashtags. Please try again.'
-    );
-  const handleSeoTitles = () =>
-    callAi(
-      ENDPOINTS.GENERATE_SEO_TITLES,
-      'SEO Titles',
-      'Could not generate SEO titles. Please try again.'
-    );
-  const handleMetaDescriptions = () =>
-    callAi(
-      ENDPOINTS.GENERATE_META_DESCRIPTIONS,
-      'Meta Descriptions',
-      'Could not generate meta descriptions. Please try again.'
-    );
-  const handleBlogOutline = () =>
-    callAi(
-      ENDPOINTS.GENERATE_BLOG_OUTLINE,
-      'Blog Outline',
-      'Could not generate blog outline. Please try again.'
-    );
-  const handleTweetShorten = () =>
-    callAi(ENDPOINTS.SHORTEN_FOR_TWEET, 'Tweet', 'Could not shorten for tweet. Please try again.');
-  const handleEmailRewrite = () =>
-    callAi(ENDPOINTS.REWRITE_EMAIL, 'Email', 'Could not rewrite email. Please try again.');
-  const handleKeywords = () =>
-    callAi(ENDPOINTS.EXTRACT_KEYWORDS, 'Keywords', 'Could not extract keywords. Please try again.');
-  const handleSummarize = () =>
-    callAi(ENDPOINTS.SUMMARIZE, 'Summary', 'Could not summarize text. Please try again.');
-  const handleFixGrammar = () =>
-    callAi(ENDPOINTS.FIX_GRAMMAR, 'Grammar Fix', 'Could not fix grammar. Please try again.');
-  const handleParaphrase = () =>
-    callAi(ENDPOINTS.PARAPHRASE, 'Paraphrase', 'Could not paraphrase text. Please try again.');
-  const handleSentiment = () =>
-    callAi(
-      ENDPOINTS.ANALYZE_SENTIMENT,
-      'Sentiment',
-      'Could not analyze sentiment. Please try again.'
-    );
-  const handleLengthenText = () =>
-    callAi(ENDPOINTS.LENGTHEN_TEXT, 'Lengthened', 'Could not lengthen text. Please try again.');
-  const handleEli5 = () =>
-    callAi(ENDPOINTS.ELI5, 'ELI5', 'Could not simplify text. Please try again.');
-  const handleProofread = () =>
-    callAi(ENDPOINTS.PROOFREAD, 'Proofread', 'Could not proofread text. Please try again.');
-  const handleGenerateTitle = () =>
-    callAi(ENDPOINTS.GENERATE_TITLE, 'Titles', 'Could not generate titles. Please try again.');
-  const handleRefactorPrompt = () =>
-    callAi(
-      ENDPOINTS.REFACTOR_PROMPT,
-      'Prompt Refactored',
-      'Could not refactor prompt. Please try again.'
-    );
-  const handleEmojify = () =>
-    callAi(ENDPOINTS.EMOJIFY, 'Emojify', 'Could not add emojis. Please try again.', 'emojify');
+  /**
+   * Generate handler functions from tool definitions.
+   * Each handler calls callAi with the tool's endpoint and label.
+   * The resulting object has the same property names as the original
+   * hand-written handlers for backward compatibility.
+   */
+  const simpleHandlers = useMemo(() => {
+    const result = {};
+    for (const tool of AI_TOOL_DEFINITIONS) {
+      result[tool.handlerName] = () =>
+        callAi(tool.endpoint, tool.label, tool.errorMsg, tool.toolId);
+    }
+    return result;
+  }, [callAi]);
 
-  // New AI Writing handlers
-  const handleAcademicStyle = () =>
-    callAi(
-      ENDPOINTS.ACADEMIC_STYLE,
-      'Academic Style',
-      'Could not convert to academic style.',
-      'academic_style'
-    );
-  const handleCreativeStyle = () =>
-    callAi(
-      ENDPOINTS.CREATIVE_STYLE,
-      'Creative Style',
-      'Could not convert to creative style.',
-      'creative_style'
-    );
-  const handleTechnicalStyle = () =>
-    callAi(
-      ENDPOINTS.TECHNICAL_STYLE,
-      'Technical Style',
-      'Could not convert to technical style.',
-      'technical_style'
-    );
-  const handleActiveVoice = () =>
-    callAi(
-      ENDPOINTS.ACTIVE_VOICE,
-      'Active Voice',
-      'Could not convert to active voice.',
-      'active_voice'
-    );
-  const handleRedundancyRemover = () =>
-    callAi(
-      ENDPOINTS.REDUNDANCY_REMOVER,
-      'Remove Redundancy',
-      'Could not remove redundancy.',
-      'redundancy_remover'
-    );
-  const handleSentenceSplitter = () =>
-    callAi(
-      ENDPOINTS.SENTENCE_SPLITTER,
-      'Split Sentences',
-      'Could not split sentences.',
-      'sentence_splitter'
-    );
-  const handleConciseness = () =>
-    callAi(ENDPOINTS.CONCISENESS, 'Make Concise', 'Could not make text concise.', 'conciseness');
-  const handleResumeBullets = () =>
-    callAi(
-      ENDPOINTS.RESUME_BULLETS,
-      'Resume Bullets',
-      'Could not generate resume bullets.',
-      'resume_bullets'
-    );
-  const handleMeetingNotes = () =>
-    callAi(
-      ENDPOINTS.MEETING_NOTES,
-      'Meeting Notes',
-      'Could not generate meeting notes.',
-      'meeting_notes'
-    );
-  const handleCoverLetter = () =>
-    callAi(
-      ENDPOINTS.COVER_LETTER,
-      'Cover Letter',
-      'Could not generate cover letter.',
-      'cover_letter'
-    );
-  const handleOutlineToDraft = () =>
-    callAi(
-      ENDPOINTS.OUTLINE_TO_DRAFT,
-      'Outline→Draft',
-      'Could not expand outline.',
-      'outline_to_draft'
-    );
-  const handleContinueWriting = () =>
-    callAi(
-      ENDPOINTS.CONTINUE_WRITING,
-      'Continue Writing',
-      'Could not continue writing.',
-      'continue_writing'
-    );
-  const handleRewriteUnique = () =>
-    callAi(
-      ENDPOINTS.REWRITE_UNIQUE,
-      'Rewrite Unique',
-      'Could not rewrite uniquely.',
-      'rewrite_unique'
-    );
-  const handleToneAnalyzer = () =>
-    callAi(ENDPOINTS.TONE_ANALYZER, 'Tone Analysis', 'Could not analyze tone.', 'tone_analyzer');
+  // ── Parameterized handlers (require extra state / custom logic) ──
 
-  // New AI Content handlers
-  const handleLinkedinPost = () =>
-    callAi(
-      ENDPOINTS.LINKEDIN_POST,
-      'LinkedIn Post',
-      'Could not generate LinkedIn post.',
-      'linkedin_post'
-    );
-  const handleTwitterThread = () =>
-    callAi(
-      ENDPOINTS.TWITTER_THREAD,
-      'Twitter Thread',
-      'Could not generate Twitter thread.',
-      'twitter_thread'
-    );
-  const handleInstagramCaption = () =>
-    callAi(
-      ENDPOINTS.INSTAGRAM_CAPTION,
-      'Instagram Caption',
-      'Could not generate Instagram caption.',
-      'instagram_caption'
-    );
-  const handleYoutubeDesc = () =>
-    callAi(
-      ENDPOINTS.YOUTUBE_DESC,
-      'YouTube Description',
-      'Could not generate YouTube description.',
-      'youtube_desc'
-    );
-  const handleSocialBio = () =>
-    callAi(ENDPOINTS.SOCIAL_BIO, 'Social Bio', 'Could not generate social bio.', 'social_bio');
-  const handleProductDesc = () =>
-    callAi(
-      ENDPOINTS.PRODUCT_DESC,
-      'Product Description',
-      'Could not generate product description.',
-      'product_desc'
-    );
-  const handleCtaGenerator = () =>
-    callAi(ENDPOINTS.CTA_GENERATOR, 'CTAs', 'Could not generate CTAs.', 'cta_generator');
-  const handleAdCopy = () =>
-    callAi(ENDPOINTS.AD_COPY, 'Ad Copy', 'Could not generate ad copy.', 'ad_copy');
-  const handleLandingHeadline = () =>
-    callAi(
-      ENDPOINTS.LANDING_HEADLINE,
-      'Landing Headline',
-      'Could not generate headlines.',
-      'landing_headline'
-    );
-  const handleEmailSubject = () =>
-    callAi(
-      ENDPOINTS.EMAIL_SUBJECT,
-      'Email Subject',
-      'Could not generate subject lines.',
-      'email_subject'
-    );
-  const handleContentIdeas = () =>
-    callAi(
-      ENDPOINTS.CONTENT_IDEAS,
-      'Content Ideas',
-      'Could not generate content ideas.',
-      'content_ideas'
-    );
-  const handleHookGenerator = () =>
-    callAi(ENDPOINTS.HOOK_GENERATOR, 'Hooks', 'Could not generate hooks.', 'hook_generator');
-  const handleAngleGenerator = () =>
-    callAi(ENDPOINTS.ANGLE_GENERATOR, 'Angles', 'Could not generate angles.', 'angle_generator');
-  const handleFaqSchema = () =>
-    callAi(ENDPOINTS.FAQ_SCHEMA, 'FAQ Schema', 'Could not generate FAQ schema.', 'faq_schema');
-
-  // New Language handlers
-  const handlePosTagger = () =>
-    callAi(ENDPOINTS.POS_TAGGER, 'Parts of Speech', 'Could not tag parts of speech.', 'pos_tagger');
-  const handleSentenceType = () =>
-    callAi(
-      ENDPOINTS.SENTENCE_TYPE,
-      'Sentence Type',
-      'Could not classify sentences.',
-      'sentence_type'
-    );
-  const handleGrammarExplain = () =>
-    callAi(
-      ENDPOINTS.GRAMMAR_EXPLAIN,
-      'Grammar Explain',
-      'Could not explain grammar.',
-      'grammar_explain'
-    );
-  const handleSynonymFinder = () =>
-    callAi(ENDPOINTS.SYNONYM_FINDER, 'Synonyms', 'Could not find synonyms.', 'synonym_finder');
-  const handleAntonymFinder = () =>
-    callAi(ENDPOINTS.ANTONYM_FINDER, 'Antonyms', 'Could not find antonyms.', 'antonym_finder');
-  const handleDefineWords = () =>
-    callAi(ENDPOINTS.DEFINE_WORDS, 'Definitions', 'Could not define words.', 'define_words');
-  const handleWordPower = () =>
-    callAi(ENDPOINTS.WORD_POWER, 'Power Words', 'Could not enhance words.', 'word_power');
-  const handleVocabComplexity = () =>
-    callAi(
-      ENDPOINTS.VOCAB_COMPLEXITY,
-      'Vocab Complexity',
-      'Could not analyze vocabulary.',
-      'vocab_complexity'
-    );
-  const handleJargonSimplifier = () =>
-    callAi(
-      ENDPOINTS.JARGON_SIMPLIFIER,
-      'Jargon Simplifier',
-      'Could not simplify jargon.',
-      'jargon_simplifier'
-    );
-  const handleFormalityDetector = () =>
-    callAi(
-      ENDPOINTS.FORMALITY_DETECTOR,
-      'Formality',
-      'Could not detect formality.',
-      'formality_detector'
-    );
-  const handleClicheDetector = () =>
-    callAi(
-      ENDPOINTS.CLICHE_DETECTOR,
-      'Cliche Detector',
-      'Could not detect cliches.',
-      'cliche_detector'
-    );
-
-  // New Generator AI handlers
-  const handleRegexGen = () =>
-    callAi(ENDPOINTS.REGEX_GEN, 'Regex Pattern', 'Could not generate regex.', 'regex_gen');
-  const handleWritingPrompt = () =>
-    callAi(
-      ENDPOINTS.WRITING_PROMPT,
-      'Writing Prompt',
-      'Could not generate prompt.',
-      'writing_prompt'
-    );
-  const handleTeamNameGen = () =>
-    callAi(ENDPOINTS.TEAM_NAME_GEN, 'Team Names', 'Could not generate names.', 'team_name_gen');
-  const handleMockApiResponse = () =>
-    callAi(
-      ENDPOINTS.MOCK_API_RESPONSE,
-      'Mock API',
-      'Could not generate mock response.',
-      'mock_api_response'
-    );
-
+  /** @param {string} [overrideVal] - Optional format value override. */
   const handleChangeFormat = async (overrideVal) => {
     if (!text) return;
     const original = text;
@@ -374,6 +195,7 @@ export default function useAiTools(
     }
   };
 
+  /** @param {string} [overrideVal] - Optional tone value override. */
   const handleChangeTone = async (overrideVal) => {
     if (!text) return;
     const original = text;
@@ -391,6 +213,7 @@ export default function useAiTools(
     }
   };
 
+  /** Detect the language of the current text. */
   const handleDetectLanguage = async () => {
     if (!text) return;
     try {
@@ -403,12 +226,12 @@ export default function useAiTools(
     }
   };
 
+  /** @param {string} [overrideVal] - Optional target language override. */
   const handleTranslate = async (overrideVal) => {
     if (!text) return;
     const original = text;
     const lang = overrideVal ?? translateLang;
     try {
-      // Auto-detect source language if enabled
       if (autoDetectLang) {
         const detected = await handleDetectLanguage();
         if (detected) showAlert(`Detected: ${detected}`, 'info');
@@ -429,6 +252,7 @@ export default function useAiTools(
     }
   };
 
+  /** @param {string} [overrideVal] - Optional target language override. */
   const handleTransliterate = async (overrideVal) => {
     if (!text) return;
     const original = text;
@@ -450,6 +274,7 @@ export default function useAiTools(
     }
   };
 
+  /** @param {string} [overrideVal] - Optional delimiter override. */
   const handleSplitToLines = async (overrideVal) => {
     if (!text) return;
     const original = text;
@@ -472,6 +297,7 @@ export default function useAiTools(
     }
   };
 
+  /** @param {string} [overrideVal] - Optional separator override. */
   const handleJoinLines = async (overrideVal) => {
     if (!text) return;
     const original = text;
@@ -493,6 +319,7 @@ export default function useAiTools(
     }
   };
 
+  /** @param {string} [overrideVal] - Optional Caesar shift override. */
   const handleCaesarCipher = async (overrideVal) => {
     if (!text) return;
     const original = text;
@@ -510,6 +337,7 @@ export default function useAiTools(
     }
   };
 
+  /** @param {string} [overrideVal] - Optional rail count override. */
   const handleRailFenceEnc = async (overrideVal) => {
     if (!text) return;
     const original = text;
@@ -531,6 +359,7 @@ export default function useAiTools(
     }
   };
 
+  /** @param {string} [overrideVal] - Optional rail count override. */
   const handleRailFenceDec = async (overrideVal) => {
     if (!text) return;
     const original = text;
@@ -552,11 +381,11 @@ export default function useAiTools(
     }
   };
 
+  /** @param {string} [overrideVal] - Optional target language override. */
   const handleCurlToCode = async (overrideVal) => {
     if (!text) return;
     const original = text;
     const target = overrideVal ?? curlTarget;
-    // Client-side cURL to code conversion
     try {
       let result = text;
       const urlMatch = text.match(/curl\s+(?:.*?\s+)?['"]?(https?:\/\/[^\s'"]+)/);
@@ -613,12 +442,12 @@ export default function useAiTools(
     }
   };
 
+  /** @param {string} [overrideVal] - Optional date format type override. */
   const handleDateFormat = async (overrideVal) => {
     if (!text) return;
     const original = text;
     const fmt = overrideVal ?? dateFormatType;
     try {
-      // Try to parse the date from text
       const lines = text.split('\n').map((line) => {
         const d = new Date(line.trim());
         if (isNaN(d.getTime())) return line;
@@ -665,6 +494,7 @@ export default function useAiTools(
     }
   };
 
+  /** @param {string} [overrideVal] - Optional alignment override. */
   const handlePadLines = async (overrideVal) => {
     if (!text) return;
     const original = text;
@@ -682,6 +512,7 @@ export default function useAiTools(
     }
   };
 
+  /** Accept the current AI result and replace the input text. */
   const handleAiAccept = () => {
     if (aiResult) {
       setText(aiResult.result);
@@ -690,6 +521,7 @@ export default function useAiTools(
     }
   };
 
+  /** Dismiss the current AI result without applying it. */
   const handleAiDismiss = () => setAiResult(null);
 
   return {
@@ -704,27 +536,13 @@ export default function useAiTools(
     setTranslateLang,
     translitLang,
     setTranslitLang,
-    handleHashtags,
-    handleSeoTitles,
-    handleMetaDescriptions,
-    handleBlogOutline,
-    handleTweetShorten,
-    handleEmailRewrite,
-    handleKeywords,
-    handleSummarize,
-    handleFixGrammar,
-    handleParaphrase,
-    handleSentiment,
-    handleLengthenText,
-    handleEli5,
-    handleProofread,
-    handleGenerateTitle,
-    handleRefactorPrompt,
+    // Simple AI handlers (factory-generated)
+    ...simpleHandlers,
+    // Parameterized handlers
     handleChangeFormat,
     handleChangeTone,
     handleTranslate,
     handleTransliterate,
-    handleEmojify,
     handleDetectLanguage,
     autoDetectLang,
     setAutoDetectLang,
@@ -739,7 +557,7 @@ export default function useAiTools(
     handleSplitToLines,
     handleJoinLines,
     handlePadLines,
-    // New select tool state
+    // Select tool state
     caesarShift,
     setCaesarShift,
     railCount,
@@ -748,59 +566,12 @@ export default function useAiTools(
     setCurlTarget,
     dateFormatType,
     setDateFormatType,
-    // New select tool handlers
+    // Select tool handlers
     handleCaesarCipher,
     handleRailFenceEnc,
     handleRailFenceDec,
     handleCurlToCode,
     handleDateFormat,
-    // New AI Writing handlers
-    handleAcademicStyle,
-    handleCreativeStyle,
-    handleTechnicalStyle,
-    handleActiveVoice,
-    handleRedundancyRemover,
-    handleSentenceSplitter,
-    handleConciseness,
-    handleResumeBullets,
-    handleMeetingNotes,
-    handleCoverLetter,
-    handleOutlineToDraft,
-    handleContinueWriting,
-    handleRewriteUnique,
-    handleToneAnalyzer,
-    // New AI Content handlers
-    handleLinkedinPost,
-    handleTwitterThread,
-    handleInstagramCaption,
-    handleYoutubeDesc,
-    handleSocialBio,
-    handleProductDesc,
-    handleCtaGenerator,
-    handleAdCopy,
-    handleLandingHeadline,
-    handleEmailSubject,
-    handleContentIdeas,
-    handleHookGenerator,
-    handleAngleGenerator,
-    handleFaqSchema,
-    // New Language handlers
-    handlePosTagger,
-    handleSentenceType,
-    handleGrammarExplain,
-    handleSynonymFinder,
-    handleAntonymFinder,
-    handleDefineWords,
-    handleWordPower,
-    handleVocabComplexity,
-    handleJargonSimplifier,
-    handleFormalityDetector,
-    handleClicheDetector,
-    // New Generator AI handlers
-    handleRegexGen,
-    handleWritingPrompt,
-    handleTeamNameGen,
-    handleMockApiResponse,
     handleAiAccept,
     handleAiDismiss,
   };

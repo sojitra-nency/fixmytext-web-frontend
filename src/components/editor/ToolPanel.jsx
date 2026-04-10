@@ -75,6 +75,8 @@ function GroupHeader({ label, count, collapsed, onToggle, pinned }) {
         pinned ? ' tu-group-header--pinned' : ''
       }`}
       onClick={onToggle}
+      aria-expanded={!collapsed}
+      aria-label={`${collapsed ? 'Expand' : 'Collapse'} ${label} group`}
     >
       <svg
         className="tu-group-chevron"

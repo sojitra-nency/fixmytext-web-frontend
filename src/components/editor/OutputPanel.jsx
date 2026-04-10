@@ -1,6 +1,7 @@
 import { memo, useMemo, useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { useCreateShareMutation } from '../../store/api/shareApi';
@@ -32,6 +33,26 @@ const SIZES = [
   { label: '40', px: '40px' },
 ];
 
+/**
+ * Output panel that displays AI results, markdown previews, and dyslexia-friendly text.
+ * Supports rich text editing, markdown rendering with DOMPurify sanitization,
+ * text-to-speech, sharing, and file export.
+ *
+ * @param {object} props
+ * @param {object|null} props.aiResult - The AI-generated result object with `label` and `result` fields.
+ * @param {function} props.hasMarkdown - Function to detect if a string contains markdown.
+ * @param {string|null} props.previewMode - Current preview mode: 'result', 'dyslexia', 'markdown', or null.
+ * @param {function} props.showAlert - Callback to display an alert notification.
+ * @param {string} props.text - The current input text.
+ * @param {boolean} props.dyslexiaMode - Whether dyslexia-friendly font is active.
+ * @param {boolean} props.markdownMode - Whether markdown preview mode is active.
+ * @param {object} props.speech - Speech hook instance for text-to-speech.
+ * @param {function} props.onDyslexiaToggle - Callback to toggle dyslexia mode.
+ * @param {object|null} props.activeTool - The currently selected tool definition.
+ * @param {boolean} props.loading - Whether a tool operation is in progress.
+ * @param {object} props.exportTools - Export utility hooks for saving output.
+ * @param {function} props.onOutputEdit - Callback when user edits the output inline.
+ */
 export default memo(function OutputPanel({
   aiResult,
   hasMarkdown,
@@ -323,7 +344,7 @@ export default memo(function OutputPanel({
         </div>
       </div>
       <div className="tu-input-toolbar">
-        <button className="tu-input-toolbar-btn" onClick={handleCopy} title="Copy output">
+        <button className="tu-input-toolbar-btn" onClick={handleCopy} title="Copy output" aria-label="Copy to clipboard">
           <svg
             width="14"
             height="14"
@@ -471,6 +492,7 @@ export default memo(function OutputPanel({
           onClick={handleShare}
           disabled={isSharing}
           title="Generate shareable link"
+          aria-label="Share result"
         >
           <svg
             width="14"
@@ -759,9 +781,10 @@ export default memo(function OutputPanel({
         <div className="tu-output-text">
           {showResult ? (
             mdPreview || (activeTool?.type === 'ai' && hasMarkdown(aiResult.result)) ? (
+              /* Sanitized to prevent XSS from AI-generated content */
               <div
                 className="tu-preview-markdown"
-                dangerouslySetInnerHTML={{ __html: marked.parse(aiResult.result) }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(aiResult.result)) }}
               />
             ) : isEditable ? (
               <div
@@ -773,9 +796,10 @@ export default memo(function OutputPanel({
                 spellCheck={false}
               />
             ) : isHtmlOutput ? (
+              /* Sanitized to prevent XSS from AI-generated content */
               <span
                 style={{ whiteSpace: 'pre-wrap' }}
-                dangerouslySetInnerHTML={{ __html: aiResult.result }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(aiResult.result) }}
               />
             ) : (
               <span style={{ whiteSpace: 'pre-wrap' }}>{aiResult.result}</span>
@@ -785,9 +809,10 @@ export default memo(function OutputPanel({
               {text}
             </span>
           ) : showMarkdown ? (
+            /* Sanitized to prevent XSS from AI-generated content */
             <div
               className="tu-preview-markdown"
-              dangerouslySetInnerHTML={{ __html: marked.parse(text) }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(text)) }}
             />
           ) : null}
         </div>

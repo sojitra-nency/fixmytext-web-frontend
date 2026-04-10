@@ -42,6 +42,7 @@ import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts';
 import ToolPanel from './ToolPanel';
 import ToolIcon from './ToolIcon';
 import OutputPanel from './OutputPanel';
+import TabBar from './TabBar';
 import DrawerPanel from '../drawers/DrawerPanel';
 import FindReplaceDrawer from '../drawers/FindReplaceDrawer';
 import CompareOutput, { CompareInput } from '../drawers/CompareDrawer';
@@ -204,153 +205,23 @@ const DRAWERS = {
   nthlines: { title: 'Every Nth Line', color: 'teal' },
 };
 
-/* ── Tab bar with scroll arrows that disable at boundaries ── */
-function TabBarWrap({
-  workspaceTabs,
-  activeWorkspaceId,
-  setActiveWorkspaceId,
-  setActivePanel,
-  setSaveModal,
-  closeWorkspaceTab,
-  onTabSwitch,
-}) {
-  const barRef = useRef(null);
-  const [scrollState, setScrollState] = useState({ overflows: false, atStart: true, atEnd: true });
+/* Tab bar component extracted to ./TabBar.jsx */
 
-  const updateScroll = useCallback(() => {
-    const el = barRef.current;
-    if (!el) return;
-    const overflows = el.scrollWidth > el.clientWidth;
-    const atStart = el.scrollLeft <= 0;
-    const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1;
-    setScrollState({ overflows, atStart, atEnd });
-  }, []);
-
-  useEffect(() => {
-    const el = barRef.current;
-    if (!el) return;
-    updateScroll();
-    el.addEventListener('scroll', updateScroll, { passive: true });
-    const ro = new ResizeObserver(updateScroll);
-    ro.observe(el);
-    return () => {
-      el.removeEventListener('scroll', updateScroll);
-      ro.disconnect();
-    };
-  }, [updateScroll, workspaceTabs.length]);
-
-  return (
-    <div className="tu-tab-bar-wrap">
-      {scrollState.overflows && (
-        <button
-          className={`tu-tab-scroll tu-tab-scroll--left${
-            scrollState.atStart ? ' tu-tab-scroll--disabled' : ''
-          }`}
-          onClick={() => barRef.current?.scrollBy({ left: -200, behavior: 'smooth' })}
-          disabled={scrollState.atStart}
-          title="Scroll tabs left"
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
-      )}
-      <div
-        ref={barRef}
-        className="tu-tab-bar"
-        onWheel={(e) => {
-          e.currentTarget.scrollLeft += e.deltaY;
-          e.preventDefault();
-        }}
-      >
-        {workspaceTabs.map((tab) => (
-          <div
-            key={tab.id}
-            className={`tu-tab${activeWorkspaceId === tab.id ? ' tu-tab--active' : ''}`}
-            onClick={() => {
-              if (tab.id !== activeWorkspaceId) onTabSwitch?.();
-              setActiveWorkspaceId(tab.id);
-              if (tab.type === 'drawer') setActivePanel(tab.panelId);
-            }}
-            title={`~/FixMyText/workspace/${tab.label}`}
-          >
-            <ToolIcon
-              icon={tab.icon}
-              color={tab.tool?.color || tab.color}
-              toolId={tab.tool?.id || tab.panelId}
-            />
-            <span className="tu-tab-name">{tab.label}</span>
-            <button
-              className="tu-tab-save"
-              onClick={(e) => {
-                e.stopPropagation();
-                setSaveModal({ tabId: tab.id, defaultName: tab.label });
-              }}
-              title="Save to templates (Ctrl+S)"
-            >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                <polyline points="17 21 17 13 7 13 7 21" />
-                <polyline points="7 3 7 8 15 8" />
-              </svg>
-            </button>
-            <button
-              className="tu-tab-close"
-              onClick={(e) => {
-                e.stopPropagation();
-                closeWorkspaceTab(tab.id);
-              }}
-            >
-              ✕
-            </button>
-          </div>
-        ))}
-      </div>
-      {scrollState.overflows && (
-        <button
-          className={`tu-tab-scroll tu-tab-scroll--right${
-            scrollState.atEnd ? ' tu-tab-scroll--disabled' : ''
-          }`}
-          onClick={() => barRef.current?.scrollBy({ left: 200, behavior: 'smooth' })}
-          disabled={scrollState.atEnd}
-          title="Scroll tabs right"
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
-        </button>
-      )}
-    </div>
-  );
-}
-
+/**
+ * Main editor orchestrator component.
+ * Manages workspace tabs, tool execution, text state per tab, drawer panels,
+ * keyboard shortcuts, and coordinates between all editor sub-components
+ * (ToolPanel, OutputPanel, TabBar, drawers, etc.).
+ *
+ * @param {object} props
+ * @param {function} props.showAlert - Alert notification callback.
+ * @param {object} props.gamification - Gamification hook state.
+ * @param {object|null} props.user - Current user object.
+ * @param {boolean} props.isAuthenticated - Whether user is authenticated.
+ * @param {string} props.mode - Current theme mode.
+ * @param {function} props.setMode - Theme mode setter.
+ * @param {object} props.subscription - Subscription hook state.
+ */
 export default function TextForm(props) {
   const [toolTexts, setToolTexts] = useState({});
   const [dyslexiaMode, setDyslexiaMode] = useState(false);
@@ -3083,7 +2954,7 @@ export default function TextForm(props) {
         <div className="tu-forge-center">
           {/* ─── Workspace Tab Bar (top-level, tools as files) ─── */}
           {workspaceTabs.length > 0 && (
-            <TabBarWrap
+            <TabBar
               workspaceTabs={workspaceTabs}
               activeWorkspaceId={activeWorkspaceId}
               setActiveWorkspaceId={setActiveWorkspaceId}

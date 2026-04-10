@@ -2,8 +2,12 @@ import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
+/** Maximum number of token refresh attempts before forcing logout. */
+const MAX_REFRESH_RETRIES = 1;
+
 // Simple mutex — no external dependency
 let refreshPromise = null;
+let retryCount = 0;
 
 /**
  * Create a fetchBaseQuery with auth token injection.
@@ -41,8 +45,9 @@ function createReauthQuery(rawBaseQuery) {
         url.includes('/auth/register'));
 
     if (result.error && result.error.status === 401 && !isAuthEndpoint) {
-      // If a refresh is already in flight, wait for it
-      if (!refreshPromise) {
+      // Only attempt refresh if we haven't exceeded the retry limit
+      if (!refreshPromise && retryCount < MAX_REFRESH_RETRIES) {
+        retryCount++;
         refreshPromise = defaultBaseQuery(
           { url: '/api/v1/auth/refresh', method: 'POST' },
           api,
@@ -56,6 +61,7 @@ function createReauthQuery(rawBaseQuery) {
               });
               return true;
             } else {
+              retryCount = 0;
               api.dispatch({ type: 'auth/logout' });
               return false;
             }
@@ -63,6 +69,11 @@ function createReauthQuery(rawBaseQuery) {
           .finally(() => {
             refreshPromise = null;
           });
+      } else if (!refreshPromise) {
+        // Max retries exceeded — force logout to prevent infinite refresh loops
+        retryCount = 0;
+        api.dispatch({ type: 'auth/logout' });
+        return result;
       }
 
       const refreshed = await refreshPromise;
@@ -70,6 +81,11 @@ function createReauthQuery(rawBaseQuery) {
         // Retry original request with new token
         result = await rawBaseQuery(args, api, extraOptions);
       }
+    }
+
+    // Reset retry counter on successful requests
+    if (!result.error) {
+      retryCount = 0;
     }
 
     return result;
