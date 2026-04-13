@@ -138,4 +138,57 @@ describe('BottomPanel', () => {
     expect(screen.getByText('3')).toBeInTheDocument();
     expect(screen.getByText('Tools Used')).toBeInTheDocument();
   });
+
+  it('calls handleRestoreOriginal when restore input button clicked', () => {
+    const history = {
+      history: [{ operation: 'Upper', original: 'hello', result: 'HELLO', timestamp: Date.now() }],
+      handleRestoreOriginal: vi.fn(),
+      handleRestoreResult: vi.fn(),
+      handleClearHistory: vi.fn(),
+    };
+    render(<BottomPanel {...baseProps} history={history} />);
+    fireEvent.click(screen.getByText('History'));
+    fireEvent.click(screen.getByTitle('Restore input'));
+    expect(history.handleRestoreOriginal).toHaveBeenCalledWith(0);
+  });
+
+  it('calls handleRestoreResult when restore output button clicked', () => {
+    const history = {
+      history: [{ operation: 'Upper', original: 'hello', result: 'HELLO', timestamp: Date.now() }],
+      handleRestoreOriginal: vi.fn(),
+      handleRestoreResult: vi.fn(),
+      handleClearHistory: vi.fn(),
+    };
+    render(<BottomPanel {...baseProps} history={history} />);
+    fireEvent.click(screen.getByText('History'));
+    fireEvent.click(screen.getByTitle('Restore output'));
+    expect(history.handleRestoreResult).toHaveBeenCalledWith(0);
+  });
+
+  it('calls handleClearHistory when clear button clicked', () => {
+    const history = {
+      history: [{ operation: 'Test', original: 'a', result: 'b', timestamp: Date.now() }],
+      handleRestoreOriginal: vi.fn(),
+      handleRestoreResult: vi.fn(),
+      handleClearHistory: vi.fn(),
+    };
+    render(<BottomPanel {...baseProps} history={history} />);
+    fireEvent.click(screen.getByText('History'));
+    fireEvent.click(screen.getByText('Clear'));
+    expect(history.handleClearHistory).toHaveBeenCalled();
+  });
+
+  it('shows time formatting for older entries', () => {
+    const history = {
+      history: [
+        { operation: 'Old', original: 'a', result: 'b', timestamp: Date.now() - 3600000 },
+      ],
+      handleRestoreOriginal: vi.fn(),
+      handleRestoreResult: vi.fn(),
+      handleClearHistory: vi.fn(),
+    };
+    render(<BottomPanel {...baseProps} history={history} />);
+    fireEvent.click(screen.getByText('History'));
+    expect(screen.getByText('1h ago')).toBeInTheDocument();
+  });
 });

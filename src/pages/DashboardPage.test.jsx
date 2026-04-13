@@ -387,6 +387,15 @@ describe('DashboardPage', () => {
     expect(setMode).toHaveBeenCalledWith('light');
   });
 
+  it('updates name input value on typing', () => {
+    renderDash();
+    fireEvent.click(screen.getByText('Profile'));
+    fireEvent.click(screen.getByTitle('Edit name'));
+    const input = screen.getByPlaceholderText('Display name');
+    fireEvent.change(input, { target: { value: 'Bob' } });
+    expect(input.value).toBe('Bob');
+  });
+
   it('calls setPersona when persona card clicked', () => {
     renderDash();
     fireEvent.click(screen.getByText('Profile'));
