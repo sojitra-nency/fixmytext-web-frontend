@@ -313,10 +313,10 @@ describe('DashboardPage', () => {
     expect(screen.getByText('Credits')).toBeInTheDocument();
   });
 
-  it('shows Plan Comparison table', () => {
+  it('shows subscription tab content', () => {
     renderDash();
     fireEvent.click(screen.getByText('Subscription'));
-    expect(screen.getByText('Plan Comparison')).toBeInTheDocument();
+    expect(screen.getByText('Free Plan')).toBeInTheDocument();
   });
 
   it('shows upgrade button for free user', () => {
@@ -385,6 +385,15 @@ describe('DashboardPage', () => {
     fireEvent.click(screen.getByText('Profile'));
     fireEvent.click(screen.getByText(/Light/));
     expect(setMode).toHaveBeenCalledWith('light');
+  });
+
+  it('updates name input value on typing', () => {
+    renderDash();
+    fireEvent.click(screen.getByText('Profile'));
+    fireEvent.click(screen.getByTitle('Edit name'));
+    const input = screen.getByPlaceholderText('Display name');
+    fireEvent.change(input, { target: { value: 'Bob' } });
+    expect(input.value).toBe('Bob');
   });
 
   it('calls setPersona when persona card clicked', () => {
