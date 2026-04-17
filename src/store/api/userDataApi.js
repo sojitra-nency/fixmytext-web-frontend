@@ -1,9 +1,9 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { baseQueryWithReauth } from './baseQuery';
+import { baseQueryWithRetry } from './baseQuery';
 
 export const userDataApi = createApi({
   reducerPath: 'userDataApi',
-  baseQuery: baseQueryWithReauth,
+  baseQuery: baseQueryWithRetry,
   tagTypes: [
     'Preferences',
     'Gamification',

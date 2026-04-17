@@ -36,6 +36,7 @@ import useSmartSuggestions from '../../hooks/useSmartSuggestions';
 import useToolSearch from '../../hooks/useToolSearch';
 import useResize from '../../hooks/useResize';
 import useTrialLimit from '../../hooks/useTrialLimit';
+import useDrawerState from '../../hooks/useDrawerState';
 import useKeyboardShortcuts from '../../hooks/useKeyboardShortcuts';
 
 // Components
@@ -226,7 +227,7 @@ export default function TextForm(props) {
   const [toolTexts, setToolTexts] = useState({});
   const [dyslexiaMode, setDyslexiaMode] = useState(false);
   const [markdownMode, setMarkdownMode] = useState(false);
-  const [activePanel, setActivePanel] = useState(null);
+  const { activePanel, setActivePanel, togglePanel } = useDrawerState();
   const [previewMode, setPreviewMode] = useState(null);
   const [activeTab, setActiveTab] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -2220,7 +2221,7 @@ export default function TextForm(props) {
     [text]
   );
 
-  const togglePanel = (panel) => setActivePanel((prev) => (prev === panel ? null : panel));
+  // togglePanel and closePanel provided by useDrawerState hook
 
   const renderDrawerContent = () => {
     switch (activePanel) {

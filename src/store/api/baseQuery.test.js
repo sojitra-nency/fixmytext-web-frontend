@@ -1,4 +1,9 @@
-import { createAuthBaseQuery, baseQueryWithReauth, createBaseQueryWithReauth } from './baseQuery';
+import {
+  createAuthBaseQuery,
+  baseQueryWithReauth,
+  createBaseQueryWithReauth,
+  baseQueryWithRetry,
+} from './baseQuery';
 
 describe('baseQuery module', () => {
   it('exports createAuthBaseQuery as a function', () => {
@@ -29,5 +34,9 @@ describe('baseQuery module', () => {
       headers.set('X-Custom', 'test');
     });
     expect(typeof result).toBe('function');
+  });
+
+  it('exports baseQueryWithRetry as a function', () => {
+    expect(typeof baseQueryWithRetry).toBe('function');
   });
 });
