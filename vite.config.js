@@ -11,6 +11,16 @@ export default defineConfig({
         manualChunks: {
           'vendor-export': ['jspdf', 'docx'],
           'vendor-format': ['prettier'],
+          'vendor-hash': [
+            'blakejs',
+            'whirlpool-hash',
+            'xxhashjs',
+            'murmurhash3js',
+            'js-sha3',
+            'js-sha256',
+            'js-sha512',
+            'blueimp-md5',
+          ],
         },
       },
     },
