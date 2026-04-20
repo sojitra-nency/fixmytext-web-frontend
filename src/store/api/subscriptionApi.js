@@ -1,9 +1,9 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { baseQueryWithReauth } from './baseQuery';
+import { baseQueryWithRetry } from './baseQuery';
 
 export const subscriptionApi = createApi({
   reducerPath: 'subscriptionApi',
-  baseQuery: baseQueryWithReauth,
+  baseQuery: baseQueryWithRetry,
   tagTypes: ['Subscription'],
   endpoints: (builder) => ({
     getSubscriptionStatus: builder.query({

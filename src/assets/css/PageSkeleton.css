@@ -1,0 +1,45 @@
+/* PageSkeleton — shimmer placeholder for lazy-loaded routes */
+
+.page-skeleton {
+  max-width: 720px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+}
+
+.page-skeleton__bar {
+  background: var(--surface, #eaeaeb);
+  border-radius: var(--r-sm, 4px);
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.page-skeleton__bar--title {
+  width: 40%;
+  height: 28px;
+  margin-bottom: 12px;
+}
+
+.page-skeleton__bar--subtitle {
+  width: 60%;
+  height: 16px;
+  margin-bottom: 8px;
+}
+
+.page-skeleton__bar--line {
+  width: 100%;
+  height: 14px;
+  margin-bottom: 10px;
+}
+
+.page-skeleton__bar--short {
+  width: 65%;
+}
+
+.page-skeleton__spacer {
+  height: 20px;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { opacity: 0.5; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.5; }
+}

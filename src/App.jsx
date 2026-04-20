@@ -4,6 +4,7 @@ import Alert from './components/layout/Alert';
 import Navbar from './components/layout/Navbar';
 import Home from './pages/Home';
 import OnboardingModal from './components/layout/OnboardingModal';
+import PageSkeleton from './components/layout/PageSkeleton';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 const AboutPage = lazy(() => import('./pages/AboutPage'));
@@ -12,20 +13,17 @@ const SignupPage = lazy(() => import('./pages/SignupPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const PricingPage = lazy(() => import('./pages/PricingPage'));
 const SharePage = lazy(() => import('./pages/SharePage'));
-import { useAlert } from './hooks/useAlert';
-import { useTheme } from './hooks/useTheme';
-import { useAuth } from './hooks/useAuth';
-import useGamification from './hooks/useGamification';
-import useSubscription from './hooks/useSubscription';
+
+import { AlertProvider, useAlertContext } from './contexts/AlertContext';
+import { AppProvider, useAppContext } from './contexts/AppContext';
+import { ThemeProvider, useThemeContext } from './contexts/ThemeContext';
 import PassPurchaseModal from './components/subscription/PassPurchaseModal';
 import { ROUTES } from './constants';
 
 function AppInner() {
-  const { alerts, showAlert, dismissAlert } = useAlert();
-  const { mode, setMode } = useTheme();
-  const { user, isAuthenticated } = useAuth();
-  const gamification = useGamification();
-  const subscription = useSubscription({ showAlert });
+  const { alerts, showAlert, dismissAlert } = useAlertContext();
+  const { mode, setMode } = useThemeContext();
+  const { user, isAuthenticated, gamification, subscription } = useAppContext();
 
   // Listen for global RTK Query errors from middleware
   useEffect(() => {
@@ -53,7 +51,7 @@ function AppInner() {
         blockedTool={subscription.blockedTool}
         subscription={subscription}
       />
-      <Suspense fallback={null}>
+      <Suspense fallback={<PageSkeleton />}>
         <Routes>
           <Route
             exact
@@ -101,7 +99,13 @@ function AppInner() {
 function App() {
   return (
     <Router>
-      <AppInner />
+      <AlertProvider>
+        <ThemeProvider>
+          <AppProvider>
+            <AppInner />
+          </AppProvider>
+        </ThemeProvider>
+      </AlertProvider>
     </Router>
   );
 }

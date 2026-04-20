@@ -1,4 +1,4 @@
-import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -99,3 +99,16 @@ export const baseQueryWithReauth = createReauthQuery(defaultBaseQuery);
 export function createBaseQueryWithReauth(extraHeaders) {
   return createReauthQuery(createAuthBaseQuery(extraHeaders));
 }
+
+/**
+ * Reauth base query with automatic retry for transient server errors (5xx).
+ * Use this for read-heavy APIs (queries). Mutations should NOT use this.
+ */
+export const baseQueryWithRetry = retry(baseQueryWithReauth, {
+  maxRetries: 2,
+  retryCondition: (_error, _args, { attempt }) => {
+    // Only retry on server errors (5xx), not on client errors (4xx)
+    if (_error?.status && _error.status < 500) return false;
+    return attempt <= 2;
+  },
+});
