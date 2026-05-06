@@ -22,7 +22,12 @@ vi.mock('../store/api/authApi', () => ({
 }));
 
 vi.mock('../constants', () => ({
-  ROUTES: { HOME: '/', SIGNUP: '/signup', LOGIN: '/login' },
+  ROUTES: {
+    HOME: '/',
+    SIGNUP: '/signup',
+    LOGIN: '/login',
+    FORGOT_PASSWORD: '/forgot-password',
+  },
 }));
 
 describe('LoginPage', () => {
@@ -45,6 +50,13 @@ describe('LoginPage', () => {
     render(<LoginPage showAlert={showAlert} />);
     expect(screen.getByText('Sign up')).toBeInTheDocument();
     expect(screen.getByText('Sign up').closest('a')).toHaveAttribute('href', '/signup');
+  });
+
+  it('renders forgot-password link', () => {
+    render(<LoginPage showAlert={showAlert} />);
+    const link = screen.getByText('Forgot password?');
+    expect(link).toBeInTheDocument();
+    expect(link.closest('a')).toHaveAttribute('href', '/forgot-password');
   });
 
   it('redirects when already authenticated', () => {

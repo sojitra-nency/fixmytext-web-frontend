@@ -6,7 +6,7 @@
 .tu-forge {
   display: grid;
   grid-template-columns: 48px 240px 1fr;
-  height: calc(100vh - 44px);
+  height: calc(100vh - var(--app-chrome-offset));
   overflow: hidden;
   position: relative;
 }
@@ -2397,7 +2397,7 @@ body:not(.dark) .tu-bottom-panel .tu-btn--ai-dismiss:hover {
   .tu-forge {
     grid-template-columns: 1fr;
     height: auto;
-    min-height: calc(100vh - 44px);
+    min-height: calc(100vh - var(--app-chrome-offset));
   }
   .tu-activity-bar {
     display: none;

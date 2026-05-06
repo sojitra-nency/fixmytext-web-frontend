@@ -5,7 +5,7 @@
 .tu-dash {
   display: grid;
   grid-template-columns: 240px 1fr;
-  height: calc(100vh - 44px);
+  height: calc(100vh - var(--app-chrome-offset));
   background: var(--editor-bg);
   color: var(--editor-fg);
   overflow: hidden;
@@ -576,6 +576,97 @@
 .tu-dash-settings-badge--ok {
   background: rgba(78, 201, 176, 0.15);
   color: var(--emerald);
+}
+
+.tu-dash-settings-badge--warn {
+  background: rgba(244, 71, 71, 0.15);
+  color: var(--rose, #f44747);
+}
+
+.tu-dash-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+/* ── Email verification card ── */
+.tu-dash-card--warn {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
+}
+
+.tu-dash-verify {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.tu-dash-verify__icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tu-dash-verify__body {
+  flex: 1 1 260px;
+  min-width: 200px;
+}
+
+.tu-dash-verify__body .tu-dash-card-title {
+  margin-top: 0;
+}
+
+.tu-dash-verify__body .tu-dash-card-desc b {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.tu-dash-verify__btn {
+  appearance: none;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-sm);
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--t), opacity var(--t);
+  white-space: nowrap;
+  align-self: center;
+}
+
+.tu-dash-verify__btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.tu-dash-verify__btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tu-dash-verify__btn:focus-visible {
+  outline: 2px solid var(--accent-glow);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .tu-dash-verify {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .tu-dash-verify__btn {
+    align-self: flex-start;
+  }
 }
 
 /* ── Theme toggle ── */

@@ -25,6 +25,20 @@ export const authApi = createApi({
       query: () => '/api/v1/auth/me',
       providesTags: ['Me'],
     }),
+    forgotPassword: builder.mutation({
+      query: (body) => ({ url: '/api/v1/auth/forgot-password', method: 'POST', body }),
+    }),
+    resetPassword: builder.mutation({
+      query: (body) => ({ url: '/api/v1/auth/reset-password', method: 'POST', body }),
+    }),
+    verifyEmail: builder.mutation({
+      query: (body) => ({ url: '/api/v1/auth/verify-email', method: 'POST', body }),
+      // Refetch /me so the UI reflects the new verification status.
+      invalidatesTags: ['Me'],
+    }),
+    resendVerification: builder.mutation({
+      query: () => ({ url: '/api/v1/auth/resend-verification', method: 'POST' }),
+    }),
   }),
 });
 
@@ -33,6 +47,10 @@ export const {
   useLoginMutation,
   useLogoutMutation,
   useRefreshMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
+  useVerifyEmailMutation,
+  useResendVerificationMutation,
 
   useGetMeQuery,
 } = authApi;

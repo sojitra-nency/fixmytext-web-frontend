@@ -106,6 +106,9 @@ export default function LoginPage({ showAlert }) {
               />
               <span>Remember me</span>
             </label>
+            <Link to={ROUTES.FORGOT_PASSWORD} className="auth-forgot-link">
+              Forgot password?
+            </Link>
           </div>
           <button type="submit" className="auth-btn auth-btn--primary" disabled={isLoading}>
             {isLoading ? 'Signing in...' : 'Sign In'}

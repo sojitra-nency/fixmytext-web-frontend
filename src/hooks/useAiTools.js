@@ -4,6 +4,34 @@ import { useTransformTextMutation } from '../store/api/textApi';
 import { ENDPOINTS } from '../constants/endpoints';
 
 /**
+ * Normalize a transform-API error into a user-facing message + alert tone.
+ * Handles three shapes the backend produces:
+ *   - 403 + structured {code:"email_not_verified", message}: verification gate
+ *   - 429 + string detail: quota / rate limit
+ *   - anything else: prefer `detail` (string or {message}), fall back to
+ *     the caller-supplied default.
+ */
+function formatToolError(err, fallback) {
+  const detail = err?.data?.detail;
+  if (err?.status === 403 && typeof detail === 'object' && detail?.code === 'email_not_verified') {
+    return {
+      message: detail.message || 'Please verify your email to use FixMyText tools.',
+      tone: 'warning',
+    };
+  }
+  if (err?.status === 429) {
+    return {
+      message:
+        (typeof detail === 'string' ? detail : detail?.message) ||
+        'Daily limit reached. Please try again later.',
+      tone: 'warning',
+    };
+  }
+  const msg = typeof detail === 'string' ? detail : detail?.message || fallback;
+  return { message: msg, tone: 'danger' };
+}
+
+/**
  * AI tool handler definitions.
  * Each entry maps to a callAi() invocation with specific endpoint and label.
  * Adding a new AI tool only requires adding an entry here.
@@ -145,14 +173,11 @@ export default function useAiTools(
         });
       showAlert(`${label} generated`, 'success');
     } catch (err) {
-      if (err.status === 429) {
-        showAlert(
-          err.data?.detail || 'Daily AI limit reached. Upgrade to Pro for unlimited access.',
-          'warning'
-        );
-      } else {
-        showAlert(err.data?.detail || errorMsg, 'danger');
-      }
+      const { message, tone } = formatToolError(
+        err,
+        errorMsg || 'Daily AI limit reached. Upgrade to Pro for unlimited access.',
+      );
+      showAlert(message, tone);
     }
   }, [text, accessToken, transformText, setAiResult, setPreviewMode, pushHistory, showAlert]);
 
@@ -191,7 +216,10 @@ export default function useAiTools(
         pushHistory(label, original, data.result, { toolId: 'change_format', toolType: 'select' });
       showAlert(`Reformatted as ${fmt}`, 'success');
     } catch (err) {
-      showAlert(err.data?.detail || 'Could not change format. Please try again.', 'danger');
+      {
+        const { message, tone } = formatToolError(err, 'Could not change format. Please try again.');
+        showAlert(message, tone);
+      }
     }
   };
 
@@ -209,7 +237,10 @@ export default function useAiTools(
         pushHistory(label, original, data.result, { toolId: 'change_tone', toolType: 'select' });
       showAlert(`Tone changed to ${tone}`, 'success');
     } catch (err) {
-      showAlert(err.data?.detail || 'Could not change tone. Please try again.', 'danger');
+      {
+        const { message, tone } = formatToolError(err, 'Could not change tone. Please try again.');
+        showAlert(message, tone);
+      }
     }
   };
 
@@ -248,7 +279,10 @@ export default function useAiTools(
         pushHistory(label, original, data.result, { toolId: 'translate', toolType: 'select' });
       showAlert(`Translated to ${lang}`, 'success');
     } catch (err) {
-      showAlert(err.data?.detail || 'Could not translate text. Please try again.', 'danger');
+      {
+        const { message, tone } = formatToolError(err, 'Could not translate text. Please try again.');
+        showAlert(message, tone);
+      }
     }
   };
 
@@ -270,7 +304,10 @@ export default function useAiTools(
         pushHistory(label, original, data.result, { toolId: 'transliterate', toolType: 'select' });
       showAlert(`Transliterated to ${lang} script`, 'success');
     } catch (err) {
-      showAlert(err.data?.detail || 'Could not transliterate text. Please try again.', 'danger');
+      {
+        const { message, tone } = formatToolError(err, 'Could not transliterate text. Please try again.');
+        showAlert(message, tone);
+      }
     }
   };
 
@@ -293,7 +330,10 @@ export default function useAiTools(
         pushHistory(label, original, data.result, { toolId: 'split_to_lines', toolType: 'select' });
       showAlert('Text split to lines', 'success');
     } catch (err) {
-      showAlert(err.data?.detail || 'Could not split text. Please try again.', 'danger');
+      {
+        const { message, tone } = formatToolError(err, 'Could not split text. Please try again.');
+        showAlert(message, tone);
+      }
     }
   };
 
@@ -315,7 +355,10 @@ export default function useAiTools(
         pushHistory(label, original, data.result, { toolId: 'join_lines', toolType: 'select' });
       showAlert('Lines joined', 'success');
     } catch (err) {
-      showAlert(err.data?.detail || 'Could not join lines. Please try again.', 'danger');
+      {
+        const { message, tone } = formatToolError(err, 'Could not join lines. Please try again.');
+        showAlert(message, tone);
+      }
     }
   };
 
@@ -333,7 +376,10 @@ export default function useAiTools(
         pushHistory(label, original, data.result, { toolId: 'caesar_cipher', toolType: 'select' });
       showAlert(`Caesar cipher applied (shift ${shift})`, 'success');
     } catch (err) {
-      showAlert(err.data?.detail || 'Could not apply Caesar cipher.', 'danger');
+      {
+        const { message, tone } = formatToolError(err, 'Could not apply Caesar cipher.');
+        showAlert(message, tone);
+      }
     }
   };
 
@@ -355,7 +401,10 @@ export default function useAiTools(
         pushHistory(label, original, data.result, { toolId: 'rail_fence_enc', toolType: 'select' });
       showAlert(`Rail fence encrypted (${rails} rails)`, 'success');
     } catch (err) {
-      showAlert(err.data?.detail || 'Could not encrypt with Rail Fence.', 'danger');
+      {
+        const { message, tone } = formatToolError(err, 'Could not encrypt with Rail Fence.');
+        showAlert(message, tone);
+      }
     }
   };
 
@@ -377,7 +426,10 @@ export default function useAiTools(
         pushHistory(label, original, data.result, { toolId: 'rail_fence_dec', toolType: 'select' });
       showAlert(`Rail fence decrypted (${rails} rails)`, 'success');
     } catch (err) {
-      showAlert(err.data?.detail || 'Could not decrypt Rail Fence.', 'danger');
+      {
+        const { message, tone } = formatToolError(err, 'Could not decrypt Rail Fence.');
+        showAlert(message, tone);
+      }
     }
   };
 
@@ -508,7 +560,10 @@ export default function useAiTools(
         pushHistory(label, original, data.result, { toolId: 'pad_lines', toolType: 'select' });
       showAlert(`Lines padded (${align})`, 'success');
     } catch (err) {
-      showAlert(err.data?.detail || 'Could not pad lines. Please try again.', 'danger');
+      {
+        const { message, tone } = formatToolError(err, 'Could not pad lines. Please try again.');
+        showAlert(message, tone);
+      }
     }
   };
 

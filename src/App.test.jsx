@@ -98,6 +98,15 @@ vi.mock('./pages/LoginPage', () => ({
 vi.mock('./pages/SignupPage', () => ({
   default: () => React.createElement('div', { 'data-testid': 'signup-page' }),
 }));
+vi.mock('./pages/ForgotPasswordPage', () => ({
+  default: () => React.createElement('div', { 'data-testid': 'forgot-password-page' }),
+}));
+vi.mock('./pages/ResetPasswordPage', () => ({
+  default: () => React.createElement('div', { 'data-testid': 'reset-password-page' }),
+}));
+vi.mock('./pages/VerifyEmailPage', () => ({
+  default: () => React.createElement('div', { 'data-testid': 'verify-email-page' }),
+}));
 vi.mock('./pages/DashboardPage', () => ({
   default: () => React.createElement('div', { 'data-testid': 'dashboard-page' }),
 }));
@@ -112,6 +121,9 @@ vi.mock('./components/layout/Navbar', () => ({
 }));
 vi.mock('./components/layout/Alert', () => ({
   default: () => React.createElement('div', { 'data-testid': 'alert' }),
+}));
+vi.mock('./components/layout/EmailVerificationBanner', () => ({
+  default: () => React.createElement('div', { 'data-testid': 'email-verification-banner' }),
 }));
 vi.mock('./components/layout/OnboardingModal', () => ({
   default: () => React.createElement('div', { 'data-testid': 'onboarding-modal' }),
