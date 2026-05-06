@@ -15,7 +15,14 @@ import { useMemo } from 'react';
  * @param {Function} deps.showAlert
  * @returns {Object} All hash handler functions
  */
-const useHashTools = ({ textRef, setLocalLoading, setAiResult, setPreviewMode, pushHistory, showAlert }) => {
+const useHashTools = ({
+  textRef,
+  setLocalLoading,
+  setAiResult,
+  setPreviewMode,
+  pushHistory,
+  showAlert,
+}) => {
   return useMemo(() => {
     // Factory for all hash handlers
     const createHashHandler = (toolId, label, hashFn) => async () => {
@@ -62,7 +69,8 @@ const useHashTools = ({ textRef, setLocalLoading, setAiResult, setPreviewMode, p
     // Helper: Adler-32 (pure JS)
     const adler32Fn = (text) => {
       const bytes = new TextEncoder().encode(text);
-      let a = 1, b = 0;
+      let a = 1,
+        b = 0;
       for (let i = 0; i < bytes.length; i++) {
         a = (a + bytes[i]) % 65521;
         b = (b + a) % 65521;
@@ -143,7 +151,9 @@ const useHashTools = ({ textRef, setLocalLoading, setAiResult, setPreviewMode, p
       return m.default.encoders.toHex(w.finalize());
     });
     const handleCrc32 = createHashHandler('crc32', 'CRC32 Checksum', async (t) => crc32Fn(t));
-    const handleAdler32 = createHashHandler('adler32', 'Adler-32 Checksum', async (t) => adler32Fn(t));
+    const handleAdler32 = createHashHandler('adler32', 'Adler-32 Checksum', async (t) =>
+      adler32Fn(t)
+    );
     const handleFnv1a = createHashHandler('fnv1a', 'FNV-1a Hash', async (t) => fnv1aFn(t));
     const handleXxhash = createHashHandler('xxhash', 'xxHash Hash', async (t) => {
       const m = await import('xxhashjs');

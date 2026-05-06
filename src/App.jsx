@@ -84,10 +84,7 @@ function AppInner() {
             path={ROUTES.RESET_PASSWORD}
             element={<ResetPasswordPage showAlert={showAlert} />}
           />
-          <Route
-            path={ROUTES.VERIFY_EMAIL}
-            element={<VerifyEmailPage showAlert={showAlert} />}
-          />
+          <Route path={ROUTES.VERIFY_EMAIL} element={<VerifyEmailPage showAlert={showAlert} />} />
           <Route
             path={ROUTES.PRICING}
             element={<PricingPage showAlert={showAlert} subscription={subscription} />}

@@ -102,7 +102,7 @@ export default function ResetPasswordPage({ showAlert }) {
     } catch (err) {
       showAlert(
         err?.data?.detail || 'Reset link is invalid or has expired. Request a new one.',
-        'danger',
+        'danger'
       );
     }
   };
@@ -154,10 +154,7 @@ export default function ResetPasswordPage({ showAlert }) {
                 </button>
               </div>
               {passwordHint && (
-                <p
-                  className={`auth-hint auth-hint--${passwordHint.tone}`}
-                  aria-live="polite"
-                >
+                <p className={`auth-hint auth-hint--${passwordHint.tone}`} aria-live="polite">
                   {passwordHint.message}
                 </p>
               )}
@@ -177,11 +174,7 @@ export default function ResetPasswordPage({ showAlert }) {
                 />
               </div>
             </div>
-            <button
-              type="submit"
-              className="auth-btn auth-btn--primary"
-              disabled={isLoading}
-            >
+            <button type="submit" className="auth-btn auth-btn--primary" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <span className="auth-btn__spinner" aria-hidden="true" />

@@ -10,13 +10,9 @@ let mockAccessToken = null;
 let mockTokenParam = 'valid-token';
 
 vi.mock('react-router-dom', () => ({
-  Link: ({ children, to, ...props }) =>
-    React.createElement('a', { href: to, ...props }, children),
+  Link: ({ children, to, ...props }) => React.createElement('a', { href: to, ...props }, children),
   useNavigate: () => mockNavigate,
-  useSearchParams: () => [
-    { get: (k) => (k === 'token' ? mockTokenParam : null) },
-    vi.fn(),
-  ],
+  useSearchParams: () => [{ get: (k) => (k === 'token' ? mockTokenParam : null) }, vi.fn()],
 }));
 
 vi.mock('react-redux', () => ({
@@ -56,8 +52,7 @@ describe('VerifyEmailPage', () => {
 
   it('surfaces the backend error message on failure', async () => {
     mockVerifyEmail.mockReturnValue({
-      unwrap: () =>
-        Promise.reject({ status: 400, data: { detail: 'Invalid or expired' } }),
+      unwrap: () => Promise.reject({ status: 400, data: { detail: 'Invalid or expired' } }),
     });
     render(<VerifyEmailPage showAlert={showAlert} />);
 
@@ -80,7 +75,7 @@ describe('VerifyEmailPage', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/login');
     expect(showAlert).toHaveBeenCalledWith(
       'Please sign in to request a new verification email.',
-      'warning',
+      'warning'
     );
   });
 
@@ -96,7 +91,7 @@ describe('VerifyEmailPage', () => {
       expect(mockResendVerification).toHaveBeenCalled();
       expect(showAlert).toHaveBeenCalledWith(
         'A new verification email has been sent. Check your inbox.',
-        'success',
+        'success'
       );
     });
   });
@@ -112,10 +107,7 @@ describe('VerifyEmailPage', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /send verification email/i }));
     await waitFor(() => {
-      expect(showAlert).toHaveBeenCalledWith(
-        'Please wait 60 seconds before ...',
-        'warning',
-      );
+      expect(showAlert).toHaveBeenCalledWith('Please wait 60 seconds before ...', 'warning');
     });
   });
 });

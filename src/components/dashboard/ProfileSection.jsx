@@ -19,8 +19,7 @@ export default function ProfileSection({ user, isAuthenticated, g, mode, setMode
   const [nameInput, setNameInput] = useState(user?.display_name || '');
   const nameRef = useRef(null);
 
-  const [resendVerification, { isLoading: resending }] =
-    useResendVerificationMutation();
+  const [resendVerification, { isLoading: resending }] = useResendVerificationMutation();
   const [cooldownUntil, setCooldownUntil] = useState(0);
   const [, forceTick] = useState(0);
 
@@ -47,10 +46,7 @@ export default function ProfileSection({ user, isAuthenticated, g, mode, setMode
     if (cooldownUntil > Date.now() || resending) return;
     try {
       await resendVerification().unwrap();
-      showAlert(
-        'Verification email sent. Check your inbox and spam folder.',
-        'success',
-      );
+      showAlert('Verification email sent. Check your inbox and spam folder.', 'success');
       setCooldownUntil(Date.now() + 120 * 1000);
     } catch (err) {
       if (err?.status === 429) {
@@ -59,12 +55,12 @@ export default function ProfileSection({ user, isAuthenticated, g, mode, setMode
         setCooldownUntil(Date.now() + waitSec * 1000);
         showAlert(
           err?.data?.detail || 'Please wait a bit before requesting another email.',
-          'warning',
+          'warning'
         );
       } else {
         showAlert(
           err?.data?.detail || 'Could not send verification email. Try again shortly.',
-          'danger',
+          'danger'
         );
       }
     }
@@ -75,8 +71,8 @@ export default function ProfileSection({ user, isAuthenticated, g, mode, setMode
     cooldownSecs > 0
       ? `Resend in ${cooldownSecs}s`
       : resending
-        ? 'Sending...'
-        : 'Resend verification email';
+      ? 'Sending...'
+      : 'Resend verification email';
 
   return (
     <div className="tu-dash-content">
@@ -154,9 +150,7 @@ export default function ProfileSection({ user, isAuthenticated, g, mode, setMode
                 </button>
               </div>
             )}
-            <span className="tu-dash-profile-large-email">
-              {user?.email || 'Not signed in'}
-            </span>
+            <span className="tu-dash-profile-large-email">{user?.email || 'Not signed in'}</span>
             <div className="tu-dash-badge-row">
               <span
                 className={`tu-dash-settings-badge${
@@ -168,9 +162,7 @@ export default function ProfileSection({ user, isAuthenticated, g, mode, setMode
               {isAuthenticated && (
                 <span
                   className={`tu-dash-settings-badge${
-                    isVerified
-                      ? ' tu-dash-settings-badge--ok'
-                      : ' tu-dash-settings-badge--warn'
+                    isVerified ? ' tu-dash-settings-badge--ok' : ' tu-dash-settings-badge--warn'
                   }`}
                   title={
                     isVerified
@@ -208,9 +200,9 @@ export default function ProfileSection({ user, isAuthenticated, g, mode, setMode
             <div className="tu-dash-verify__body">
               <h3 className="tu-dash-card-title">Verify your email</h3>
               <p className="tu-dash-card-desc">
-                We sent a verification link to <b>{user?.email}</b>. Confirm your
-                address to unlock all FixMyText tools — AI-powered tools and local
-                transformations both require a verified email.
+                We sent a verification link to <b>{user?.email}</b>. Confirm your address to unlock
+                all FixMyText tools — AI-powered tools and local transformations both require a
+                verified email.
               </p>
             </div>
             <button
@@ -228,9 +220,7 @@ export default function ProfileSection({ user, isAuthenticated, g, mode, setMode
       {/* Persona */}
       <div className="tu-dash-card">
         <h3 className="tu-dash-card-title">Persona</h3>
-        <p className="tu-dash-card-desc">
-          Choose your persona to get tailored tool suggestions
-        </p>
+        <p className="tu-dash-card-desc">Choose your persona to get tailored tool suggestions</p>
         <div className="tu-dash-persona-grid">
           {Object.entries(PERSONAS).map(([key, p]) => (
             <button
@@ -258,17 +248,13 @@ export default function ProfileSection({ user, isAuthenticated, g, mode, setMode
           <span className="tu-dash-settings-label">Theme</span>
           <div className="tu-dash-theme-toggle">
             <button
-              className={`tu-dash-theme-btn${
-                mode === 'light' ? ' tu-dash-theme-btn--active' : ''
-              }`}
+              className={`tu-dash-theme-btn${mode === 'light' ? ' tu-dash-theme-btn--active' : ''}`}
               onClick={() => setMode('light')}
             >
               <span>☀️</span> Light
             </button>
             <button
-              className={`tu-dash-theme-btn${
-                mode === 'dark' ? ' tu-dash-theme-btn--active' : ''
-              }`}
+              className={`tu-dash-theme-btn${mode === 'dark' ? ' tu-dash-theme-btn--active' : ''}`}
               onClick={() => setMode('dark')}
             >
               <span>🌙</span> Dark

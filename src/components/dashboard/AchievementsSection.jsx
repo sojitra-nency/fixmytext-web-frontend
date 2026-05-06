@@ -32,9 +32,7 @@ export default function AchievementsSection({ g }) {
           return (
             <div
               key={ach.id}
-              className={`tu-dash-achievement${
-                unlocked ? ' tu-dash-achievement--unlocked' : ''
-              }`}
+              className={`tu-dash-achievement${unlocked ? ' tu-dash-achievement--unlocked' : ''}`}
             >
               <span className="tu-dash-achievement-icon">{ach.icon}</span>
               <span className="tu-dash-achievement-label">{ach.label}</span>

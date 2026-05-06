@@ -21,8 +21,7 @@ function useChromeOffset(ref, isMounted) {
       root.style.setProperty(CHROME_VAR, `${NAVBAR_HEIGHT + h}px`);
     };
     apply();
-    const ro =
-      typeof ResizeObserver !== 'undefined' ? new ResizeObserver(apply) : null;
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(apply) : null;
     if (ro) ro.observe(ref.current);
     window.addEventListener('resize', apply);
     return () => {
@@ -98,8 +97,7 @@ export default function EmailVerificationBanner({ showAlert }) {
   const tickRef = useRef(null);
   const bannerRef = useRef(null);
 
-  const isVisible =
-    isAuthenticated && !!user && !user.is_email_verified && !dismissed;
+  const isVisible = isAuthenticated && !!user && !user.is_email_verified && !dismissed;
   useChromeOffset(bannerRef, isVisible);
 
   // Tick once a second while a cooldown is active so the countdown updates.
@@ -130,10 +128,7 @@ export default function EmailVerificationBanner({ showAlert }) {
     if (cooldownUntil > Date.now()) return;
     try {
       await resendVerification().unwrap();
-      showAlert(
-        'Verification email sent. Check your inbox and spam folder.',
-        'success',
-      );
+      showAlert('Verification email sent. Check your inbox and spam folder.', 'success');
       // Mirror the server-side 2-minute cooldown so the UI stays honest even
       // if the user hammers the button.
       setCooldownUntil(Date.now() + 120 * 1000);
@@ -146,12 +141,12 @@ export default function EmailVerificationBanner({ showAlert }) {
         setCooldownUntil(Date.now() + waitSec * 1000);
         showAlert(
           err?.data?.detail || 'Please wait a bit before requesting another email.',
-          'warning',
+          'warning'
         );
       } else {
         showAlert(
           err?.data?.detail || 'Could not send verification email. Try again shortly.',
-          'danger',
+          'danger'
         );
       }
     }
@@ -170,11 +165,7 @@ export default function EmailVerificationBanner({ showAlert }) {
 
   const cooldownSecs = Math.max(0, Math.ceil((cooldownUntil - Date.now()) / 1000));
   const buttonLabel =
-    cooldownSecs > 0
-      ? `Resend in ${cooldownSecs}s`
-      : isLoading
-        ? 'Sending...'
-        : 'Resend email';
+    cooldownSecs > 0 ? `Resend in ${cooldownSecs}s` : isLoading ? 'Sending...' : 'Resend email';
 
   return (
     <div

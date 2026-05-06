@@ -1,11 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import {
-  TOOLS,
-  ACHIEVEMENTS,
-  LEVELS,
-  USE_CASE_TABS,
-} from '../constants/tools';
+import { TOOLS, ACHIEVEMENTS, LEVELS, USE_CASE_TABS } from '../constants/tools';
 import { useGetToolStatsQuery } from '../store/api/userDataApi';
 
 // Extracted dashboard section components
@@ -99,7 +94,11 @@ export default function DashboardPage({
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps -- runs once on mount; showAlert/subscription are stable refs
 
-  const { data: toolStatsData, error: toolStatsError, refetch: refetchToolStats } = useGetToolStatsQuery(undefined, { skip: !isAuthenticated });
+  const {
+    data: toolStatsData,
+    error: toolStatsError,
+    refetch: refetchToolStats,
+  } = useGetToolStatsQuery(undefined, { skip: !isAuthenticated });
 
   // Top used tools
   const topTools = useMemo(() => {

@@ -39,70 +39,414 @@ function formatToolError(err, fallback) {
  */
 const AI_TOOL_DEFINITIONS = [
   // Original AI tools
-  { handlerName: 'handleHashtags', endpoint: ENDPOINTS.GENERATE_HASHTAGS, label: 'Hashtags', errorMsg: 'Could not generate hashtags. Please try again.' },
-  { handlerName: 'handleSeoTitles', endpoint: ENDPOINTS.GENERATE_SEO_TITLES, label: 'SEO Titles', errorMsg: 'Could not generate SEO titles. Please try again.' },
-  { handlerName: 'handleMetaDescriptions', endpoint: ENDPOINTS.GENERATE_META_DESCRIPTIONS, label: 'Meta Descriptions', errorMsg: 'Could not generate meta descriptions. Please try again.' },
-  { handlerName: 'handleBlogOutline', endpoint: ENDPOINTS.GENERATE_BLOG_OUTLINE, label: 'Blog Outline', errorMsg: 'Could not generate blog outline. Please try again.' },
-  { handlerName: 'handleTweetShorten', endpoint: ENDPOINTS.SHORTEN_FOR_TWEET, label: 'Tweet', errorMsg: 'Could not shorten for tweet. Please try again.' },
-  { handlerName: 'handleEmailRewrite', endpoint: ENDPOINTS.REWRITE_EMAIL, label: 'Email', errorMsg: 'Could not rewrite email. Please try again.' },
-  { handlerName: 'handleKeywords', endpoint: ENDPOINTS.EXTRACT_KEYWORDS, label: 'Keywords', errorMsg: 'Could not extract keywords. Please try again.' },
-  { handlerName: 'handleSummarize', endpoint: ENDPOINTS.SUMMARIZE, label: 'Summary', errorMsg: 'Could not summarize text. Please try again.' },
-  { handlerName: 'handleFixGrammar', endpoint: ENDPOINTS.FIX_GRAMMAR, label: 'Grammar Fix', errorMsg: 'Could not fix grammar. Please try again.' },
-  { handlerName: 'handleParaphrase', endpoint: ENDPOINTS.PARAPHRASE, label: 'Paraphrase', errorMsg: 'Could not paraphrase text. Please try again.' },
-  { handlerName: 'handleSentiment', endpoint: ENDPOINTS.ANALYZE_SENTIMENT, label: 'Sentiment', errorMsg: 'Could not analyze sentiment. Please try again.' },
-  { handlerName: 'handleLengthenText', endpoint: ENDPOINTS.LENGTHEN_TEXT, label: 'Lengthened', errorMsg: 'Could not lengthen text. Please try again.' },
-  { handlerName: 'handleEli5', endpoint: ENDPOINTS.ELI5, label: 'ELI5', errorMsg: 'Could not simplify text. Please try again.' },
-  { handlerName: 'handleProofread', endpoint: ENDPOINTS.PROOFREAD, label: 'Proofread', errorMsg: 'Could not proofread text. Please try again.' },
-  { handlerName: 'handleGenerateTitle', endpoint: ENDPOINTS.GENERATE_TITLE, label: 'Titles', errorMsg: 'Could not generate titles. Please try again.' },
-  { handlerName: 'handleRefactorPrompt', endpoint: ENDPOINTS.REFACTOR_PROMPT, label: 'Prompt Refactored', errorMsg: 'Could not refactor prompt. Please try again.' },
-  { handlerName: 'handleEmojify', endpoint: ENDPOINTS.EMOJIFY, label: 'Emojify', errorMsg: 'Could not add emojis. Please try again.', toolId: 'emojify' },
+  {
+    handlerName: 'handleHashtags',
+    endpoint: ENDPOINTS.GENERATE_HASHTAGS,
+    label: 'Hashtags',
+    errorMsg: 'Could not generate hashtags. Please try again.',
+  },
+  {
+    handlerName: 'handleSeoTitles',
+    endpoint: ENDPOINTS.GENERATE_SEO_TITLES,
+    label: 'SEO Titles',
+    errorMsg: 'Could not generate SEO titles. Please try again.',
+  },
+  {
+    handlerName: 'handleMetaDescriptions',
+    endpoint: ENDPOINTS.GENERATE_META_DESCRIPTIONS,
+    label: 'Meta Descriptions',
+    errorMsg: 'Could not generate meta descriptions. Please try again.',
+  },
+  {
+    handlerName: 'handleBlogOutline',
+    endpoint: ENDPOINTS.GENERATE_BLOG_OUTLINE,
+    label: 'Blog Outline',
+    errorMsg: 'Could not generate blog outline. Please try again.',
+  },
+  {
+    handlerName: 'handleTweetShorten',
+    endpoint: ENDPOINTS.SHORTEN_FOR_TWEET,
+    label: 'Tweet',
+    errorMsg: 'Could not shorten for tweet. Please try again.',
+  },
+  {
+    handlerName: 'handleEmailRewrite',
+    endpoint: ENDPOINTS.REWRITE_EMAIL,
+    label: 'Email',
+    errorMsg: 'Could not rewrite email. Please try again.',
+  },
+  {
+    handlerName: 'handleKeywords',
+    endpoint: ENDPOINTS.EXTRACT_KEYWORDS,
+    label: 'Keywords',
+    errorMsg: 'Could not extract keywords. Please try again.',
+  },
+  {
+    handlerName: 'handleSummarize',
+    endpoint: ENDPOINTS.SUMMARIZE,
+    label: 'Summary',
+    errorMsg: 'Could not summarize text. Please try again.',
+  },
+  {
+    handlerName: 'handleFixGrammar',
+    endpoint: ENDPOINTS.FIX_GRAMMAR,
+    label: 'Grammar Fix',
+    errorMsg: 'Could not fix grammar. Please try again.',
+  },
+  {
+    handlerName: 'handleParaphrase',
+    endpoint: ENDPOINTS.PARAPHRASE,
+    label: 'Paraphrase',
+    errorMsg: 'Could not paraphrase text. Please try again.',
+  },
+  {
+    handlerName: 'handleSentiment',
+    endpoint: ENDPOINTS.ANALYZE_SENTIMENT,
+    label: 'Sentiment',
+    errorMsg: 'Could not analyze sentiment. Please try again.',
+  },
+  {
+    handlerName: 'handleLengthenText',
+    endpoint: ENDPOINTS.LENGTHEN_TEXT,
+    label: 'Lengthened',
+    errorMsg: 'Could not lengthen text. Please try again.',
+  },
+  {
+    handlerName: 'handleEli5',
+    endpoint: ENDPOINTS.ELI5,
+    label: 'ELI5',
+    errorMsg: 'Could not simplify text. Please try again.',
+  },
+  {
+    handlerName: 'handleProofread',
+    endpoint: ENDPOINTS.PROOFREAD,
+    label: 'Proofread',
+    errorMsg: 'Could not proofread text. Please try again.',
+  },
+  {
+    handlerName: 'handleGenerateTitle',
+    endpoint: ENDPOINTS.GENERATE_TITLE,
+    label: 'Titles',
+    errorMsg: 'Could not generate titles. Please try again.',
+  },
+  {
+    handlerName: 'handleRefactorPrompt',
+    endpoint: ENDPOINTS.REFACTOR_PROMPT,
+    label: 'Prompt Refactored',
+    errorMsg: 'Could not refactor prompt. Please try again.',
+  },
+  {
+    handlerName: 'handleEmojify',
+    endpoint: ENDPOINTS.EMOJIFY,
+    label: 'Emojify',
+    errorMsg: 'Could not add emojis. Please try again.',
+    toolId: 'emojify',
+  },
   // AI Writing handlers
-  { handlerName: 'handleAcademicStyle', endpoint: ENDPOINTS.ACADEMIC_STYLE, label: 'Academic Style', errorMsg: 'Could not convert to academic style.', toolId: 'academic_style' },
-  { handlerName: 'handleCreativeStyle', endpoint: ENDPOINTS.CREATIVE_STYLE, label: 'Creative Style', errorMsg: 'Could not convert to creative style.', toolId: 'creative_style' },
-  { handlerName: 'handleTechnicalStyle', endpoint: ENDPOINTS.TECHNICAL_STYLE, label: 'Technical Style', errorMsg: 'Could not convert to technical style.', toolId: 'technical_style' },
-  { handlerName: 'handleActiveVoice', endpoint: ENDPOINTS.ACTIVE_VOICE, label: 'Active Voice', errorMsg: 'Could not convert to active voice.', toolId: 'active_voice' },
-  { handlerName: 'handleRedundancyRemover', endpoint: ENDPOINTS.REDUNDANCY_REMOVER, label: 'Remove Redundancy', errorMsg: 'Could not remove redundancy.', toolId: 'redundancy_remover' },
-  { handlerName: 'handleSentenceSplitter', endpoint: ENDPOINTS.SENTENCE_SPLITTER, label: 'Split Sentences', errorMsg: 'Could not split sentences.', toolId: 'sentence_splitter' },
-  { handlerName: 'handleConciseness', endpoint: ENDPOINTS.CONCISENESS, label: 'Make Concise', errorMsg: 'Could not make text concise.', toolId: 'conciseness' },
-  { handlerName: 'handleResumeBullets', endpoint: ENDPOINTS.RESUME_BULLETS, label: 'Resume Bullets', errorMsg: 'Could not generate resume bullets.', toolId: 'resume_bullets' },
-  { handlerName: 'handleMeetingNotes', endpoint: ENDPOINTS.MEETING_NOTES, label: 'Meeting Notes', errorMsg: 'Could not generate meeting notes.', toolId: 'meeting_notes' },
-  { handlerName: 'handleCoverLetter', endpoint: ENDPOINTS.COVER_LETTER, label: 'Cover Letter', errorMsg: 'Could not generate cover letter.', toolId: 'cover_letter' },
-  { handlerName: 'handleOutlineToDraft', endpoint: ENDPOINTS.OUTLINE_TO_DRAFT, label: 'Outline→Draft', errorMsg: 'Could not expand outline.', toolId: 'outline_to_draft' },
-  { handlerName: 'handleContinueWriting', endpoint: ENDPOINTS.CONTINUE_WRITING, label: 'Continue Writing', errorMsg: 'Could not continue writing.', toolId: 'continue_writing' },
-  { handlerName: 'handleRewriteUnique', endpoint: ENDPOINTS.REWRITE_UNIQUE, label: 'Rewrite Unique', errorMsg: 'Could not rewrite uniquely.', toolId: 'rewrite_unique' },
-  { handlerName: 'handleToneAnalyzer', endpoint: ENDPOINTS.TONE_ANALYZER, label: 'Tone Analysis', errorMsg: 'Could not analyze tone.', toolId: 'tone_analyzer' },
+  {
+    handlerName: 'handleAcademicStyle',
+    endpoint: ENDPOINTS.ACADEMIC_STYLE,
+    label: 'Academic Style',
+    errorMsg: 'Could not convert to academic style.',
+    toolId: 'academic_style',
+  },
+  {
+    handlerName: 'handleCreativeStyle',
+    endpoint: ENDPOINTS.CREATIVE_STYLE,
+    label: 'Creative Style',
+    errorMsg: 'Could not convert to creative style.',
+    toolId: 'creative_style',
+  },
+  {
+    handlerName: 'handleTechnicalStyle',
+    endpoint: ENDPOINTS.TECHNICAL_STYLE,
+    label: 'Technical Style',
+    errorMsg: 'Could not convert to technical style.',
+    toolId: 'technical_style',
+  },
+  {
+    handlerName: 'handleActiveVoice',
+    endpoint: ENDPOINTS.ACTIVE_VOICE,
+    label: 'Active Voice',
+    errorMsg: 'Could not convert to active voice.',
+    toolId: 'active_voice',
+  },
+  {
+    handlerName: 'handleRedundancyRemover',
+    endpoint: ENDPOINTS.REDUNDANCY_REMOVER,
+    label: 'Remove Redundancy',
+    errorMsg: 'Could not remove redundancy.',
+    toolId: 'redundancy_remover',
+  },
+  {
+    handlerName: 'handleSentenceSplitter',
+    endpoint: ENDPOINTS.SENTENCE_SPLITTER,
+    label: 'Split Sentences',
+    errorMsg: 'Could not split sentences.',
+    toolId: 'sentence_splitter',
+  },
+  {
+    handlerName: 'handleConciseness',
+    endpoint: ENDPOINTS.CONCISENESS,
+    label: 'Make Concise',
+    errorMsg: 'Could not make text concise.',
+    toolId: 'conciseness',
+  },
+  {
+    handlerName: 'handleResumeBullets',
+    endpoint: ENDPOINTS.RESUME_BULLETS,
+    label: 'Resume Bullets',
+    errorMsg: 'Could not generate resume bullets.',
+    toolId: 'resume_bullets',
+  },
+  {
+    handlerName: 'handleMeetingNotes',
+    endpoint: ENDPOINTS.MEETING_NOTES,
+    label: 'Meeting Notes',
+    errorMsg: 'Could not generate meeting notes.',
+    toolId: 'meeting_notes',
+  },
+  {
+    handlerName: 'handleCoverLetter',
+    endpoint: ENDPOINTS.COVER_LETTER,
+    label: 'Cover Letter',
+    errorMsg: 'Could not generate cover letter.',
+    toolId: 'cover_letter',
+  },
+  {
+    handlerName: 'handleOutlineToDraft',
+    endpoint: ENDPOINTS.OUTLINE_TO_DRAFT,
+    label: 'Outline→Draft',
+    errorMsg: 'Could not expand outline.',
+    toolId: 'outline_to_draft',
+  },
+  {
+    handlerName: 'handleContinueWriting',
+    endpoint: ENDPOINTS.CONTINUE_WRITING,
+    label: 'Continue Writing',
+    errorMsg: 'Could not continue writing.',
+    toolId: 'continue_writing',
+  },
+  {
+    handlerName: 'handleRewriteUnique',
+    endpoint: ENDPOINTS.REWRITE_UNIQUE,
+    label: 'Rewrite Unique',
+    errorMsg: 'Could not rewrite uniquely.',
+    toolId: 'rewrite_unique',
+  },
+  {
+    handlerName: 'handleToneAnalyzer',
+    endpoint: ENDPOINTS.TONE_ANALYZER,
+    label: 'Tone Analysis',
+    errorMsg: 'Could not analyze tone.',
+    toolId: 'tone_analyzer',
+  },
   // AI Content handlers
-  { handlerName: 'handleLinkedinPost', endpoint: ENDPOINTS.LINKEDIN_POST, label: 'LinkedIn Post', errorMsg: 'Could not generate LinkedIn post.', toolId: 'linkedin_post' },
-  { handlerName: 'handleTwitterThread', endpoint: ENDPOINTS.TWITTER_THREAD, label: 'Twitter Thread', errorMsg: 'Could not generate Twitter thread.', toolId: 'twitter_thread' },
-  { handlerName: 'handleInstagramCaption', endpoint: ENDPOINTS.INSTAGRAM_CAPTION, label: 'Instagram Caption', errorMsg: 'Could not generate Instagram caption.', toolId: 'instagram_caption' },
-  { handlerName: 'handleYoutubeDesc', endpoint: ENDPOINTS.YOUTUBE_DESC, label: 'YouTube Description', errorMsg: 'Could not generate YouTube description.', toolId: 'youtube_desc' },
-  { handlerName: 'handleSocialBio', endpoint: ENDPOINTS.SOCIAL_BIO, label: 'Social Bio', errorMsg: 'Could not generate social bio.', toolId: 'social_bio' },
-  { handlerName: 'handleProductDesc', endpoint: ENDPOINTS.PRODUCT_DESC, label: 'Product Description', errorMsg: 'Could not generate product description.', toolId: 'product_desc' },
-  { handlerName: 'handleCtaGenerator', endpoint: ENDPOINTS.CTA_GENERATOR, label: 'CTAs', errorMsg: 'Could not generate CTAs.', toolId: 'cta_generator' },
-  { handlerName: 'handleAdCopy', endpoint: ENDPOINTS.AD_COPY, label: 'Ad Copy', errorMsg: 'Could not generate ad copy.', toolId: 'ad_copy' },
-  { handlerName: 'handleLandingHeadline', endpoint: ENDPOINTS.LANDING_HEADLINE, label: 'Landing Headline', errorMsg: 'Could not generate headlines.', toolId: 'landing_headline' },
-  { handlerName: 'handleEmailSubject', endpoint: ENDPOINTS.EMAIL_SUBJECT, label: 'Email Subject', errorMsg: 'Could not generate subject lines.', toolId: 'email_subject' },
-  { handlerName: 'handleContentIdeas', endpoint: ENDPOINTS.CONTENT_IDEAS, label: 'Content Ideas', errorMsg: 'Could not generate content ideas.', toolId: 'content_ideas' },
-  { handlerName: 'handleHookGenerator', endpoint: ENDPOINTS.HOOK_GENERATOR, label: 'Hooks', errorMsg: 'Could not generate hooks.', toolId: 'hook_generator' },
-  { handlerName: 'handleAngleGenerator', endpoint: ENDPOINTS.ANGLE_GENERATOR, label: 'Angles', errorMsg: 'Could not generate angles.', toolId: 'angle_generator' },
-  { handlerName: 'handleFaqSchema', endpoint: ENDPOINTS.FAQ_SCHEMA, label: 'FAQ Schema', errorMsg: 'Could not generate FAQ schema.', toolId: 'faq_schema' },
+  {
+    handlerName: 'handleLinkedinPost',
+    endpoint: ENDPOINTS.LINKEDIN_POST,
+    label: 'LinkedIn Post',
+    errorMsg: 'Could not generate LinkedIn post.',
+    toolId: 'linkedin_post',
+  },
+  {
+    handlerName: 'handleTwitterThread',
+    endpoint: ENDPOINTS.TWITTER_THREAD,
+    label: 'Twitter Thread',
+    errorMsg: 'Could not generate Twitter thread.',
+    toolId: 'twitter_thread',
+  },
+  {
+    handlerName: 'handleInstagramCaption',
+    endpoint: ENDPOINTS.INSTAGRAM_CAPTION,
+    label: 'Instagram Caption',
+    errorMsg: 'Could not generate Instagram caption.',
+    toolId: 'instagram_caption',
+  },
+  {
+    handlerName: 'handleYoutubeDesc',
+    endpoint: ENDPOINTS.YOUTUBE_DESC,
+    label: 'YouTube Description',
+    errorMsg: 'Could not generate YouTube description.',
+    toolId: 'youtube_desc',
+  },
+  {
+    handlerName: 'handleSocialBio',
+    endpoint: ENDPOINTS.SOCIAL_BIO,
+    label: 'Social Bio',
+    errorMsg: 'Could not generate social bio.',
+    toolId: 'social_bio',
+  },
+  {
+    handlerName: 'handleProductDesc',
+    endpoint: ENDPOINTS.PRODUCT_DESC,
+    label: 'Product Description',
+    errorMsg: 'Could not generate product description.',
+    toolId: 'product_desc',
+  },
+  {
+    handlerName: 'handleCtaGenerator',
+    endpoint: ENDPOINTS.CTA_GENERATOR,
+    label: 'CTAs',
+    errorMsg: 'Could not generate CTAs.',
+    toolId: 'cta_generator',
+  },
+  {
+    handlerName: 'handleAdCopy',
+    endpoint: ENDPOINTS.AD_COPY,
+    label: 'Ad Copy',
+    errorMsg: 'Could not generate ad copy.',
+    toolId: 'ad_copy',
+  },
+  {
+    handlerName: 'handleLandingHeadline',
+    endpoint: ENDPOINTS.LANDING_HEADLINE,
+    label: 'Landing Headline',
+    errorMsg: 'Could not generate headlines.',
+    toolId: 'landing_headline',
+  },
+  {
+    handlerName: 'handleEmailSubject',
+    endpoint: ENDPOINTS.EMAIL_SUBJECT,
+    label: 'Email Subject',
+    errorMsg: 'Could not generate subject lines.',
+    toolId: 'email_subject',
+  },
+  {
+    handlerName: 'handleContentIdeas',
+    endpoint: ENDPOINTS.CONTENT_IDEAS,
+    label: 'Content Ideas',
+    errorMsg: 'Could not generate content ideas.',
+    toolId: 'content_ideas',
+  },
+  {
+    handlerName: 'handleHookGenerator',
+    endpoint: ENDPOINTS.HOOK_GENERATOR,
+    label: 'Hooks',
+    errorMsg: 'Could not generate hooks.',
+    toolId: 'hook_generator',
+  },
+  {
+    handlerName: 'handleAngleGenerator',
+    endpoint: ENDPOINTS.ANGLE_GENERATOR,
+    label: 'Angles',
+    errorMsg: 'Could not generate angles.',
+    toolId: 'angle_generator',
+  },
+  {
+    handlerName: 'handleFaqSchema',
+    endpoint: ENDPOINTS.FAQ_SCHEMA,
+    label: 'FAQ Schema',
+    errorMsg: 'Could not generate FAQ schema.',
+    toolId: 'faq_schema',
+  },
   // Language handlers
-  { handlerName: 'handlePosTagger', endpoint: ENDPOINTS.POS_TAGGER, label: 'Parts of Speech', errorMsg: 'Could not tag parts of speech.', toolId: 'pos_tagger' },
-  { handlerName: 'handleSentenceType', endpoint: ENDPOINTS.SENTENCE_TYPE, label: 'Sentence Type', errorMsg: 'Could not classify sentences.', toolId: 'sentence_type' },
-  { handlerName: 'handleGrammarExplain', endpoint: ENDPOINTS.GRAMMAR_EXPLAIN, label: 'Grammar Explain', errorMsg: 'Could not explain grammar.', toolId: 'grammar_explain' },
-  { handlerName: 'handleSynonymFinder', endpoint: ENDPOINTS.SYNONYM_FINDER, label: 'Synonyms', errorMsg: 'Could not find synonyms.', toolId: 'synonym_finder' },
-  { handlerName: 'handleAntonymFinder', endpoint: ENDPOINTS.ANTONYM_FINDER, label: 'Antonyms', errorMsg: 'Could not find antonyms.', toolId: 'antonym_finder' },
-  { handlerName: 'handleDefineWords', endpoint: ENDPOINTS.DEFINE_WORDS, label: 'Definitions', errorMsg: 'Could not define words.', toolId: 'define_words' },
-  { handlerName: 'handleWordPower', endpoint: ENDPOINTS.WORD_POWER, label: 'Power Words', errorMsg: 'Could not enhance words.', toolId: 'word_power' },
-  { handlerName: 'handleVocabComplexity', endpoint: ENDPOINTS.VOCAB_COMPLEXITY, label: 'Vocab Complexity', errorMsg: 'Could not analyze vocabulary.', toolId: 'vocab_complexity' },
-  { handlerName: 'handleJargonSimplifier', endpoint: ENDPOINTS.JARGON_SIMPLIFIER, label: 'Jargon Simplifier', errorMsg: 'Could not simplify jargon.', toolId: 'jargon_simplifier' },
-  { handlerName: 'handleFormalityDetector', endpoint: ENDPOINTS.FORMALITY_DETECTOR, label: 'Formality', errorMsg: 'Could not detect formality.', toolId: 'formality_detector' },
-  { handlerName: 'handleClicheDetector', endpoint: ENDPOINTS.CLICHE_DETECTOR, label: 'Cliche Detector', errorMsg: 'Could not detect cliches.', toolId: 'cliche_detector' },
+  {
+    handlerName: 'handlePosTagger',
+    endpoint: ENDPOINTS.POS_TAGGER,
+    label: 'Parts of Speech',
+    errorMsg: 'Could not tag parts of speech.',
+    toolId: 'pos_tagger',
+  },
+  {
+    handlerName: 'handleSentenceType',
+    endpoint: ENDPOINTS.SENTENCE_TYPE,
+    label: 'Sentence Type',
+    errorMsg: 'Could not classify sentences.',
+    toolId: 'sentence_type',
+  },
+  {
+    handlerName: 'handleGrammarExplain',
+    endpoint: ENDPOINTS.GRAMMAR_EXPLAIN,
+    label: 'Grammar Explain',
+    errorMsg: 'Could not explain grammar.',
+    toolId: 'grammar_explain',
+  },
+  {
+    handlerName: 'handleSynonymFinder',
+    endpoint: ENDPOINTS.SYNONYM_FINDER,
+    label: 'Synonyms',
+    errorMsg: 'Could not find synonyms.',
+    toolId: 'synonym_finder',
+  },
+  {
+    handlerName: 'handleAntonymFinder',
+    endpoint: ENDPOINTS.ANTONYM_FINDER,
+    label: 'Antonyms',
+    errorMsg: 'Could not find antonyms.',
+    toolId: 'antonym_finder',
+  },
+  {
+    handlerName: 'handleDefineWords',
+    endpoint: ENDPOINTS.DEFINE_WORDS,
+    label: 'Definitions',
+    errorMsg: 'Could not define words.',
+    toolId: 'define_words',
+  },
+  {
+    handlerName: 'handleWordPower',
+    endpoint: ENDPOINTS.WORD_POWER,
+    label: 'Power Words',
+    errorMsg: 'Could not enhance words.',
+    toolId: 'word_power',
+  },
+  {
+    handlerName: 'handleVocabComplexity',
+    endpoint: ENDPOINTS.VOCAB_COMPLEXITY,
+    label: 'Vocab Complexity',
+    errorMsg: 'Could not analyze vocabulary.',
+    toolId: 'vocab_complexity',
+  },
+  {
+    handlerName: 'handleJargonSimplifier',
+    endpoint: ENDPOINTS.JARGON_SIMPLIFIER,
+    label: 'Jargon Simplifier',
+    errorMsg: 'Could not simplify jargon.',
+    toolId: 'jargon_simplifier',
+  },
+  {
+    handlerName: 'handleFormalityDetector',
+    endpoint: ENDPOINTS.FORMALITY_DETECTOR,
+    label: 'Formality',
+    errorMsg: 'Could not detect formality.',
+    toolId: 'formality_detector',
+  },
+  {
+    handlerName: 'handleClicheDetector',
+    endpoint: ENDPOINTS.CLICHE_DETECTOR,
+    label: 'Cliche Detector',
+    errorMsg: 'Could not detect cliches.',
+    toolId: 'cliche_detector',
+  },
   // Generator AI handlers
-  { handlerName: 'handleRegexGen', endpoint: ENDPOINTS.REGEX_GEN, label: 'Regex Pattern', errorMsg: 'Could not generate regex.', toolId: 'regex_gen' },
-  { handlerName: 'handleWritingPrompt', endpoint: ENDPOINTS.WRITING_PROMPT, label: 'Writing Prompt', errorMsg: 'Could not generate prompt.', toolId: 'writing_prompt' },
-  { handlerName: 'handleTeamNameGen', endpoint: ENDPOINTS.TEAM_NAME_GEN, label: 'Team Names', errorMsg: 'Could not generate names.', toolId: 'team_name_gen' },
-  { handlerName: 'handleMockApiResponse', endpoint: ENDPOINTS.MOCK_API_RESPONSE, label: 'Mock API', errorMsg: 'Could not generate mock response.', toolId: 'mock_api_response' },
+  {
+    handlerName: 'handleRegexGen',
+    endpoint: ENDPOINTS.REGEX_GEN,
+    label: 'Regex Pattern',
+    errorMsg: 'Could not generate regex.',
+    toolId: 'regex_gen',
+  },
+  {
+    handlerName: 'handleWritingPrompt',
+    endpoint: ENDPOINTS.WRITING_PROMPT,
+    label: 'Writing Prompt',
+    errorMsg: 'Could not generate prompt.',
+    toolId: 'writing_prompt',
+  },
+  {
+    handlerName: 'handleTeamNameGen',
+    endpoint: ENDPOINTS.TEAM_NAME_GEN,
+    label: 'Team Names',
+    errorMsg: 'Could not generate names.',
+    toolId: 'team_name_gen',
+  },
+  {
+    handlerName: 'handleMockApiResponse',
+    endpoint: ENDPOINTS.MOCK_API_RESPONSE,
+    label: 'Mock API',
+    errorMsg: 'Could not generate mock response.',
+    toolId: 'mock_api_response',
+  },
 ];
 
 /**
@@ -155,31 +499,34 @@ export default function useAiTools(
    * @param {string} errorMsg - Fallback error message.
    * @param {string} [toolId] - Optional tool identifier for history tracking.
    */
-  const callAi = useCallback(async (endpoint, label, errorMsg, toolId) => {
-    if (!text) return;
-    if (!accessToken) {
-      showAlert('Please log in to use AI tools', 'warning');
-      return;
-    }
-    const original = text;
-    try {
-      const data = await transformText({ endpoint, text }).unwrap();
-      setAiResult({ label, result: data.result });
-      setPreviewMode('result');
-      if (pushHistory)
-        pushHistory(label, original, data.result, {
-          toolId: toolId || label.toLowerCase().replace(/\s+/g, '_'),
-          toolType: 'ai',
-        });
-      showAlert(`${label} generated`, 'success');
-    } catch (err) {
-      const { message, tone } = formatToolError(
-        err,
-        errorMsg || 'Daily AI limit reached. Upgrade to Pro for unlimited access.',
-      );
-      showAlert(message, tone);
-    }
-  }, [text, accessToken, transformText, setAiResult, setPreviewMode, pushHistory, showAlert]);
+  const callAi = useCallback(
+    async (endpoint, label, errorMsg, toolId) => {
+      if (!text) return;
+      if (!accessToken) {
+        showAlert('Please log in to use AI tools', 'warning');
+        return;
+      }
+      const original = text;
+      try {
+        const data = await transformText({ endpoint, text }).unwrap();
+        setAiResult({ label, result: data.result });
+        setPreviewMode('result');
+        if (pushHistory)
+          pushHistory(label, original, data.result, {
+            toolId: toolId || label.toLowerCase().replace(/\s+/g, '_'),
+            toolType: 'ai',
+          });
+        showAlert(`${label} generated`, 'success');
+      } catch (err) {
+        const { message, tone } = formatToolError(
+          err,
+          errorMsg || 'Daily AI limit reached. Upgrade to Pro for unlimited access.'
+        );
+        showAlert(message, tone);
+      }
+    },
+    [text, accessToken, transformText, setAiResult, setPreviewMode, pushHistory, showAlert]
+  );
 
   /**
    * Generate handler functions from tool definitions.
@@ -217,7 +564,10 @@ export default function useAiTools(
       showAlert(`Reformatted as ${fmt}`, 'success');
     } catch (err) {
       {
-        const { message, tone } = formatToolError(err, 'Could not change format. Please try again.');
+        const { message, tone } = formatToolError(
+          err,
+          'Could not change format. Please try again.'
+        );
         showAlert(message, tone);
       }
     }
@@ -280,7 +630,10 @@ export default function useAiTools(
       showAlert(`Translated to ${lang}`, 'success');
     } catch (err) {
       {
-        const { message, tone } = formatToolError(err, 'Could not translate text. Please try again.');
+        const { message, tone } = formatToolError(
+          err,
+          'Could not translate text. Please try again.'
+        );
         showAlert(message, tone);
       }
     }
@@ -305,7 +658,10 @@ export default function useAiTools(
       showAlert(`Transliterated to ${lang} script`, 'success');
     } catch (err) {
       {
-        const { message, tone } = formatToolError(err, 'Could not transliterate text. Please try again.');
+        const { message, tone } = formatToolError(
+          err,
+          'Could not transliterate text. Please try again.'
+        );
         showAlert(message, tone);
       }
     }

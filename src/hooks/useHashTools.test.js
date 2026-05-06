@@ -133,12 +133,10 @@ describe('useHashTools', () => {
         result: 'md5-of-test input',
       });
       expect(deps.setPreviewMode).toHaveBeenCalledWith('result');
-      expect(deps.pushHistory).toHaveBeenCalledWith(
-        'MD5 Hash',
-        'test input',
-        'md5-of-test input',
-        { toolId: 'md5', toolType: 'local' },
-      );
+      expect(deps.pushHistory).toHaveBeenCalledWith('MD5 Hash', 'test input', 'md5-of-test input', {
+        toolId: 'md5',
+        toolType: 'local',
+      });
       expect(deps.showAlert).toHaveBeenCalledWith('MD5 Hash generated', 'success');
       expect(deps.setLocalLoading).toHaveBeenCalledWith(false);
     });
@@ -160,12 +158,10 @@ describe('useHashTools', () => {
         result: 'abcdef01',
       });
       expect(deps.setPreviewMode).toHaveBeenCalledWith('result');
-      expect(deps.pushHistory).toHaveBeenCalledWith(
-        'SHA-256 Hash',
-        'crypto text',
-        'abcdef01',
-        { toolId: 'sha256', toolType: 'local' },
-      );
+      expect(deps.pushHistory).toHaveBeenCalledWith('SHA-256 Hash', 'crypto text', 'abcdef01', {
+        toolId: 'sha256',
+        toolType: 'local',
+      });
       expect(deps.showAlert).toHaveBeenCalledWith('SHA-256 Hash generated', 'success');
       expect(deps.setLocalLoading).toHaveBeenCalledWith(false);
     });
@@ -188,7 +184,7 @@ describe('useHashTools', () => {
         'CRC32 Checksum',
         'abc',
         expect.stringMatching(/^[0-9a-f]{8}$/),
-        { toolId: 'crc32', toolType: 'local' },
+        { toolId: 'crc32', toolType: 'local' }
       );
       expect(deps.showAlert).toHaveBeenCalledWith('CRC32 Checksum generated', 'success');
       expect(deps.setLocalLoading).toHaveBeenCalledWith(false);
@@ -232,24 +228,21 @@ describe('useHashTools', () => {
   // --- Empty text guard ---
 
   describe('empty text guard', () => {
-    it.each([
-      ['handleMd5'],
-      ['handleSha256'],
-      ['handleCrc32'],
-      ['handleAdler32'],
-      ['handleFnv1a'],
-    ])('%s does nothing when textRef.current is empty', async (handlerName) => {
-      const deps = makeDeps('');
-      const { result } = renderHook(() => useHashTools(deps));
+    it.each([['handleMd5'], ['handleSha256'], ['handleCrc32'], ['handleAdler32'], ['handleFnv1a']])(
+      '%s does nothing when textRef.current is empty',
+      async (handlerName) => {
+        const deps = makeDeps('');
+        const { result } = renderHook(() => useHashTools(deps));
 
-      await result.current[handlerName]();
+        await result.current[handlerName]();
 
-      expect(deps.setLocalLoading).not.toHaveBeenCalled();
-      expect(deps.setAiResult).not.toHaveBeenCalled();
-      expect(deps.setPreviewMode).not.toHaveBeenCalled();
-      expect(deps.pushHistory).not.toHaveBeenCalled();
-      expect(deps.showAlert).not.toHaveBeenCalled();
-    });
+        expect(deps.setLocalLoading).not.toHaveBeenCalled();
+        expect(deps.setAiResult).not.toHaveBeenCalled();
+        expect(deps.setPreviewMode).not.toHaveBeenCalled();
+        expect(deps.pushHistory).not.toHaveBeenCalled();
+        expect(deps.showAlert).not.toHaveBeenCalled();
+      }
+    );
   });
 
   // --- Error handling ---

@@ -1,9 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import {
-  useResendVerificationMutation,
-  useVerifyEmailMutation,
-} from '../store/api/authApi';
+import { useResendVerificationMutation, useVerifyEmailMutation } from '../store/api/authApi';
 import { useSelector } from 'react-redux';
 import { ROUTES } from '../constants';
 
@@ -79,7 +76,7 @@ export default function VerifyEmailPage({ showAlert }) {
         setState(STATES.FAILED);
         setErrorMessage(
           err?.data?.detail ||
-            'This verification link is invalid or has expired. Please request a new one.',
+            'This verification link is invalid or has expired. Please request a new one.'
         );
       }
     })();
@@ -93,20 +90,17 @@ export default function VerifyEmailPage({ showAlert }) {
     }
     try {
       await resendVerification().unwrap();
-      showAlert(
-        'A new verification email has been sent. Check your inbox.',
-        'success',
-      );
+      showAlert('A new verification email has been sent. Check your inbox.', 'success');
     } catch (err) {
       if (err?.status === 429) {
         showAlert(
           err?.data?.detail || 'Please wait a moment before requesting another email.',
-          'warning',
+          'warning'
         );
       } else {
         showAlert(
           err?.data?.detail || 'Could not send verification email. Try again shortly.',
-          'danger',
+          'danger'
         );
       }
     }
@@ -117,11 +111,7 @@ export default function VerifyEmailPage({ showAlert }) {
       <div className="auth-card auth-card--status">
         {state === STATES.VERIFYING && (
           <>
-            <div
-              className="auth-status auth-status--pending"
-              role="status"
-              aria-live="polite"
-            >
+            <div className="auth-status auth-status--pending" role="status" aria-live="polite">
               <span className="auth-status__spinner" aria-hidden="true" />
             </div>
             <h2 className="auth-title">Verifying your email</h2>
@@ -131,17 +121,12 @@ export default function VerifyEmailPage({ showAlert }) {
 
         {state === STATES.SUCCESS && (
           <>
-            <div
-              className="auth-status auth-status--success"
-              role="status"
-              aria-live="polite"
-            >
+            <div className="auth-status auth-status--success" role="status" aria-live="polite">
               <CheckIcon />
             </div>
             <h2 className="auth-title">Email verified</h2>
             <p className="auth-subtitle">
-              Your account is now fully activated. AI-powered tools are unlocked and
-              ready to use.
+              Your account is now fully activated. AI-powered tools are unlocked and ready to use.
             </p>
             <Link to={ROUTES.HOME} className="auth-btn auth-btn--primary">
               Go to the app
@@ -184,8 +169,8 @@ export default function VerifyEmailPage({ showAlert }) {
             </div>
             <h2 className="auth-title">Missing verification token</h2>
             <p className="auth-subtitle">
-              This link doesn&apos;t include a verification token. Request a new one
-              from your account or sign-up email.
+              This link doesn&apos;t include a verification token. Request a new one from your
+              account or sign-up email.
             </p>
             <button
               type="button"

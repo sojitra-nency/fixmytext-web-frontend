@@ -8,14 +8,10 @@ let mockAccessToken = null;
 let mockTokenParam = 'valid-token';
 
 vi.mock('react-router-dom', () => ({
-  Link: ({ children, to, ...props }) =>
-    React.createElement('a', { href: to, ...props }, children),
+  Link: ({ children, to, ...props }) => React.createElement('a', { href: to, ...props }, children),
   Navigate: ({ to }) => <div data-testid="navigate" data-to={to} />,
   useNavigate: () => mockNavigate,
-  useSearchParams: () => [
-    { get: (k) => (k === 'token' ? mockTokenParam : null) },
-    vi.fn(),
-  ],
+  useSearchParams: () => [{ get: (k) => (k === 'token' ? mockTokenParam : null) }, vi.fn()],
 }));
 
 vi.mock('react-redux', () => ({
@@ -76,10 +72,7 @@ describe('ResetPasswordPage', () => {
     fireEvent.change(confirmPw, { target: { value: 'short' } });
     fireEvent.submit(screen.getByRole('button', { name: 'Reset password' }).closest('form'));
     await waitFor(() => {
-      expect(showAlert).toHaveBeenCalledWith(
-        'Password must be at least 8 characters',
-        'danger',
-      );
+      expect(showAlert).toHaveBeenCalledWith('Password must be at least 8 characters', 'danger');
     });
     expect(mockResetPassword).not.toHaveBeenCalled();
   });
@@ -116,7 +109,7 @@ describe('ResetPasswordPage', () => {
       });
       expect(showAlert).toHaveBeenCalledWith(
         'Password reset successfully. Please sign in.',
-        'success',
+        'success'
       );
       expect(mockNavigate).toHaveBeenCalledWith('/login');
     });

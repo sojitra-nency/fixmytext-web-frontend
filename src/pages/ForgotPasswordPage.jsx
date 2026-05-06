@@ -40,25 +40,18 @@ export default function ForgotPasswordPage({ showAlert }) {
       // The backend currently returns the raw token to unblock frontend work;
       // in prod the user will receive a link by email instead.
       if (res?.reset_token) {
-         
         console.info(
           'DEV reset link:',
-          `${window.location.origin}${ROUTES.RESET_PASSWORD}?token=${res.reset_token}`,
+          `${window.location.origin}${ROUTES.RESET_PASSWORD}?token=${res.reset_token}`
         );
       }
       setSubmitted(true);
-      showAlert(
-        'If that email is registered, we have sent a reset link.',
-        'success',
-      );
+      showAlert('If that email is registered, we have sent a reset link.', 'success');
     } catch (err) {
       if (err?.status === 429) {
         showAlert('Too many attempts. Please try again in a minute.', 'danger');
       } else {
-        showAlert(
-          err?.data?.detail || 'Could not send reset link. Please try again.',
-          'danger',
-        );
+        showAlert(err?.data?.detail || 'Could not send reset link. Please try again.', 'danger');
       }
     }
   };
@@ -68,8 +61,8 @@ export default function ForgotPasswordPage({ showAlert }) {
       <div className="auth-card">
         <h2 className="auth-title">Forgot password</h2>
         <p className="auth-subtitle">
-          Enter the email associated with your account and we&apos;ll send a secure link
-          to reset your password.
+          Enter the email associated with your account and we&apos;ll send a secure link to reset
+          your password.
         </p>
 
         {submitted ? (
@@ -83,8 +76,7 @@ export default function ForgotPasswordPage({ showAlert }) {
                   If <strong>{email}</strong> is registered, a reset link is on its way.
                 </p>
                 <p>
-                  The link expires in 15 minutes. Check your spam folder if you don&apos;t
-                  see it.
+                  The link expires in 15 minutes. Check your spam folder if you don&apos;t see it.
                 </p>
               </div>
             </div>
@@ -108,11 +100,7 @@ export default function ForgotPasswordPage({ showAlert }) {
                 autoFocus
               />
             </div>
-            <button
-              type="submit"
-              className="auth-btn auth-btn--primary"
-              disabled={isLoading}
-            >
+            <button type="submit" className="auth-btn auth-btn--primary" disabled={isLoading}>
               {isLoading ? (
                 <>
                   <span className="auth-btn__spinner" aria-hidden="true" />

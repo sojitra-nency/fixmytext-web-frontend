@@ -24,7 +24,7 @@ function renderProfile({ user, isAuthenticated = true } = {}) {
       mode="dark"
       setMode={vi.fn()}
       showAlert={vi.fn()}
-    />,
+    />
   );
 }
 
@@ -55,9 +55,7 @@ describe('ProfileSection — email verification', () => {
     expect(screen.getByText('Verify your email')).toBeInTheDocument();
     // Email appears in the header and inside the verify card copy.
     expect(screen.getAllByText('new@example.com').length).toBeGreaterThan(0);
-    expect(
-      screen.getByRole('button', { name: 'Resend verification email' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Resend verification email' })).toBeInTheDocument();
   });
 
   it('does not show any verification badge for guest (unauthenticated) users', () => {
@@ -84,7 +82,7 @@ describe('ProfileSection — email verification', () => {
         mode="dark"
         setMode={vi.fn()}
         showAlert={showAlertLocal}
-      />,
+      />
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Resend verification email' }));
@@ -93,7 +91,7 @@ describe('ProfileSection — email verification', () => {
       expect(mockResendVerification).toHaveBeenCalled();
       expect(showAlertLocal).toHaveBeenCalledWith(
         'Verification email sent. Check your inbox and spam folder.',
-        'success',
+        'success'
       );
     });
 
@@ -123,7 +121,7 @@ describe('ProfileSection — email verification', () => {
         mode="dark"
         setMode={vi.fn()}
         showAlert={showAlertLocal}
-      />,
+      />
     );
 
     fireEvent.click(screen.getByRole('button', { name: 'Resend verification email' }));
@@ -131,7 +129,7 @@ describe('ProfileSection — email verification', () => {
       expect(screen.getByRole('button', { name: /resend in (29|30)s/i })).toBeDisabled();
       expect(showAlertLocal).toHaveBeenCalledWith(
         'Please wait 30 seconds before requesting another.',
-        'warning',
+        'warning'
       );
     });
   });

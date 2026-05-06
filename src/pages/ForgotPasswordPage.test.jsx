@@ -6,8 +6,7 @@ const mockForgotPassword = vi.fn();
 let mockAccessToken = null;
 
 vi.mock('react-router-dom', () => ({
-  Link: ({ children, to, ...props }) =>
-    React.createElement('a', { href: to, ...props }, children),
+  Link: ({ children, to, ...props }) => React.createElement('a', { href: to, ...props }, children),
   Navigate: ({ to }) => <div data-testid="navigate" data-to={to} />,
 }));
 
@@ -63,7 +62,7 @@ describe('ForgotPasswordPage', () => {
       expect(mockForgotPassword).toHaveBeenCalledWith({ email: 'user@example.com' });
       expect(showAlert).toHaveBeenCalledWith(
         'If that email is registered, we have sent a reset link.',
-        'success',
+        'success'
       );
     });
     // After submission, the form is swapped for the confirmation panel.
@@ -82,7 +81,7 @@ describe('ForgotPasswordPage', () => {
     await waitFor(() => {
       expect(showAlert).toHaveBeenCalledWith(
         'Too many attempts. Please try again in a minute.',
-        'danger',
+        'danger'
       );
     });
   });
@@ -97,7 +96,7 @@ describe('ForgotPasswordPage', () => {
     await waitFor(() => {
       expect(showAlert).toHaveBeenCalledWith(
         'Could not send reset link. Please try again.',
-        'danger',
+        'danger'
       );
     });
   });

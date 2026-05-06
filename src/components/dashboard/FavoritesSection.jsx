@@ -16,9 +16,7 @@ export default function FavoritesSection({ g }) {
         <div className="tu-dash-empty-page">
           <span className="tu-dash-empty-icon">❤️</span>
           <span>No favorites yet</span>
-          <span className="tu-dash-empty-hint">
-            Heart tools from the sidebar to add them here
-          </span>
+          <span className="tu-dash-empty-hint">Heart tools from the sidebar to add them here</span>
         </div>
       ) : (
         <div className="tu-tpanel-list tu-dash-fav-panel">
@@ -28,9 +26,7 @@ export default function FavoritesSection({ g }) {
             return (
               <div key={id} className="tu-titem-wrap">
                 <div className="tu-titem">
-                  <span className={`tu-titem-icon tu-titem-icon--${tool.color}`}>
-                    {tool.icon}
-                  </span>
+                  <span className={`tu-titem-icon tu-titem-icon--${tool.color}`}>{tool.icon}</span>
                   <span className="tu-titem-name">{tool.label}</span>
                   <button
                     className="tu-titem-fav tu-titem-fav--active"

@@ -67,7 +67,7 @@ describe('EmailVerificationBanner', () => {
       expect(mockResendVerification).toHaveBeenCalled();
       expect(showAlert).toHaveBeenCalledWith(
         'Verification email sent. Check your inbox and spam folder.',
-        'success',
+        'success'
       );
     });
 
@@ -97,7 +97,7 @@ describe('EmailVerificationBanner', () => {
       expect(screen.getByRole('button', { name: /resend in 4[4-5]s/i })).toBeDisabled();
       expect(showAlert).toHaveBeenCalledWith(
         'Please wait 45 seconds before requesting another.',
-        'warning',
+        'warning'
       );
     });
   });
@@ -109,9 +109,7 @@ describe('EmailVerificationBanner', () => {
     });
 
     const { container } = render(<EmailVerificationBanner showAlert={showAlert} />);
-    fireEvent.click(
-      screen.getByRole('button', { name: /dismiss verification reminder/i }),
-    );
+    fireEvent.click(screen.getByRole('button', { name: /dismiss verification reminder/i }));
     expect(container.firstChild).toBeNull();
     expect(localStorage.getItem('fmt:email-verify-dismissed-until')).toBeTruthy();
   });
@@ -121,10 +119,7 @@ describe('EmailVerificationBanner', () => {
       accessToken: 'tok',
       user: { email: 'u@example.com', is_email_verified: false },
     });
-    localStorage.setItem(
-      'fmt:email-verify-dismissed-until',
-      String(Date.now() + 30 * 60 * 1000),
-    );
+    localStorage.setItem('fmt:email-verify-dismissed-until', String(Date.now() + 30 * 60 * 1000));
     const { container } = render(<EmailVerificationBanner showAlert={showAlert} />);
     expect(container.firstChild).toBeNull();
   });

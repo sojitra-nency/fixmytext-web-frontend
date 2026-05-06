@@ -344,7 +344,12 @@ export default memo(function OutputPanel({
         </div>
       </div>
       <div className="tu-input-toolbar">
-        <button className="tu-input-toolbar-btn" onClick={handleCopy} title="Copy output" aria-label="Copy to clipboard">
+        <button
+          className="tu-input-toolbar-btn"
+          onClick={handleCopy}
+          title="Copy output"
+          aria-label="Copy to clipboard"
+        >
           <svg
             width="14"
             height="14"
@@ -784,7 +789,9 @@ export default memo(function OutputPanel({
               /* Sanitized to prevent XSS from AI-generated content */
               <div
                 className="tu-preview-markdown"
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(marked.parse(aiResult.result)) }}
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(marked.parse(aiResult.result)),
+                }}
               />
             ) : isEditable ? (
               <div
