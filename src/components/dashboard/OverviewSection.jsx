@@ -14,7 +14,17 @@ import { TOOLS, ACHIEVEMENTS, LEVELS, QUEST_TEMPLATES } from '../../constants/to
  * @param {Array} props.categoryUsage - Category usage stats.
  * @param {function} props.setActiveSection - Callback to switch dashboard section.
  */
-export default function OverviewSection({ g, level, nextLevel, xpProgress, topTools, categoryUsage, setActiveSection, toolStatsError, refetchToolStats }) {
+export default function OverviewSection({
+  g,
+  level,
+  nextLevel,
+  xpProgress,
+  topTools,
+  categoryUsage,
+  setActiveSection,
+  toolStatsError,
+  refetchToolStats,
+}) {
   return (
     <div className="tu-dash-content">
       <h2 className="tu-dash-title">Overview</h2>
@@ -77,9 +87,7 @@ export default function OverviewSection({ g, level, nextLevel, xpProgress, topTo
         </div>
         <div className="tu-dash-stat-card">
           <span className="tu-dash-stat-icon">✏️</span>
-          <span className="tu-dash-stat-value">
-            {((g?.totalChars || 0) / 1000).toFixed(1)}k
-          </span>
+          <span className="tu-dash-stat-value">{((g?.totalChars || 0) / 1000).toFixed(1)}k</span>
           <span className="tu-dash-stat-label">Characters</span>
         </div>
         <div className="tu-dash-stat-card">
@@ -114,9 +122,7 @@ export default function OverviewSection({ g, level, nextLevel, xpProgress, topTo
       {g?.dailyQuest?.id && (
         <div className="tu-dash-card">
           <h3 className="tu-dash-card-title">Daily Quest</h3>
-          <div
-            className={`tu-dash-quest${g.dailyQuest.completed ? ' tu-dash-quest--done' : ''}`}
-          >
+          <div className={`tu-dash-quest${g.dailyQuest.completed ? ' tu-dash-quest--done' : ''}`}>
             <span className="tu-dash-quest-icon">{g.dailyQuest.completed ? '✅' : '📋'}</span>
             <span className="tu-dash-quest-text">
               {QUEST_TEMPLATES.find((q) => q.id === g.dailyQuest.id)?.text || 'Daily Quest'}
@@ -183,10 +189,7 @@ export default function OverviewSection({ g, level, nextLevel, xpProgress, topTo
         <div className="tu-dash-card">
           <div className="tu-dash-card-header">
             <h3 className="tu-dash-card-title">Recent Achievements</h3>
-            <button
-              className="tu-dash-card-link"
-              onClick={() => setActiveSection('achievements')}
-            >
+            <button className="tu-dash-card-link" onClick={() => setActiveSection('achievements')}>
               View all
             </button>
           </div>

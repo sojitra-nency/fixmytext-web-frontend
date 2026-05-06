@@ -17,7 +17,13 @@ globalThis.ResizeObserver = vi.fn(() => ({
 
 describe('TabBar', () => {
   const mockTabs = [
-    { id: 'tab-1', label: 'Uppercase', icon: 'Aa', type: 'tool', tool: { id: 'upper', color: '#f00' } },
+    {
+      id: 'tab-1',
+      label: 'Uppercase',
+      icon: 'Aa',
+      type: 'tool',
+      tool: { id: 'upper', color: '#f00' },
+    },
     { id: 'tab-2', label: 'History', icon: 'H', type: 'drawer', panelId: 'history', color: '#0f0' },
   ];
 
@@ -82,7 +88,10 @@ describe('TabBar', () => {
     render(<TabBar {...baseProps} />);
     const saveBtns = screen.getAllByLabelText('Save tab to templates');
     fireEvent.click(saveBtns[0]);
-    expect(baseProps.setSaveModal).toHaveBeenCalledWith({ tabId: 'tab-1', defaultName: 'Uppercase' });
+    expect(baseProps.setSaveModal).toHaveBeenCalledWith({
+      tabId: 'tab-1',
+      defaultName: 'Uppercase',
+    });
   });
 
   it('does not switch tab when close button clicked (stopPropagation)', () => {

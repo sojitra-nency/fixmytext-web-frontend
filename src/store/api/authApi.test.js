@@ -4,6 +4,10 @@ import {
   useLoginMutation,
   useLogoutMutation,
   useRefreshMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
+  useVerifyEmailMutation,
+  useResendVerificationMutation,
   useGetMeQuery,
 } from './authApi';
 
@@ -27,6 +31,10 @@ describe('authApi', () => {
     expect(endpointNames).toContain('logout');
     expect(endpointNames).toContain('refresh');
     expect(endpointNames).toContain('getMe');
+    expect(endpointNames).toContain('forgotPassword');
+    expect(endpointNames).toContain('resetPassword');
+    expect(endpointNames).toContain('verifyEmail');
+    expect(endpointNames).toContain('resendVerification');
   });
 
   it('exports hook functions', () => {
@@ -34,6 +42,10 @@ describe('authApi', () => {
     expect(typeof useLoginMutation).toBe('function');
     expect(typeof useLogoutMutation).toBe('function');
     expect(typeof useRefreshMutation).toBe('function');
+    expect(typeof useForgotPasswordMutation).toBe('function');
+    expect(typeof useResetPasswordMutation).toBe('function');
+    expect(typeof useVerifyEmailMutation).toBe('function');
+    expect(typeof useResendVerificationMutation).toBe('function');
     expect(typeof useGetMeQuery).toBe('function');
   });
 

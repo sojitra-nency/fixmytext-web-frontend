@@ -18,15 +18,11 @@ export default function HistorySection({ g, recentOps }) {
         <div className="tu-dash-empty-page">
           <span className="tu-dash-empty-icon">📈</span>
           <span>No activity this session</span>
-          <span className="tu-dash-empty-hint">
-            Start using tools to see your history here
-          </span>
+          <span className="tu-dash-empty-hint">Start using tools to see your history here</span>
         </div>
       ) : (
         <div className="tu-dash-card">
-          <h3 className="tu-dash-card-title">
-            Session Timeline ({recentOps.length} operations)
-          </h3>
+          <h3 className="tu-dash-card-title">Session Timeline ({recentOps.length} operations)</h3>
           <div className="tu-dash-history-list">
             {[...recentOps].reverse().map((op, i) => {
               const tool = TOOLS.find((t) => t.id === op.id);
@@ -66,12 +62,8 @@ export default function HistorySection({ g, recentOps }) {
             return (
               <div
                 key={tool.id}
-                className={`tu-dash-discovered${
-                  discovered ? '' : ' tu-dash-discovered--locked'
-                }`}
-                title={
-                  discovered ? `${tool.label} — ${g.toolsUsed?.[tool.id] || 0}x used` : '???'
-                }
+                className={`tu-dash-discovered${discovered ? '' : ' tu-dash-discovered--locked'}`}
+                title={discovered ? `${tool.label} — ${g.toolsUsed?.[tool.id] || 0}x used` : '???'}
               >
                 <span>{discovered ? tool.icon : '?'}</span>
               </div>

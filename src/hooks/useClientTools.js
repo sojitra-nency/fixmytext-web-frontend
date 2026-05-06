@@ -25,7 +25,9 @@ export default function useClientTools({
         const bar = '\u2588'.repeat(Math.round(pct / 2));
         return `${ch}: ${count} (${pct}%) ${bar}`;
       });
-      const result = `Letter Frequency Analysis (${total} letters)\n${'\u2500'.repeat(40)}\n${lines.join('\n')}`;
+      const result = `Letter Frequency Analysis (${total} letters)\n${'\u2500'.repeat(
+        40
+      )}\n${lines.join('\n')}`;
       setToolResults((prev) => ({ ...prev, [activeWorkspaceId]: result }));
       setPreviewMode('result');
       showAlert('Frequency analysis complete', 'success');
@@ -139,7 +141,9 @@ export default function useClientTools({
         showAlert('Could not parse date/timestamp', 'danger');
         return;
       }
-      const result = `Unix (s):  ${Math.floor(date.getTime() / 1000)}\nUnix (ms): ${date.getTime()}\nISO 8601:  ${date.toISOString()}\nUTC:       ${date.toUTCString()}\nLocal:     ${date.toLocaleString()}`;
+      const result = `Unix (s):  ${Math.floor(
+        date.getTime() / 1000
+      )}\nUnix (ms): ${date.getTime()}\nISO 8601:  ${date.toISOString()}\nUTC:       ${date.toUTCString()}\nLocal:     ${date.toLocaleString()}`;
       setToolResults((prev) => ({ ...prev, [activeWorkspaceId]: result }));
       setPreviewMode('result');
       showAlert('Timestamp converted', 'success');
@@ -164,7 +168,9 @@ export default function useClientTools({
         showAlert('Enter a HEX (#FF5733) or RGB (rgb(255,87,51)) color', 'danger');
         return;
       }
-      const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`.toUpperCase();
+      const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b
+        .toString(16)
+        .padStart(2, '0')}`.toUpperCase();
       const rn = r / 255,
         gn = g / 255,
         bn = b / 255;
@@ -180,7 +186,9 @@ export default function useClientTools({
         else if (max === gn) h = ((bn - rn) / d + 2) / 6;
         else h = ((rn - gn) / d + 4) / 6;
       }
-      const result = `HEX: ${hex}\nRGB: rgb(${r}, ${g}, ${b})\nHSL: hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`;
+      const result = `HEX: ${hex}\nRGB: rgb(${r}, ${g}, ${b})\nHSL: hsl(${Math.round(
+        h * 360
+      )}, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%)`;
       setToolResults((prev) => ({ ...prev, [activeWorkspaceId]: result }));
       setPreviewMode('result');
       showAlert('Color converted', 'success');
@@ -191,8 +199,7 @@ export default function useClientTools({
         const t = (Date.now() + i).toString(36).toUpperCase().padStart(10, '0');
         const r = Array.from(
           { length: 16 },
-          () =>
-            '0123456789ABCDEFGHJKMNPQRSTVWXYZ'[Math.floor(Math.random() * 32)]
+          () => '0123456789ABCDEFGHJKMNPQRSTVWXYZ'[Math.floor(Math.random() * 32)]
         ).join('');
         return t + r;
       }).join('\n');
@@ -212,12 +219,10 @@ export default function useClientTools({
       const [min, hour, dom, month, dow] = parts;
       const descs = [];
       if (min === '*') descs.push('every minute');
-      else if (min.includes('/'))
-        descs.push(`every ${min.split('/')[1]} minutes`);
+      else if (min.includes('/')) descs.push(`every ${min.split('/')[1]} minutes`);
       else descs.push(`at minute ${min}`);
       if (hour === '*') descs.push('of every hour');
-      else if (hour.includes('-'))
-        descs.push(`during hours ${hour.replace('-', ' through ')}`);
+      else if (hour.includes('-')) descs.push(`during hours ${hour.replace('-', ' through ')}`);
       else descs.push(`at ${hour}:00`);
       if (dom !== '*') descs.push(`on day ${dom} of the month`);
       if (month !== '*') descs.push(`in month ${month}`);
@@ -258,7 +263,9 @@ export default function useClientTools({
         const idx = l.indexOf(':');
         return `| ${l.slice(0, idx).trim().padEnd(30)} | ${l.slice(idx + 1).trim()} |`;
       });
-      const result = `| ${'Header'.padEnd(30)} | Value |\n| ${'-'.repeat(30)} | ----- |\n${headers.join('\n')}`;
+      const result = `| ${'Header'.padEnd(30)} | Value |\n| ${'-'.repeat(
+        30
+      )} | ----- |\n${headers.join('\n')}`;
       setToolResults((prev) => ({ ...prev, [activeWorkspaceId]: result }));
       setPreviewMode('result');
       showAlert('HTTP headers parsed', 'success');
@@ -269,10 +276,12 @@ export default function useClientTools({
       if (!t) return;
       try {
         const url = new URL(t);
-        const params = [...url.searchParams.entries()]
-          .map(([k, v]) => `  ${k} = ${v}`)
-          .join('\n');
-        const result = `Protocol: ${url.protocol}\nHost:     ${url.hostname}\nPort:     ${url.port || '(default)'}\nPath:     ${url.pathname}\nSearch:   ${url.search}\nHash:     ${url.hash}\n${params ? `\nQuery Parameters:\n${params}` : ''}`;
+        const params = [...url.searchParams.entries()].map(([k, v]) => `  ${k} = ${v}`).join('\n');
+        const result = `Protocol: ${url.protocol}\nHost:     ${url.hostname}\nPort:     ${
+          url.port || '(default)'
+        }\nPath:     ${url.pathname}\nSearch:   ${url.search}\nHash:     ${url.hash}\n${
+          params ? `\nQuery Parameters:\n${params}` : ''
+        }`;
         setToolResults((prev) => ({ ...prev, [activeWorkspaceId]: result }));
         setPreviewMode('result');
         showAlert('URL parsed', 'success');
@@ -339,7 +348,13 @@ export default function useClientTools({
       if (fkGrade <= 5) level = 'Elementary';
       else if (fkGrade <= 8) level = 'Middle School';
       else if (fkGrade <= 12) level = 'High School';
-      const result = `Reading Level Analysis\n${'\u2500'.repeat(30)}\nFlesch Score:    ${flesch.toFixed(1)}\nGrade Level:     ${fkGrade.toFixed(1)} (${level})\nReading Time:    ~${readTime} min (238 WPM)\nSpeaking Time:   ~${speakTime} min (150 WPM)\nWords:           ${wc}\nSentences:       ${sc}\nAvg Words/Sent:  ${(wc / sc).toFixed(1)}`;
+      const result = `Reading Level Analysis\n${'\u2500'.repeat(
+        30
+      )}\nFlesch Score:    ${flesch.toFixed(1)}\nGrade Level:     ${fkGrade.toFixed(
+        1
+      )} (${level})\nReading Time:    ~${readTime} min (238 WPM)\nSpeaking Time:   ~${speakTime} min (150 WPM)\nWords:           ${wc}\nSentences:       ${sc}\nAvg Words/Sent:  ${(
+        wc / sc
+      ).toFixed(1)}`;
       setToolResults((prev) => ({ ...prev, [activeWorkspaceId]: result }));
       setPreviewMode('result');
       showAlert('Reading level analyzed', 'success');
@@ -349,7 +364,9 @@ export default function useClientTools({
       const t = textRef.current;
       if (!t) return;
       const words = t.split(/\s+/).filter(Boolean).length;
-      const result = `Reading Time:  ~${Math.ceil(words / 238)} min (238 WPM)\nSpeaking Time: ~${Math.ceil(words / 150)} min (150 WPM)\nWords: ${words}`;
+      const result = `Reading Time:  ~${Math.ceil(
+        words / 238
+      )} min (238 WPM)\nSpeaking Time: ~${Math.ceil(words / 150)} min (150 WPM)\nWords: ${words}`;
       setToolResults((prev) => ({ ...prev, [activeWorkspaceId]: result }));
       setPreviewMode('result');
       showAlert('Reading time estimated', 'success');
@@ -375,10 +392,18 @@ export default function useClientTools({
       const words = t.split(/\s+/).filter(Boolean);
       const sentences = t.split(/[.!?]+/).filter((s) => s.trim());
       const uniqueWords = new Set(words.map((w) => w.toLowerCase()));
-      const avgWordLen =
-        words.reduce((s, w) => s + w.length, 0) / words.length;
+      const avgWordLen = words.reduce((s, w) => s + w.length, 0) / words.length;
       const avgSentLen = words.length / sentences.length;
-      const result = `Text Statistics\n${'\u2500'.repeat(30)}\nTotal Words:       ${words.length}\nUnique Words:      ${uniqueWords.size}\nVocabulary Ratio:  ${((uniqueWords.size / words.length) * 100).toFixed(1)}%\nAvg Word Length:   ${avgWordLen.toFixed(1)} chars\nAvg Sentence Len:  ${avgSentLen.toFixed(1)} words\nLongest Word:      ${words.reduce((a, b) => (a.length > b.length ? a : b), '')}`;
+      const result = `Text Statistics\n${'\u2500'.repeat(30)}\nTotal Words:       ${
+        words.length
+      }\nUnique Words:      ${uniqueWords.size}\nVocabulary Ratio:  ${(
+        (uniqueWords.size / words.length) *
+        100
+      ).toFixed(1)}%\nAvg Word Length:   ${avgWordLen.toFixed(
+        1
+      )} chars\nAvg Sentence Len:  ${avgSentLen.toFixed(
+        1
+      )} words\nLongest Word:      ${words.reduce((a, b) => (a.length > b.length ? a : b), '')}`;
       setToolResults((prev) => ({ ...prev, [activeWorkspaceId]: result }));
       setPreviewMode('result');
       showAlert('Text statistics computed', 'success');
@@ -482,10 +507,7 @@ export default function useClientTools({
       const result = overused.length
         ? `Overused Words (>3% frequency)\n${'\u2500'.repeat(30)}\n` +
           overused
-            .map(
-              ([w, c]) =>
-                `\u26a0 "${w}" \u2014 ${c}\u00d7 (${((c / total) * 100).toFixed(1)}%)`
-            )
+            .map(([w, c]) => `\u26a0 "${w}" \u2014 ${c}\u00d7 (${((c / total) * 100).toFixed(1)}%)`)
             .join('\n')
         : 'No overused words detected!';
       setToolResults((prev) => ({ ...prev, [activeWorkspaceId]: result }));
@@ -551,8 +573,7 @@ export default function useClientTools({
           n %= 100;
         }
         if (n >= 20) {
-          result +=
-            tens[Math.floor(n / 10)] + (n % 10 ? '-' + ones[n % 10] : '') + ' ';
+          result += tens[Math.floor(n / 10)] + (n % 10 ? '-' + ones[n % 10] : '') + ' ';
         } else if (n > 0) {
           result += ones[n] + ' ';
         }
@@ -733,23 +754,12 @@ export default function useClientTools({
         showAlert('Need at least a header + 1 data row', 'danger');
         return;
       }
-      const widths = rows[0].map((_, i) =>
-        Math.max(...rows.map((r) => (r[i] || '').length))
-      );
-      const header =
-        '| ' +
-        rows[0].map((c, i) => c.padEnd(widths[i])).join(' | ') +
-        ' |';
-      const divider =
-        '| ' + widths.map((w) => '-'.repeat(w)).join(' | ') + ' |';
+      const widths = rows[0].map((_, i) => Math.max(...rows.map((r) => (r[i] || '').length)));
+      const header = '| ' + rows[0].map((c, i) => c.padEnd(widths[i])).join(' | ') + ' |';
+      const divider = '| ' + widths.map((w) => '-'.repeat(w)).join(' | ') + ' |';
       const body = rows
         .slice(1)
-        .map(
-          (r) =>
-            '| ' +
-            r.map((c, i) => (c || '').padEnd(widths[i] || 0)).join(' | ') +
-            ' |'
-        )
+        .map((r) => '| ' + r.map((c, i) => (c || '').padEnd(widths[i] || 0)).join(' | ') + ' |')
         .join('\n');
       setToolResults((prev) => ({
         ...prev,
@@ -762,14 +772,10 @@ export default function useClientTools({
     const handleExtractEmails = () => {
       const t = textRef.current;
       if (!t) return;
-      const emails = [
-        ...new Set(t.match(/[\w.+-]+@[\w-]+\.[\w.]+/g) || []),
-      ];
+      const emails = [...new Set(t.match(/[\w.+-]+@[\w-]+\.[\w.]+/g) || [])];
       setToolResults((prev) => ({
         ...prev,
-        [activeWorkspaceId]: emails.length
-          ? emails.join('\n')
-          : 'No email addresses found',
+        [activeWorkspaceId]: emails.length ? emails.join('\n') : 'No email addresses found',
       }));
       setPreviewMode('result');
       showAlert(`Found ${emails.length} email(s)`, 'success');
@@ -778,9 +784,7 @@ export default function useClientTools({
     const handleExtractUrls = () => {
       const t = textRef.current;
       if (!t) return;
-      const urls = [
-        ...new Set(t.match(/https?:\/\/[^\s<>"{}|\\^`[\]]+/g) || []),
-      ];
+      const urls = [...new Set(t.match(/https?:\/\/[^\s<>"{}|\\^`[\]]+/g) || [])];
       setToolResults((prev) => ({
         ...prev,
         [activeWorkspaceId]: urls.length ? urls.join('\n') : 'No URLs found',
@@ -795,22 +799,16 @@ export default function useClientTools({
       const numbers = t.match(/-?\d+\.?\d*/g) || [];
       setToolResults((prev) => ({
         ...prev,
-        [activeWorkspaceId]: numbers.length
-          ? numbers.join('\n')
-          : 'No numbers found',
+        [activeWorkspaceId]: numbers.length ? numbers.join('\n') : 'No numbers found',
       }));
       setPreviewMode('result');
       showAlert(`Found ${numbers.length} number(s)`, 'success');
     };
 
     const handleNanoidGen = () => {
-      const chars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
       const gen = () =>
-        Array.from(
-          crypto.getRandomValues(new Uint8Array(21)),
-          (b) => chars[b % 64]
-        ).join('');
+        Array.from(crypto.getRandomValues(new Uint8Array(21)), (b) => chars[b % 64]).join('');
       const result = Array.from({ length: 5 }, gen).join('\n');
       setToolResults((prev) => ({ ...prev, [activeWorkspaceId]: result }));
       setPreviewMode('result');
@@ -819,7 +817,9 @@ export default function useClientTools({
 
     const handleTimestampGen = () => {
       const now = new Date();
-      const result = `Unix (s):  ${Math.floor(now.getTime() / 1000)}\nUnix (ms): ${now.getTime()}\nISO 8601:  ${now.toISOString()}\nRFC 2822:  ${now.toUTCString()}\nLocal:     ${now.toLocaleString()}`;
+      const result = `Unix (s):  ${Math.floor(
+        now.getTime() / 1000
+      )}\nUnix (ms): ${now.getTime()}\nISO 8601:  ${now.toISOString()}\nRFC 2822:  ${now.toUTCString()}\nLocal:     ${now.toLocaleString()}`;
       setToolResults((prev) => ({ ...prev, [activeWorkspaceId]: result }));
       setPreviewMode('result');
       showAlert('Timestamps generated', 'success');
@@ -833,14 +833,8 @@ export default function useClientTools({
         words.join('.'),
         words[0] + '_' + Math.floor(Math.random() * 999),
         words.join('') + Math.floor(Math.random() * 99),
-        words[0][0] +
-          '_' +
-          (words[1] || words[0]) +
-          '_' +
-          Math.floor(Math.random() * 99),
-        words.map((w) => w[0]).join('') +
-          '_' +
-          Math.floor(Math.random() * 9999),
+        words[0][0] + '_' + (words[1] || words[0]) + '_' + Math.floor(Math.random() * 99),
+        words.map((w) => w[0]).join('') + '_' + Math.floor(Math.random() * 9999),
         words[0] + '.codes',
         'the_' + words[0],
         words[0] + '_dev',
@@ -881,11 +875,9 @@ export default function useClientTools({
       try {
         const cleaned = t.trim().replace(/\s+/g, '');
         const parts = cleaned.split('.');
-        if (parts.length !== 3)
-          throw new Error('Invalid JWT: expected 3 dot-separated parts');
+        if (parts.length !== 3) throw new Error('Invalid JWT: expected 3 dot-separated parts');
         const decode = (s, label) => {
-          if (!/^[A-Za-z0-9_-]+$/.test(s))
-            throw new Error(`Invalid characters in JWT ${label}`);
+          if (!/^[A-Za-z0-9_-]+$/.test(s)) throw new Error(`Invalid characters in JWT ${label}`);
           const padded = s + '='.repeat((4 - (s.length % 4)) % 4);
           let binary;
           try {
@@ -893,9 +885,7 @@ export default function useClientTools({
           } catch {
             throw new Error(`Invalid base64 in JWT ${label}`);
           }
-          const jsonStr = new TextDecoder().decode(
-            Uint8Array.from(binary, (c) => c.charCodeAt(0))
-          );
+          const jsonStr = new TextDecoder().decode(Uint8Array.from(binary, (c) => c.charCodeAt(0)));
           try {
             return JSON.parse(jsonStr);
           } catch {
@@ -904,7 +894,11 @@ export default function useClientTools({
         };
         const header = decode(parts[0], 'header');
         const payload = decode(parts[1], 'payload');
-        const result = `=== HEADER ===\n${JSON.stringify(header, null, 2)}\n\n=== PAYLOAD ===\n${JSON.stringify(payload, null, 2)}`;
+        const result = `=== HEADER ===\n${JSON.stringify(
+          header,
+          null,
+          2
+        )}\n\n=== PAYLOAD ===\n${JSON.stringify(payload, null, 2)}`;
         setAiResult({ label: 'JWT Decoded', result });
         setPreviewMode('result');
         pushHistory('JWT Decoded', original, result, {

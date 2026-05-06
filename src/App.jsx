@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react';
 import './assets/css/App.css';
 import Alert from './components/layout/Alert';
+import EmailVerificationBanner from './components/layout/EmailVerificationBanner';
 import Navbar from './components/layout/Navbar';
 import Home from './pages/Home';
 import OnboardingModal from './components/layout/OnboardingModal';
@@ -10,6 +11,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const SignupPage = lazy(() => import('./pages/SignupPage'));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
+const VerifyEmailPage = lazy(() => import('./pages/VerifyEmailPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const PricingPage = lazy(() => import('./pages/PricingPage'));
 const SharePage = lazy(() => import('./pages/SharePage'));
@@ -44,6 +48,7 @@ function AppInner() {
       {!gamification.onboarded && <OnboardingModal onComplete={handleOnboardingComplete} />}
 
       <Navbar showAlert={showAlert} />
+      <EmailVerificationBanner showAlert={showAlert} />
       <Alert alerts={alerts} dismissAlert={dismissAlert} />
       <PassPurchaseModal
         show={subscription.showUpgradeModal}
@@ -71,6 +76,15 @@ function AppInner() {
           <Route exact path={ROUTES.ABOUT} element={<AboutPage />} />
           <Route path={ROUTES.LOGIN} element={<LoginPage showAlert={showAlert} />} />
           <Route path={ROUTES.SIGNUP} element={<SignupPage showAlert={showAlert} />} />
+          <Route
+            path={ROUTES.FORGOT_PASSWORD}
+            element={<ForgotPasswordPage showAlert={showAlert} />}
+          />
+          <Route
+            path={ROUTES.RESET_PASSWORD}
+            element={<ResetPasswordPage showAlert={showAlert} />}
+          />
+          <Route path={ROUTES.VERIFY_EMAIL} element={<VerifyEmailPage showAlert={showAlert} />} />
           <Route
             path={ROUTES.PRICING}
             element={<PricingPage showAlert={showAlert} subscription={subscription} />}

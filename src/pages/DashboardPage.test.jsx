@@ -51,6 +51,9 @@ vi.mock('../store/api/passesApi', () => ({
 vi.mock('../store/api/userDataApi', () => ({
   useGetToolStatsQuery: () => ({ data: null, isLoading: false }),
 }));
+vi.mock('../store/api/authApi', () => ({
+  useResendVerificationMutation: () => [vi.fn(), { isLoading: false }],
+}));
 
 // ── SpinWheel mock ──
 vi.mock('../components/gamification/SpinWheel', () => ({
@@ -96,7 +99,11 @@ const defaultSubscription = {
   refetchStatus: vi.fn(),
 };
 
-const defaultUser = { display_name: 'Alice', email: 'alice@example.com' };
+const defaultUser = {
+  display_name: 'Alice',
+  email: 'alice@example.com',
+  is_email_verified: true,
+};
 
 function renderDash(props = {}) {
   return render(

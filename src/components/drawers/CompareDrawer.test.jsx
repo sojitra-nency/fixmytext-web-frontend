@@ -62,7 +62,11 @@ describe('CompareInput', () => {
 
   it('syncs gutter scroll on textarea scroll', () => {
     const { container } = render(
-      <CompareInput compareText={'line1\nline2\nline3'} setCompareText={vi.fn()} setDiffResult={vi.fn()} />
+      <CompareInput
+        compareText={'line1\nline2\nline3'}
+        setCompareText={vi.fn()}
+        setDiffResult={vi.fn()}
+      />
     );
     const textarea = container.querySelector('.tu-textarea');
     const gutter = container.querySelector('.tu-line-numbers');

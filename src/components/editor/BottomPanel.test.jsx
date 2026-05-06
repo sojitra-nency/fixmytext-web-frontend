@@ -180,9 +180,7 @@ describe('BottomPanel', () => {
 
   it('shows time formatting for older entries', () => {
     const history = {
-      history: [
-        { operation: 'Old', original: 'a', result: 'b', timestamp: Date.now() - 3600000 },
-      ],
+      history: [{ operation: 'Old', original: 'a', result: 'b', timestamp: Date.now() - 3600000 }],
       handleRestoreOriginal: vi.fn(),
       handleRestoreResult: vi.fn(),
       handleClearHistory: vi.fn(),

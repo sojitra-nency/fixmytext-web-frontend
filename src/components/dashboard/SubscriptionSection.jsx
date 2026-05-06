@@ -16,8 +16,18 @@ const POPULAR_PASS_IDS = ['day_single', 'day_triple', 'day_all', 'sprint_all'];
  * @param {function} props.navigate - React Router navigate function.
  * @param {boolean} props.isAuthenticated - Whether the user is authenticated.
  */
-export default function SubscriptionSection({ subscription, showAlert, navigate, isAuthenticated }) {
-  const { data: catalog, isLoading: catalogLoading, error: catalogError, refetch } = useGetPassCatalogQuery();
+export default function SubscriptionSection({
+  subscription,
+  showAlert,
+  navigate,
+  isAuthenticated,
+}) {
+  const {
+    data: catalog,
+    isLoading: catalogLoading,
+    error: catalogError,
+    refetch,
+  } = useGetPassCatalogQuery();
   const [buyingId, setBuyingId] = useState(null);
 
   const passes = useMemo(() => catalog?.passes || [], [catalog?.passes]);
@@ -79,11 +89,29 @@ export default function SubscriptionSection({ subscription, showAlert, navigate,
               className={`tu-sub-plan-badge${subscription?.isPro ? ' tu-sub-plan-badge--pro' : ''}`}
             >
               {subscription?.isPro ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                 </svg>
               ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                   <circle cx="12" cy="7" r="4" />
                 </svg>
@@ -148,7 +176,14 @@ export default function SubscriptionSection({ subscription, showAlert, navigate,
           <div className="tu-sub-pro-content">
             <div className="tu-sub-pro-left">
               <div className="tu-sub-pro-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                 </svg>
                 <span>Go Pro</span>
@@ -158,15 +193,48 @@ export default function SubscriptionSection({ subscription, showAlert, navigate,
               </p>
               <ul className="tu-sub-pro-perks">
                 <li>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--accent)"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
                   Unlimited uses on all 70+ tools
                 </li>
                 <li>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--accent)"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
                   Priority support
                 </li>
                 <li>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  <svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--accent)"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
                   30-day money-back guarantee
                 </li>
               </ul>
@@ -181,7 +249,18 @@ export default function SubscriptionSection({ subscription, showAlert, navigate,
                 onClick={handleUpgrade}
                 disabled={subscription?.upgradeLoading}
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                </svg>
                 {subscription?.upgradeLoading ? 'Loading...' : 'Upgrade to Pro'}
               </button>
             </div>
@@ -196,7 +275,19 @@ export default function SubscriptionSection({ subscription, showAlert, navigate,
             <h3 className="tu-sub-section-title">Popular Passes</h3>
             <button className="tu-sub-section-link" onClick={() => navigate('/pricing')}>
               View all plans
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="5" y1="12" x2="19" y2="12" />
+                <polyline points="12 5 19 12 12 19" />
+              </svg>
             </button>
           </div>
 

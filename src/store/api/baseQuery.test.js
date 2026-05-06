@@ -172,9 +172,7 @@ describe('createAuthBaseQuery — prepareHeaders', () => {
     const api = makeApi('tok');
 
     // Should not throw
-    expect(() =>
-      capturedFetchBaseQueryConfig.prepareHeaders(headers, api)
-    ).not.toThrow();
+    expect(() => capturedFetchBaseQueryConfig.prepareHeaders(headers, api)).not.toThrow();
   });
 
   it('passes correct baseUrl and credentials to fetchBaseQuery', async () => {
@@ -417,7 +415,8 @@ describe('baseQueryWithReauth — refresh mutex', () => {
       // First time each request is called → 401
       // After refresh → success
       if (!args._retried) {
-        const newArgs = typeof args === 'string' ? { url: args, _retried: true } : { ...args, _retried: true };
+        const newArgs =
+          typeof args === 'string' ? { url: args, _retried: true } : { ...args, _retried: true };
         // Store that we've retried by checking call count per url
         return Promise.resolve({ error: { status: 401 } });
       }

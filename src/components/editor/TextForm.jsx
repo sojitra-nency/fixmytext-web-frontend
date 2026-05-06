@@ -805,7 +805,7 @@ export default function TextForm(props) {
       handleExtractUrls: clientTools.handleExtractUrls,
       handleExtractNumbers: clientTools.handleExtractNumbers,
     }),
-     
+
     [
       callApi,
       ai,
